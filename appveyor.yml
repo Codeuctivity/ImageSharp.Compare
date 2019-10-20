@@ -29,3 +29,11 @@ dotnet_csproj:
 
 artifacts:
 - path: '**\ImageSharpCompare.*.nupkg'
+
+build:
+  verbosity: minimal
+
+deploy:
+- provider: NuGet
+  api_key:
+    secure: uam/dXnhJv544YdAQNP+mKC9fkL7UFQydK/55TWjozWEswDWNUBh/Mq/WLv8Fa8U
