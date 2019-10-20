@@ -33,7 +33,9 @@ namespace Codeuctivity
         public bool ImageAreEqual(Image<Rgba32> actual, Image<Rgba32> expected)
         {
             if (!ImagesHaveSameDimension(actual, expected))
-                return false;
+            { 
+                return false; 
+            }
 
             for (var x = 0; x < actual.Width; x++)
             {
@@ -118,8 +120,7 @@ namespace Codeuctivity
                     }
                 }
                 var meanError = absoluteError / quanitiy;
-                return new CompareResult
-    (absoluteError, meanError);
+                return new CompareResult(absoluteError, meanError);
             }
             throw (new ImageSharpCompareException("Dimension of images differ"));
         }
@@ -145,18 +146,22 @@ namespace Codeuctivity
                         var g = Math.Abs(expected[x, y].G - actual[x, y].G);
                         var b = Math.Abs(expected[x, y].B - actual[x, y].B);
                         if (r > maskImage[x, y].R)
+                        {
                             absoluteError = absoluteError + r;
+                        }
 
                         if (r > maskImage[x, y].G)
+                        {
                             absoluteError = absoluteError + g;
-
+                        }
                         if (r > maskImage[x, y].B)
+                        {
                             absoluteError = absoluteError + b;
+                        }
                     }
                 }
                 var meanError = absoluteError / quanitiy;
-                return new CompareResult
-    (absoluteError, meanError);
+                return new CompareResult(absoluteError, meanError);
             }
             throw (new ImageSharpCompareException("Dimension of images differ"));
         }
