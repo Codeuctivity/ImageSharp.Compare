@@ -1,6 +1,6 @@
 # ImageSharpCompare
 
-[![Build status](https://ci.appveyor.com/api/projects/status/yr17qicavvbfypra?svg=true)](https://ci.appveyor.com/project/stesee/imagesharp-compare) [![Nuget](https://img.shields.io/nuget/v/ImageSharpCompare.svg)](https://www.nuget.org/packages/ImageSharpCompare/)
+[![Build status](https://ci.appveyor.com/api/projects/status/yr17qicavvbfypra?svg=true)](https://ci.appveyor.com/project/stesee/imagesharp-compare) [![Nuget](https://img.shields.io/nuget/v/ImageSharpCompare.svg)](https://www.nuget.org/packages/ImageSharpCompare/) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/e61c3debbfeb48469dadcc6109c719c6)](https://www.codacy.com/manual/stesee/ImageSharp.Compare?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Codeuctivity/ImageSharp.Compare&amp;utm_campaign=Badge_Grade)
 
 Compares images
 
