@@ -1,21 +1,23 @@
-﻿using System;
-using SixLabors.ImageSharp;
+﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using System;
 
 namespace Codeuctivity
 {
     /// <summary>
-    /// ImageSharpCompare, inspired by testapi feature to compare images. Use this class to compare images using a third image as mask of regions where your two compared images may differ. 
+    /// ImageSharpCompare, inspired by testapi feature to compare images. Use this class to compare images using a third image as mask of regions where your two compared images may differ.
     /// </summary>
-    public class ImageSharpCompare
+    public static class ImageSharpCompare
     {
+        private const string sizeDiffersExceptionMessage = "Dimension of images differ";
+
         /// <summary>
         /// Compares two images for equivalence
         /// </summary>
         /// <param name="actual"></param>
         /// <param name="expected"></param>
-        /// <returns></returns>
-        public bool ImageAreEqual(string actual, string expected)
+        /// <returns>True if every pixel of actual is equal to expected</returns>
+        public static bool ImageAreEqual(string actual, string expected)
         {
             using (var actualImage = (Image<Rgba32>)Image.Load(actual))
             using (var expectedImage = (Image<Rgba32>)Image.Load(expected))
@@ -29,12 +31,12 @@ namespace Codeuctivity
         /// </summary>
         /// <param name="actual"></param>
         /// <param name="expected"></param>
-        /// <returns></returns>
-        public bool ImageAreEqual(Image<Rgba32> actual, Image<Rgba32> expected)
+        /// <returns>True if every pixel of actual is equal to expected</returns>
+        public static bool ImageAreEqual(Image<Rgba32> actual, Image<Rgba32> expected)
         {
             if (!ImagesHaveSameDimension(actual, expected))
-            { 
-                return false; 
+            {
+                return false;
             }
 
             for (var x = 0; x < actual.Width; x++)
@@ -50,15 +52,18 @@ namespace Codeuctivity
 
             return true;
         }
-        
-        /// <summary>
-        /// Compares two the dimension of images for equivalence
-        /// </summary>
-        /// <param name="actual"></param>
-        /// <param name="expected"></param>
-        /// <returns></returns>
-        public bool ImagesHaveSameDimension(Image<Rgba32> actual, Image<Rgba32> expected)
+
+        private static bool ImagesHaveSameDimension(Image<Rgba32> actual, Image<Rgba32> expected)
         {
+            if (actual == null)
+            {
+                throw new ArgumentNullException(nameof(actual));
+            }
+
+            if (expected == null)
+            {
+                throw new ArgumentNullException(nameof(expected));
+            }
             return (actual.Height == expected.Height && actual.Width == expected.Width);
         }
 
@@ -68,10 +73,9 @@ namespace Codeuctivity
         /// <param name="pathActualImage"></param>
         /// <param name="pathExpectedImage"></param>
         /// <param name="pathMaskImage"></param>
-        /// <returns></returns>
-        public CompareResult CalcDiff(string pathActualImage, string pathExpectedImage, string pathMaskImage)
+        /// <returns>Mean and absolute pixel error</returns>
+        public static ICompareResult CalcDiff(string pathActualImage, string pathExpectedImage, string pathMaskImage)
         {
-
             using (var actual = (Image<Rgba32>)Image.Load(pathActualImage))
             using (var expected = (Image<Rgba32>)Image.Load(pathExpectedImage))
             using (var mask = (Image<Rgba32>)Image.Load(pathMaskImage))
@@ -85,10 +89,9 @@ namespace Codeuctivity
         /// </summary>
         /// <param name="pathActualImage"></param>
         /// <param name="pathExpectedImage"></param>
-        /// <returns></returns>
-        public CompareResult CalcDiff(string pathActualImage, string pathExpectedImage)
+        /// <returns>Mean and absolute pixel error</returns>
+        public static ICompareResult CalcDiff(string pathActualImage, string pathExpectedImage)
         {
-
             using (var actual = (Image<Rgba32>)Image.Load(pathActualImage))
             using (var expected = (Image<Rgba32>)Image.Load(pathExpectedImage))
             {
@@ -101,8 +104,8 @@ namespace Codeuctivity
         /// </summary>
         /// <param name="actual"></param>
         /// <param name="expected"></param>
-        /// <returns></returns>
-        public CompareResult CalcDiff(Image<Rgba32> actual, Image<Rgba32> expected)
+        /// <returns>Mean and absolute pixel error</returns>
+        public static ICompareResult CalcDiff(Image<Rgba32> actual, Image<Rgba32> expected)
         {
             if (ImagesHaveSameDimension(actual, expected))
             {
@@ -122,7 +125,7 @@ namespace Codeuctivity
                 var meanError = absoluteError / quanitiy;
                 return new CompareResult(absoluteError, meanError);
             }
-            throw (new ImageSharpCompareException("Dimension of images differ"));
+            throw new ImageSharpCompareException(sizeDiffersExceptionMessage);
         }
 
         /// <summary>
@@ -131,30 +134,37 @@ namespace Codeuctivity
         /// <param name="actual"></param>
         /// <param name="expected"></param>
         /// <param name="maskImage"></param>
-        /// <returns></returns>
-        public CompareResult CalcDiff(Image<Rgba32> actual, Image<Rgba32> expected, Image<Rgba32> maskImage)
+        /// <returns>Mean and absolute pixel error</returns>
+        public static ICompareResult CalcDiff(Image<Rgba32> actual, Image<Rgba32> expected, Image<Rgba32> maskImage)
         {
             if (ImagesHaveSameDimension(actual, expected))
             {
+                if (maskImage == null)
+                {
+                    throw new ArgumentNullException(nameof(maskImage));
+                }
+
                 var quanitiy = actual.Width * actual.Height;
                 var absoluteError = 0;
                 for (var x = 0; x < actual.Width; x++)
                 {
                     for (var y = 0; y < actual.Height; y++)
                     {
+                        var maksImagePixel = maskImage[x, y];
                         var r = Math.Abs(expected[x, y].R - actual[x, y].R);
                         var g = Math.Abs(expected[x, y].G - actual[x, y].G);
                         var b = Math.Abs(expected[x, y].B - actual[x, y].B);
-                        if (r > maskImage[x, y].R)
+                        if (r > maksImagePixel.R)
                         {
                             absoluteError = absoluteError + r;
                         }
 
-                        if (r > maskImage[x, y].G)
+                        if (r > maksImagePixel.G)
                         {
                             absoluteError = absoluteError + g;
                         }
-                        if (r > maskImage[x, y].B)
+
+                        if (r > maksImagePixel.B)
                         {
                             absoluteError = absoluteError + b;
                         }
@@ -163,7 +173,7 @@ namespace Codeuctivity
                 var meanError = absoluteError / quanitiy;
                 return new CompareResult(absoluteError, meanError);
             }
-            throw (new ImageSharpCompareException("Dimension of images differ"));
+            throw (new ImageSharpCompareException(sizeDiffersExceptionMessage));
         }
 
         /// <summary>
@@ -171,10 +181,9 @@ namespace Codeuctivity
         /// </summary>
         /// <param name="pathActualImage"></param>
         /// <param name="pathExpectedImage"></param>
-        /// <returns></returns>
-        public Image<Rgba32> CalcDiffMaskImage(string pathActualImage, string pathExpectedImage)
+        /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
+        public static Image<Rgba32> CalcDiffMaskImage(string pathActualImage, string pathExpectedImage)
         {
-
             using (var actual = (Image<Rgba32>)Image.Load(pathActualImage))
             using (var expected = (Image<Rgba32>)Image.Load(pathExpectedImage))
             {
@@ -187,8 +196,8 @@ namespace Codeuctivity
         /// </summary>
         /// <param name="actual"></param>
         /// <param name="expected"></param>
-        /// <returns></returns>
-        public Image<Rgba32> CalcDiffMaskImage(Image<Rgba32> actual, Image<Rgba32> expected)
+        /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
+        public static Image<Rgba32> CalcDiffMaskImage(Image<Rgba32> actual, Image<Rgba32> expected)
         {
             if (ImagesHaveSameDimension(actual, expected))
             {
@@ -206,7 +215,7 @@ namespace Codeuctivity
                 }
                 return maskImage;
             }
-            throw (new ImageSharpCompareException("Dimension of images differ"));
+            throw (new ImageSharpCompareException(sizeDiffersExceptionMessage));
         }
     }
 }

@@ -3,7 +3,7 @@ namespace Codeuctivity
     /// <summary>
     /// Dto - outcome of compared images
     /// </summary>
-    public class CompareResult
+    public class CompareResult : ICompareResult
     {
         /// <summary>
         /// ctor for CompareResult
@@ -16,11 +16,13 @@ namespace Codeuctivity
             MeanError = meanError;
             AbsoluteError = absoluteError;
         }
+
         /// <summary>
         /// Mean pixel error
         /// </summary>
         /// <value>0-1</value>
         public int MeanError { get; }
+
         /// <summary>
         /// Absolute pixel error
         /// </summary>
