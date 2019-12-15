@@ -31,9 +31,8 @@ using "compare.CalcDiff" you can calc a diff mask from actual and reference imag
 Example - Create difference image
 
 ```csharp
-compare = new Codeuctivity.ImageSharpCompare();
 using (var fileStreamDifferenceMask = File.Create("differenceMask.png"))
-using (var maskImage = compare.CalcDiffMaskImage(pathPic1, pathPic2))
+using (var maskImage = ImageSharpCompare.CalcDiffMaskImage(pathPic1, pathPic2))
     SixLabors.ImageSharp.ImageExtensions.SaveAsPng(maskImage, fileStreamDifferenceMask);
 ```
 
@@ -42,6 +41,6 @@ using (var maskImage = compare.CalcDiffMaskImage(pathPic1, pathPic2))
 Example - Compare two images using the created difference image. Add white pixels to  differenceMask.png where you want to allow difference.
 
 ```csharp
-var maskedDiff = compare.CalcDiff(pathPic1, pathPic2, "differenceMask.png");
+var maskedDiff = ImageSharpCompare.CalcDiff(pathPic1, pathPic2, "differenceMask.png");
 Assert.That(maskedDiff.AbsoluteError, Is.EqualTo(0));
 ```
