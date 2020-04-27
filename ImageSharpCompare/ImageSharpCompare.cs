@@ -159,12 +159,12 @@ namespace Codeuctivity
                             absoluteError = absoluteError + r;
                         }
 
-                        if (r > maksImagePixel.G)
+                        if (g > maksImagePixel.G)
                         {
                             absoluteError = absoluteError + g;
                         }
 
-                        if (r > maksImagePixel.B)
+                        if (b > maksImagePixel.B)
                         {
                             absoluteError = absoluteError + b;
                         }
