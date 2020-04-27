@@ -15,5 +15,15 @@
         /// Absolute pixel error
         /// </summary>
         int AbsoluteError { get; }
+
+        /// <summary>
+        /// Number of pixels that differ between images
+        /// </summary>
+        int PixelErrorCount { get; }
+
+        /// <summary>
+        /// Percentage of pixels that differ between images
+        /// </summary>
+        double PixelErrorPercentage { get; }
     }
 }

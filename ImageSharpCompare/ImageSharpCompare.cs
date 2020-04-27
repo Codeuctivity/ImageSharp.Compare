@@ -111,6 +111,7 @@ namespace Codeuctivity
             {
                 var quanitiy = actual.Width * actual.Height;
                 var absoluteError = 0;
+                var pixelErrorCount = 0;
                 for (var x = 0; x < actual.Width; x++)
                 {
                     for (var y = 0; y < actual.Height; y++)
@@ -120,10 +121,13 @@ namespace Codeuctivity
                         var b = Math.Abs(expected[x, y].B - actual[x, y].B);
 
                         absoluteError = absoluteError + r + g + b;
+
+                        pixelErrorCount += (r + g + b) > 0 ? 1 : 0;
                     }
                 }
                 var meanError = absoluteError / quanitiy;
-                return new CompareResult(absoluteError, meanError);
+                var pixelErrorPercentage = ((double)pixelErrorCount / quanitiy) * 100;
+                return new CompareResult(absoluteError, meanError, pixelErrorCount, pixelErrorPercentage);
             }
             throw new ImageSharpCompareException(sizeDiffersExceptionMessage);
         }
@@ -146,6 +150,7 @@ namespace Codeuctivity
 
                 var quanitiy = actual.Width * actual.Height;
                 var absoluteError = 0;
+                var pixelErrorCount = 0;
                 for (var x = 0; x < actual.Width; x++)
                 {
                     for (var y = 0; y < actual.Height; y++)
@@ -154,24 +159,31 @@ namespace Codeuctivity
                         var r = Math.Abs(expected[x, y].R - actual[x, y].R);
                         var g = Math.Abs(expected[x, y].G - actual[x, y].G);
                         var b = Math.Abs(expected[x, y].B - actual[x, y].B);
+
+                        var error = 0;
+
                         if (r > maksImagePixel.R)
                         {
-                            absoluteError = absoluteError + r;
+                            error += r;
                         }
 
                         if (g > maksImagePixel.G)
                         {
-                            absoluteError = absoluteError + g;
+                            error += g;
                         }
 
                         if (b > maksImagePixel.B)
                         {
-                            absoluteError = absoluteError + b;
+                            error += b;
                         }
+
+                        absoluteError += error;
+                        pixelErrorCount += error > 0 ? 1 : 0;
                     }
                 }
                 var meanError = absoluteError / quanitiy;
-                return new CompareResult(absoluteError, meanError);
+                var pixelErrorPercentage = ((double)pixelErrorCount / quanitiy) * 100;
+                return new CompareResult(absoluteError, meanError, pixelErrorCount, pixelErrorPercentage);
             }
             throw (new ImageSharpCompareException(sizeDiffersExceptionMessage));
         }
