@@ -109,7 +109,7 @@ namespace Codeuctivity
         {
             if (ImagesHaveSameDimension(actual, expected))
             {
-                var quanitiy = actual.Width * actual.Height;
+                var quantity = actual.Width * actual.Height;
                 var absoluteError = 0;
                 var pixelErrorCount = 0;
                 for (var x = 0; x < actual.Width; x++)
@@ -125,8 +125,8 @@ namespace Codeuctivity
                         pixelErrorCount += (r + g + b) > 0 ? 1 : 0;
                     }
                 }
-                var meanError = absoluteError / quanitiy;
-                var pixelErrorPercentage = ((double)pixelErrorCount / quanitiy) * 100;
+                var meanError = absoluteError / quantity;
+                var pixelErrorPercentage = ((double)pixelErrorCount / quantity) * 100;
                 return new CompareResult(absoluteError, meanError, pixelErrorCount, pixelErrorPercentage);
             }
             throw new ImageSharpCompareException(sizeDiffersExceptionMessage);
@@ -148,31 +148,31 @@ namespace Codeuctivity
                     throw new ArgumentNullException(nameof(maskImage));
                 }
 
-                var quanitiy = actual.Width * actual.Height;
+                var quantity = actual.Width * actual.Height;
                 var absoluteError = 0;
                 var pixelErrorCount = 0;
                 for (var x = 0; x < actual.Width; x++)
                 {
                     for (var y = 0; y < actual.Height; y++)
                     {
-                        var maksImagePixel = maskImage[x, y];
+                        var maskImagePixel = maskImage[x, y];
                         var r = Math.Abs(expected[x, y].R - actual[x, y].R);
                         var g = Math.Abs(expected[x, y].G - actual[x, y].G);
                         var b = Math.Abs(expected[x, y].B - actual[x, y].B);
 
                         var error = 0;
 
-                        if (r > maksImagePixel.R)
+                        if (r > maskImagePixel.R)
                         {
                             error += r;
                         }
 
-                        if (g > maksImagePixel.G)
+                        if (g > maskImagePixel.G)
                         {
                             error += g;
                         }
 
-                        if (b > maksImagePixel.B)
+                        if (b > maskImagePixel.B)
                         {
                             error += b;
                         }
@@ -181,8 +181,8 @@ namespace Codeuctivity
                         pixelErrorCount += error > 0 ? 1 : 0;
                     }
                 }
-                var meanError = absoluteError / quanitiy;
-                var pixelErrorPercentage = ((double)pixelErrorCount / quanitiy) * 100;
+                var meanError = absoluteError / quantity;
+                var pixelErrorPercentage = ((double)pixelErrorCount / quantity) * 100;
                 return new CompareResult(absoluteError, meanError, pixelErrorCount, pixelErrorPercentage);
             }
             throw (new ImageSharpCompareException(sizeDiffersExceptionMessage));

@@ -19,7 +19,7 @@ namespace ImageSharpCompareTestNunit
         [Test]
         [TestCase(jpg0, jpg0)]
         [TestCase(png0, png0)]
-        public void ShouldVerfiyThatImagesAreEqual(string pathActual, string pathExpected)
+        public void ShouldVerifyThatImagesAreEqual(string pathActual, string pathExpected)
         {
             Assert.That(ImageSharpCompare.ImageAreEqual(pathActual, pathExpected), Is.True);
         }
@@ -31,7 +31,7 @@ namespace ImageSharpCompareTestNunit
         [TestCase(jpg1, jpg1, 0, 0, 0, 0)]
         [TestCase(jpg0, jpg1, 208832, 1, 2089, 1.2923461433768035d)]
         [TestCase(png0, png1, 203027, 1, 681, 0.42129618173269651d)]
-        public void ShouldVerfiyThatImagesAreSemiEqual(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage)
+        public void ShouldVerifyThatImagesAreSemiEqual(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage)
         {
             var diff = ImageSharpCompare.CalcDiff(pathPic1, pathPic2);
             Assert.That(diff.AbsoluteError, Is.EqualTo(expectedAbsoluteError), "AbsoluteError");
@@ -62,7 +62,7 @@ namespace ImageSharpCompareTestNunit
         [TestCase(jpg0, png1)]
         [TestCase(jpg0, png0)]
         [TestCase(jpg1, png1)]
-        public void ShouldVerifyThatImagesAreNotEqal(string pathActual, string pathExpected)
+        public void ShouldVerifyThatImagesAreNotEqual(string pathActual, string pathExpected)
         {
             Assert.That(ImageSharpCompare.ImageAreEqual(pathActual, pathExpected), Is.False);
         }
