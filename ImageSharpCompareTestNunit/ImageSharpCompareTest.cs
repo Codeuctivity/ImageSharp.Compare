@@ -11,11 +11,6 @@ namespace ImageSharpCompareTestNunit
         private const string png0 = "./TestData/Calc0.png";
         private const string png1 = "./TestData/Calc1.png";
 
-        [SetUp]
-        public void Setup()
-        {
-        }
-
         [Test]
         [TestCase(jpg0, jpg0)]
         [TestCase(png0, png0)]
