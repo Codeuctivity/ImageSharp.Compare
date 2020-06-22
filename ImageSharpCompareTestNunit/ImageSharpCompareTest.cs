@@ -11,11 +11,6 @@ namespace ImageSharpCompareTestNunit
         private const string png0 = "./TestData/Calc0.png";
         private const string png1 = "./TestData/Calc1.png";
 
-        [SetUp]
-        public void Setup()
-        {
-        }
-
         [Test]
         [TestCase(jpg0, jpg0)]
         [TestCase(png0, png0)]
@@ -31,7 +26,7 @@ namespace ImageSharpCompareTestNunit
         [TestCase(jpg1, jpg1, 0, 0, 0, 0)]
         [TestCase(jpg0, jpg1, 208832, 1, 2089, 1.2923461433768035d)]
         [TestCase(png0, png1, 203027, 1, 681, 0.42129618173269651d)]
-        public void ShouldVerifyThatImagesAreSemiEqual(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage)
+        public void ShouldVerifyThatImagesAreSemiEqual(string pathPic1, string pathPic2, int expectedAbsoluteError, int expectedMeanError, int expectedPixelErrorCount, double expectedPixelErrorPercentage)
         {
             var diff = ImageSharpCompare.CalcDiff(pathPic1, pathPic2);
             Assert.That(diff.AbsoluteError, Is.EqualTo(expectedAbsoluteError), "AbsoluteError");

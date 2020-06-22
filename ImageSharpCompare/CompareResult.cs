@@ -13,7 +13,7 @@ namespace Codeuctivity
         /// <param name="pixelErrorCount">Number of pixels that differ between images</param>
         /// <param name="pixelErrorPercentage">Percentage of pixels that differ between images</param>
         public CompareResult
-                (int meanError, int absoluteError, int pixelErrorCount, double pixelErrorPercentage)
+                (int absoluteError, int meanError, int pixelErrorCount, double pixelErrorPercentage)
         {
             MeanError = meanError;
             AbsoluteError = absoluteError;
