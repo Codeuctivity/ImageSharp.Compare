@@ -12,7 +12,16 @@ ImageSharpCompare focus on os indepent support and therfore depends on  [SixLabo
 Install-Package ImageSharpCompare
 ```
 
-## Example show case
+## Example simple show cases
+
+```csharp
+bool isEqual = ImageSharpCompare.ImageAreEqual("actual.png", "expected.png");
+
+// calcs MeanError, AbsoluteError, PixelErrorCount and PixelErrorPercentage
+ICompareResult calcDiff = ImageSharpCompare.CalcDiff("actual.png", "expected.png");
+```
+
+## Example show case alowing some tolerated diff
 
 Imagine two images you want to compare, and want to accept the found difference as at state of allowed difference.
 

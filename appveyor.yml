@@ -22,7 +22,7 @@ dotnet_csproj:
   informational_version: "{version}"
 
 artifacts:
-  - path: '**\ImageSharpCompare.*.nupkg'
+  - path: '**\ImageSharpCompare.*.*nupkg'
 
 deploy:
   - provider: NuGet
