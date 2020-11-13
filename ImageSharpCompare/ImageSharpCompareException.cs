@@ -4,20 +4,20 @@ using System.Runtime.Serialization;
 namespace Codeuctivity
 {
     /// <summary>
-    /// ImageSharpCompareException gets thrown if comparing of images failes
+    /// ImageSharpCompareException gets thrown if comparing of images fails
     /// </summary>
     [Serializable]
     public class ImageSharpCompareException : Exception
     {
         /// <summary>
-        /// ImageSharpCompareException gets thrown if comparing of images failes
+        /// ImageSharpCompareException gets thrown if comparing of images fails
         /// </summary>
         public ImageSharpCompareException()
         {
         }
 
         /// <summary>
-        /// ImageSharpCompareException gets thrown if comparing of images failes
+        /// ImageSharpCompareException gets thrown if comparing of images fails
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
@@ -26,7 +26,7 @@ namespace Codeuctivity
         }
 
         /// <summary>
-        /// ImageSharpCompareException gets thrown if comparing of images failes
+        /// ImageSharpCompareException gets thrown if comparing of images fails
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
@@ -36,7 +36,7 @@ namespace Codeuctivity
         }
 
         /// <summary>
-        /// ImageSharpCompareException gets thrown if comparing of images failes
+        /// ImageSharpCompareException gets thrown if comparing of images fails
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>

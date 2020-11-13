@@ -19,11 +19,9 @@ namespace Codeuctivity
         /// <returns>True if every pixel of actual is equal to expected</returns>
         public static bool ImageAreEqual(string actual, string expected)
         {
-            using (var actualImage = (Image<Rgba32>)Image.Load(actual))
-            using (var expectedImage = (Image<Rgba32>)Image.Load(expected))
-            {
-                return ImageAreEqual(actualImage, expectedImage);
-            }
+            using var actualImage = (Image<Rgba32>)Image.Load(actual);
+            using var expectedImage = (Image<Rgba32>)Image.Load(expected);
+            return ImageAreEqual(actualImage, expectedImage);
         }
 
         /// <summary>
@@ -76,12 +74,10 @@ namespace Codeuctivity
         /// <returns>Mean and absolute pixel error</returns>
         public static ICompareResult CalcDiff(string pathActualImage, string pathExpectedImage, string pathMaskImage)
         {
-            using (var actual = (Image<Rgba32>)Image.Load(pathActualImage))
-            using (var expected = (Image<Rgba32>)Image.Load(pathExpectedImage))
-            using (var mask = (Image<Rgba32>)Image.Load(pathMaskImage))
-            {
-                return CalcDiff(actual, expected, mask);
-            }
+            using var actual = (Image<Rgba32>)Image.Load(pathActualImage);
+            using var expected = (Image<Rgba32>)Image.Load(pathExpectedImage);
+            using var mask = (Image<Rgba32>)Image.Load(pathMaskImage);
+            return CalcDiff(actual, expected, mask);
         }
 
         /// <summary>
@@ -92,11 +88,9 @@ namespace Codeuctivity
         /// <returns>Mean and absolute pixel error</returns>
         public static ICompareResult CalcDiff(string pathActualImage, string pathExpectedImage)
         {
-            using (var actual = (Image<Rgba32>)Image.Load(pathActualImage))
-            using (var expected = (Image<Rgba32>)Image.Load(pathExpectedImage))
-            {
-                return CalcDiff(actual, expected);
-            }
+            using var actual = (Image<Rgba32>)Image.Load(pathActualImage);
+            using var expected = (Image<Rgba32>)Image.Load(pathExpectedImage);
+            return CalcDiff(actual, expected);
         }
 
         /// <summary>
@@ -196,11 +190,9 @@ namespace Codeuctivity
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
         public static Image<Rgba32> CalcDiffMaskImage(string pathActualImage, string pathExpectedImage)
         {
-            using (var actual = (Image<Rgba32>)Image.Load(pathActualImage))
-            using (var expected = (Image<Rgba32>)Image.Load(pathExpectedImage))
-            {
-                return CalcDiffMaskImage(actual, expected);
-            }
+            using var actual = (Image<Rgba32>)Image.Load(pathActualImage);
+            using var expected = (Image<Rgba32>)Image.Load(pathExpectedImage);
+            return CalcDiffMaskImage(actual, expected);
         }
 
         /// <summary>
