@@ -6,7 +6,7 @@ skip_tags: true
 configuration: Release
 before_build:
   - ps: >-
-      nuget restore
+      dotnet restore
 
 build:
   project: ImageSharpCompare.sln
