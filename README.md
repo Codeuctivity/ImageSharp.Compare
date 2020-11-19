@@ -1,12 +1,12 @@
 # ImageSharpCompare
 
-[![Build status](https://ci.appveyor.com/api/projects/status/yr17qicavvbfypra?svg=true)](https://ci.appveyor.com/project/stesee/imagesharp-compare) [![Nuget](https://img.shields.io/nuget/v/ImageSharpCompare.svg)](https://www.nuget.org/packages/ImageSharpCompare/) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/e61c3debbfeb48469dadcc6109c719c6)](https://www.codacy.com/manual/stesee/ImageSharp.Compare?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Codeuctivity/ImageSharp.Compare&amp;utm_campaign=Badge_Grade)
+[![Build status](https://ci.appveyor.com/api/projects/status/yr17qicavvbfypra?svg=true)](https://ci.appveyor.com/project/stesee/imagesharp-compare) [![Nuget](https://img.shields.io/nuget/v/ImageSharpCompare.svg)](https://www.nuget.org/packages/ImageSharpCompare/) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/e61c3debbfeb48469dadcc6109c719c6)](https://www.codacy.com/manual/stesee/ImageSharp.Compare?utm_source=github.com&utm_medium=referral&utm_content=Codeuctivity/ImageSharp.Compare&utm_campaign=Badge_Grade)
 
 Compares images
 
 Inspired by the image compare feature "Visual verification API" of [TestApi](https://blogs.msdn.microsoft.com/ivo_manolov/2009/04/20/introduction-to-testapi-part-3-visual-verification-apis/) this code supports comparing images by using a tolerance mask image. That tolerance mask image is a valid image by itself and can be manipulated.
 
-ImageSharpCompare focus on os indepent support and therfore depends on  [SixLabors.ImageSharp](https://github.com/SixLabors/ImageSharp).
+ImageSharpCompare focus on os agnostic support and therefore depends on [SixLabors.ImageSharp](https://github.com/SixLabors/ImageSharp).
 
 ```PowerShell
 Install-Package ImageSharpCompare
@@ -21,17 +21,17 @@ bool isEqual = ImageSharpCompare.ImageAreEqual("actual.png", "expected.png");
 ICompareResult calcDiff = ImageSharpCompare.CalcDiff("actual.png", "expected.png");
 ```
 
-## Example show case alowing some tolerated diff
+## Example show case allowing some tolerated diff
 
 Imagine two images you want to compare, and want to accept the found difference as at state of allowed difference.
 
 ### Reference Image
 
-![actual image](./ImageSharpCompareTestNunit/TestData/Calc0.jpg "Refernce Image")
+![actual image](./ImageSharpCompareTestNunit/TestData/Calc0.jpg "Reference Image")
 
 ### Actual Image
 
-![actual image](./ImageSharpCompareTestNunit/TestData/Calc1.jpg "Refernce Image")
+![actual image](./ImageSharpCompareTestNunit/TestData/Calc1.jpg "Reference Image")
 
 ### Tolerance mask image
 
@@ -47,7 +47,7 @@ using (var maskImage = ImageSharpCompare.CalcDiffMaskImage(pathPic1, pathPic2))
 
 ![differenceMask.png](./ImageSharpCompareTestNunit/TestData/differenceMask.png "differenceMask.png")
 
-Example - Compare two images using the created difference image. Add white pixels to  differenceMask.png where you want to allow difference.
+Example - Compare two images using the created difference image. Add white pixels to differenceMask.png where you want to allow difference.
 
 ```csharp
 var maskedDiff = ImageSharpCompare.CalcDiff(pathPic1, pathPic2, "differenceMask.png");
