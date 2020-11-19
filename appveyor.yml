@@ -33,7 +33,7 @@ deploy:
       secure: BAGacXk+5m7jd8EvWW6wkYhoVml39WAi7n2Z0odVUKUq5SeWLqixvkPA1I+KbQ1r
     on:
       branch: master
-      skip_symbols: false
+    skip_symbols: false
   - provider: GitHub
     auth_token:
       secure: 6WIcUQnv2ZAHI7MaJeiopONTvv3TxZiaThY17jVC4tJTnva7F66tPqvCWX2kQRyM
