@@ -25,10 +25,10 @@
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
-    <PackageId>PdfjsSharp</PackageId>
-    <Product>PdfjsSharp</Product>
-    <AssemblyName>Codeuctivity.PdfjsSharp</AssemblyName>
-    <RootNamespace>Codeuctivity.PdfjsSharp</RootNamespace>
+    <PackageId>ImageSharpCompare</PackageId>
+    <Product>ImageSharpCompare</Product>
+    <AssemblyName>Codeuctivity.ImageSharpCompare</AssemblyName>
+    <RootNamespace>Codeuctivity.ImageSharpCompare</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
