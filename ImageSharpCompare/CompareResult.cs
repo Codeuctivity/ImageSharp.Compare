@@ -6,29 +6,13 @@ namespace Codeuctivity
     public class CompareResult : ICompareResult
     {
         /// <summary>
-        /// ctor for CompareResult
+        /// Mean pixel error of absolute pixel error
         /// </summary>
-        /// <param name="meanError">Mean error</param>
-        /// <param name="absoluteError">Absolute error</param>
-        /// <param name="pixelErrorCount">Number of pixels that differ between images</param>
-        /// <param name="pixelErrorPercentage">Percentage of pixels that differ between images</param>
-        public CompareResult
-                (int absoluteError, int meanError, int pixelErrorCount, double pixelErrorPercentage)
-        {
-            MeanError = meanError;
-            AbsoluteError = absoluteError;
-            PixelErrorCount = pixelErrorCount;
-            PixelErrorPercentage = pixelErrorPercentage;
-        }
+        /// <value>0-765</value>
+        public double MeanError { get; }
 
         /// <summary>
-        /// Mean pixel error
-        /// </summary>
-        /// <value>0-1</value>
-        public int MeanError { get; }
-
-        /// <summary>
-        /// Absolute pixel error
+        /// Absolute pixel error, counts each color channel on every pixel the delta
         /// </summary>
         public int AbsoluteError { get; }
 
@@ -40,6 +24,23 @@ namespace Codeuctivity
         /// <summary>
         /// Percentage of pixels that differ between images
         /// </summary>
+        /// <value>0-100.0</value>
         public double PixelErrorPercentage { get; }
+
+        /// <summary>
+        /// ctor for CompareResult
+        /// </summary>
+        /// <param name="meanError">Mean error</param>
+        /// <param name="absoluteError">Absolute error</param>
+        /// <param name="pixelErrorCount">Number of pixels that differ between images</param>
+        /// <param name="pixelErrorPercentage">Percentage of pixels that differ between images</param>
+        public CompareResult(int absoluteError, double meanError, int pixelErrorCount, double pixelErrorPercentage)
+        {
+            MeanError = meanError;
+            AbsoluteError = absoluteError;
+            PixelErrorCount = pixelErrorCount;
+            PixelErrorPercentage = pixelErrorPercentage;
+        }
+
     }
 }

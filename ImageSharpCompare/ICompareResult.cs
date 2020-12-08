@@ -6,10 +6,9 @@
     public interface ICompareResult
     {
         /// <summary>
-        /// Mean pixel error
+        /// Mean relative pixel error
         /// </summary>
-        /// <value>0-1</value>
-        int MeanError { get; }
+        double MeanError { get; }
 
         /// <summary>
         /// Absolute pixel error

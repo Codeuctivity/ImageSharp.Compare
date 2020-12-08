@@ -119,7 +119,7 @@ namespace Codeuctivity
                         pixelErrorCount += (r + g + b) > 0 ? 1 : 0;
                     }
                 }
-                var meanError = absoluteError / quantity;
+                var meanError = (double)absoluteError / quantity;
                 var pixelErrorPercentage = ((double)pixelErrorCount / quantity) * 100;
                 return new CompareResult(absoluteError, meanError, pixelErrorCount, pixelErrorPercentage);
             }
@@ -175,7 +175,7 @@ namespace Codeuctivity
                         pixelErrorCount += error > 0 ? 1 : 0;
                     }
                 }
-                var meanError = absoluteError / quantity;
+                var meanError = (double)absoluteError / quantity;
                 var pixelErrorPercentage = ((double)pixelErrorCount / quantity) * 100;
                 return new CompareResult(absoluteError, meanError, pixelErrorCount, pixelErrorPercentage);
             }
