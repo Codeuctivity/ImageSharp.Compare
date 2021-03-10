@@ -16,7 +16,7 @@
     <Description>Compares Images and calculates mean error, absolute error and diff image. Supports optional tolerance mask/images to ignore areas of an image. Use this for automated visual comparing in your unit tests.</Description>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>$(APPVEYOR_REPO_COMMIT_MESSAGE)</PackageReleaseNotes>
+    <PackageReleaseNotes>$(APPVEYOR_REPO_COMMIT_MESSAGE_EXTENDED)</PackageReleaseNotes>
     <AssemblyOriginatorKeyFile>ImageSharpCompare.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <IncludeSymbols>true</IncludeSymbols>
@@ -33,9 +33,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.2" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.3" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="all" />
-      <PackageReference Include="SonarAnalyzer.CSharp" Version="8.15.0.24505">
+      <PackageReference Include="SonarAnalyzer.CSharp" Version="8.19.0.28253">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
