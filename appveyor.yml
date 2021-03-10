@@ -33,6 +33,6 @@ deploy:
       branch: master
   - provider: GitHub
     auth_token:
-      secure: 6WIcUQnv2ZAHI7MaJeiopONTvv3TxZiaThY17jVC4tJTnva7F66tPqvCWX2kQRyM
+      secure: Sqmx9SIShZp1c9nTZPTS798Ztzr9B2rGF4p5FKlyT3cAXvkR4tgSc35nn8Sd11WU
     on:
       branch: master
