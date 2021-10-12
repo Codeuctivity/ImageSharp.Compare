@@ -30,9 +30,9 @@ deploy:
       secure: CTISdGCfnpyC7Rh5vs1pgbuISrkWF34sot0SyVgvu0HQxhNNd+V0Gc4MS+rtJttB
     skip_symbols: false
     on:
-      branch: master
+      branch: main
   - provider: GitHub
     auth_token:
       secure: Sqmx9SIShZp1c9nTZPTS798Ztzr9B2rGF4p5FKlyT3cAXvkR4tgSc35nn8Sd11WU
     on:
-      branch: master
+      branch: main
