@@ -21,7 +21,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Work around dotnet-bump-version hick up
-      run: git config pull.rebase true 
+      run: git config pull.ff only 
     - name: Bump versions
       uses: SiqiLu/dotnet-bump-version@master
       with:
