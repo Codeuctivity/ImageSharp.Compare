@@ -1,0 +1,50 @@
+name: .NET
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Bump versions
+      uses: SiqiLu/dotnet-bump-version@master
+      with:
+        version_files: "**/*.csproj"
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+    - name: "Build & test"
+      run: |
+          echo "done!"
+          pwd
+    - name: Publish
+      run: dotnet publish --configuration Release --no-restore
+    - uses: papeloto/action-zip@v1
+      with:
+          files: ./bin/Release/net5.0/win-x64/publish/
+          dest: GithubActionsBuild.zip
+    - uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest"
+        prerelease: true
+        title: "Development Build"
+        files: |
+          LICENSE
+          GithubActionsBuild.zip
