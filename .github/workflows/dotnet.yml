@@ -36,7 +36,6 @@ jobs:
           echo "done!"
           pwd
     - name: Publish
-      run: dotnet publish --configuration Release --no-restore
     - uses: papeloto/action-zip@v1
       with:
           files: ./bin/Release/
