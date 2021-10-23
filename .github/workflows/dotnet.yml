@@ -30,7 +30,7 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build --verbosity normal --configuration Release
     - name: "Build & test"
       run: |
           echo "done!"
