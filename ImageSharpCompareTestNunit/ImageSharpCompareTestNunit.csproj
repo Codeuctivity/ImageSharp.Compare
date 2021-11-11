@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.1;net6.0</TargetFrameworks>
@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="nunit" Version="3.13.2" />
-    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.30.0.37606">
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.31.0.39249">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

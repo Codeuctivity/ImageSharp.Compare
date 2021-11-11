@@ -34,8 +34,8 @@
 
   <ItemGroup>
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.0" PrivateAssets="all" />
-      <PackageReference Include="SonarAnalyzer.CSharp" Version="8.30.0.37606">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
+      <PackageReference Include="SonarAnalyzer.CSharp" Version="8.31.0.39249">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
