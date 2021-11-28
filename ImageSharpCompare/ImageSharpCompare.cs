@@ -1,6 +1,7 @@
 ﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using System;
+using System.IO;
 
 namespace Codeuctivity
 {
@@ -14,10 +15,23 @@ namespace Codeuctivity
         /// <summary>
         /// Compares two images for equivalence
         /// </summary>
+        /// <param name="pathImageActual"></param>
+        /// <param name="pathImageExpected"></param>
+        /// <returns>True if every pixel of actual is equal to expected</returns>
+        public static bool ImageAreEqual(string pathImageActual, string pathImageExpected)
+        {
+            using var actualImage = (Image<Rgba32>)Image.Load(pathImageActual);
+            using var expectedImage = (Image<Rgba32>)Image.Load(pathImageExpected);
+            return ImageAreEqual(actualImage, expectedImage);
+        }
+
+        /// <summary>
+        /// Compares two images for equivalence
+        /// </summary>
         /// <param name="actual"></param>
         /// <param name="expected"></param>
         /// <returns>True if every pixel of actual is equal to expected</returns>
-        public static bool ImageAreEqual(string actual, string expected)
+        public static bool ImageAreEqual(Stream actual, Stream expected)
         {
             using var actualImage = (Image<Rgba32>)Image.Load(actual);
             using var expectedImage = (Image<Rgba32>)Image.Load(expected);
@@ -90,6 +104,33 @@ namespace Codeuctivity
         {
             using var actual = (Image<Rgba32>)Image.Load(pathActualImage);
             using var expected = (Image<Rgba32>)Image.Load(pathExpectedImage);
+            return CalcDiff(actual, expected);
+        }
+
+        /// <summary>
+        /// Compares two images for equivalence
+        /// </summary>
+        /// <param name="actualImage"></param>
+        /// <param name="expectedImage"></param>
+        /// <param name="maskImage"></param>
+        /// <returns></returns>
+        public static ICompareResult CalcDiff(Stream actualImage, Stream expectedImage, Image<Rgba32> maskImage)
+        {
+            using var actual = (Image<Rgba32>)Image.Load(actualImage);
+            using var expected = (Image<Rgba32>)Image.Load(expectedImage);
+            return CalcDiff(actual, expected, maskImage);
+        }
+
+        /// <summary>
+        /// Compares two images for equivalence
+        /// </summary>
+        /// <param name="actualImage"></param>
+        /// <param name="expectedImage"></param>
+        /// <returns>Mean and absolute pixel error</returns>
+        public static ICompareResult CalcDiff(Stream actualImage, Stream expectedImage)
+        {
+            using var actual = (Image<Rgba32>)Image.Load(actualImage);
+            using var expected = (Image<Rgba32>)Image.Load(expectedImage);
             return CalcDiff(actual, expected);
         }
 
@@ -192,6 +233,19 @@ namespace Codeuctivity
         {
             using var actual = (Image<Rgba32>)Image.Load(pathActualImage);
             using var expected = (Image<Rgba32>)Image.Load(pathExpectedImage);
+            return CalcDiffMaskImage(actual, expected);
+        }
+
+        /// <summary>
+        /// Creates a diff mask image of two images
+        /// </summary>
+        /// <param name="actualImage"></param>
+        /// <param name="expectedImage"></param>
+        /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
+        public static Image<Rgba32> CalcDiffMaskImage(Stream actualImage, Stream expectedImage)
+        {
+            using var actual = (Image<Rgba32>)Image.Load(actualImage);
+            using var expected = (Image<Rgba32>)Image.Load(expectedImage);
             return CalcDiffMaskImage(actual, expected);
         }
 
