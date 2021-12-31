@@ -2,3 +2,7 @@
 
 # CA1303: Do not pass literals as localized parameters
 dotnet_diagnostic.CA1303.severity = none
+
+[*.{cs,vb}]
+tab_width=4
+indent_size=4

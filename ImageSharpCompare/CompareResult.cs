@@ -41,6 +41,5 @@ namespace Codeuctivity
             PixelErrorCount = pixelErrorCount;
             PixelErrorPercentage = pixelErrorPercentage;
         }
-
     }
 }

@@ -1,51 +1,88 @@
-name: .NET
+name: .NET build and test
+env:
+  CURRENT_VERSION: 1.2.${{ github.run_number }}
+  LAST_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
 
 on:
   push:
-    branches: [ main, GithubActions ]
   pull_request:
-    branches: [ main, GithubActions ]
 
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.x
+        dotnet-version: 6.0.x
     - name: Restore dependencies
       run: dotnet restore
-    - name: Work around dotnet-bump-version hick up
-      run: git config pull.rebase false 
-    - name: Bump versions
-      uses: SiqiLu/dotnet-bump-version@master
-      with:
-        version_files: "**/*.csproj"
-        github_token: ${{ secrets.GITHUB_TOKEN }}
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal --configuration Release
-    - name: "Build & test"
+
+  deployRelease:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: build 
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: NugetPush
       run: |
-          echo "done!"
-          pwd
-    - name: Publish
+          dotnet nuget push ./ImageSharpCompare/bin/Release/*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_TOKEN}} --source https://api.nuget.org/v3/index.json
     - uses: papeloto/action-zip@v1
       with:
-          files: ./bin/Release/
-          dest: GithubActionsBuild.zip
+          files: ./ImageSharpCompare/bin/Release/
+          dest: ImageSharpCompare.zip
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        automatic_release_tag: "latest"
-        prerelease: true
-        title: "Development Build"
+        automatic_release_tag: ${{ env.CURRENT_VERSION }}
+        prerelease: false
+        title: "Release Build"
         files: |
-          LICENSE
-          GithubActionsBuild.zip
+          ImageSharpCompare.zip
+
+  deployTest:
+    if: github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: build 
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: NugetPush
+      run: |
+          ls ./ImageSharpCompare/bin/Release
+          dotnet nuget push ./ImageSharpCompare/bin/Release/*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_TEST_TOKEN}} --source https://apiint.nugettest.org/v3/index.json
+    - uses: papeloto/action-zip@v1
+      with:
+          files: ./ImageSharpCompare/bin/Release/
+          dest: ImageSharpCompare.zip
+    - uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest-prerelease"
+        prerelease: true
+        title: "Prerelease Build"
+        files: |
+          ImageSharpCompare.zip
