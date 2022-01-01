@@ -6,7 +6,7 @@ using System.IO;
 namespace Codeuctivity
 {
     /// <summary>
-    /// ImageSharpCompare, inspired by testapi feature to compare images. Use this class to compare images using a third image as mask of regions where your two compared images may differ.
+    /// ImageSharpCompare, compares images. Use this class to compare images using a third image as mask of regions where your two compared images may differ.
     /// </summary>
     public static class ImageSharpCompare
     {
@@ -18,11 +18,11 @@ namespace Codeuctivity
         /// <param name="pathImageActual"></param>
         /// <param name="pathImageExpected"></param>
         /// <returns>True if every pixel of actual is equal to expected</returns>
-        public static bool ImageAreEqual(string pathImageActual, string pathImageExpected)
+        public static bool ImagesAreEqual(string pathImageActual, string pathImageExpected)
         {
             using var actualImage = (Image<Rgba32>)Image.Load(pathImageActual);
             using var expectedImage = (Image<Rgba32>)Image.Load(pathImageExpected);
-            return ImageAreEqual(actualImage, expectedImage);
+            return ImagesAreEqual(actualImage, expectedImage);
         }
 
         /// <summary>
@@ -31,11 +31,11 @@ namespace Codeuctivity
         /// <param name="actual"></param>
         /// <param name="expected"></param>
         /// <returns>True if every pixel of actual is equal to expected</returns>
-        public static bool ImageAreEqual(Stream actual, Stream expected)
+        public static bool ImagesAreEqual(Stream actual, Stream expected)
         {
             using var actualImage = (Image<Rgba32>)Image.Load(actual);
             using var expectedImage = (Image<Rgba32>)Image.Load(expected);
-            return ImageAreEqual(actualImage, expectedImage);
+            return ImagesAreEqual(actualImage, expectedImage);
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Codeuctivity
         /// <param name="actual"></param>
         /// <param name="expected"></param>
         /// <returns>True if every pixel of actual is equal to expected</returns>
-        public static bool ImageAreEqual(Image<Rgba32> actual, Image<Rgba32> expected)
+        public static bool ImagesAreEqual(Image<Rgba32> actual, Image<Rgba32> expected)
         {
             if (!ImagesHaveSameDimension(actual, expected))
             {

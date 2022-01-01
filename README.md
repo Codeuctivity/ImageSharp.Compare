@@ -2,7 +2,7 @@
 
 Compares images
 
-[![Build status](https://ci.appveyor.com/api/projects/status/yr17qicavvbfypra/branch/main?svg=true)](https://ci.appveyor.com/project/stesee/imagesharp-compare/branch/main) [![Nuget](https://img.shields.io/nuget/v/ImageSharpCompare.svg)](https://www.nuget.org/packages/ImageSharpCompare/) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/2fb2807a16f84021b088769e56e1515a)](https://www.codacy.com/gh/Codeuctivity/ImageSharp.Compare/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Codeuctivity/ImageSharp.Compare&amp;utm_campaign=Badge_Grade) [![Donate](https://img.shields.io/static/v1?label=Paypal&message=Donate&color=informational)](https://www.paypal.com/donate?hosted_button_id=7M7UFMMRTS7UE)
+[![.github/workflows/dotnet.yml](https://github.com/Codeuctivity/ImageSharp.Compare/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Codeuctivity/ImageSharp.Compare/actions/workflows/dotnet.yml) [![Nuget](https://img.shields.io/nuget/v/ImageSharpCompare.svg)](https://www.nuget.org/packages/ImageSharpCompare/) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/2fb2807a16f84021b088769e56e1515a)](https://www.codacy.com/gh/Codeuctivity/ImageSharp.Compare/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Codeuctivity/ImageSharp.Compare&amp;utm_campaign=Badge_Grade) [![Donate](https://img.shields.io/static/v1?label=Paypal&message=Donate&color=informational)](https://www.paypal.com/donate?hosted_button_id=7M7UFMMRTS7UE)
 
 Inspired by the image compare feature "Visual verification API" of [TestApi](https://blogs.msdn.microsoft.com/ivo_manolov/2009/04/20/introduction-to-testapi-part-3-visual-verification-apis/) this code supports comparing images by using a tolerance mask image. That tolerance mask image is a valid image by itself and can be manipulated.
 
@@ -15,7 +15,7 @@ Install-Package ImageSharpCompare
 ## Example simple show cases
 
 ```csharp
-bool isEqual = ImageSharpCompare.ImageAreEqual("actual.png", "expected.png");
+bool isEqual = ImageSharpCompare.ImagesAreEqual("actual.png", "expected.png");
 
 // calcs MeanError, AbsoluteError, PixelErrorCount and PixelErrorPercentage
 ICompareResult calcDiff = ImageSharpCompare.CalcDiff("actual.png", "expected.png");

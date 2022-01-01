@@ -18,7 +18,7 @@ namespace ImageSharpCompareTestNunit
         [TestCase(png0, png0)]
         public void ShouldVerifyThatImagesAreEqual(string pathActual, string pathExpected)
         {
-            Assert.That(ImageSharpCompare.ImageAreEqual(pathActual, pathExpected), Is.True);
+            Assert.That(ImageSharpCompare.ImagesAreEqual(pathActual, pathExpected), Is.True);
         }
 
         [Test]
@@ -29,7 +29,7 @@ namespace ImageSharpCompareTestNunit
             using var actual = new FileStream(pathActual, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             using var expected = new FileStream(pathExpected, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
-            Assert.That(ImageSharpCompare.ImageAreEqual(actual, expected), Is.True);
+            Assert.That(ImageSharpCompare.ImagesAreEqual(actual, expected), Is.True);
         }
 
         [Test]
@@ -111,7 +111,7 @@ namespace ImageSharpCompareTestNunit
         [TestCase(jpg1, png1)]
         public void ShouldVerifyThatImagesAreNotEqual(string pathActual, string pathExpected)
         {
-            Assert.That(ImageSharpCompare.ImageAreEqual(pathActual, pathExpected), Is.False);
+            Assert.That(ImageSharpCompare.ImagesAreEqual(pathActual, pathExpected), Is.False);
         }
 
         [Test]
@@ -125,7 +125,7 @@ namespace ImageSharpCompareTestNunit
             using var actual = new FileStream(pathActual, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             using var expected = new FileStream(pathExpected, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
-            Assert.That(ImageSharpCompare.ImageAreEqual(actual, expected), Is.False);
+            Assert.That(ImageSharpCompare.ImagesAreEqual(actual, expected), Is.False);
         }
     }
 }
