@@ -103,8 +103,9 @@ namespace Codeuctivity.ImageSharpCompare
         public static ICompareResult CalcDiff(Image actual, Image expected)
         {
             if (!ImagesHaveSameDimension(actual, expected))
+            {
                 throw new ImageSharpCompareException(sizeDiffersExceptionMessage);
-
+            }
 
             var actualRgb24 = ToRgb24Image(actual);
             var expectedRgb24 = ToRgb24Image(expected);
@@ -112,6 +113,7 @@ namespace Codeuctivity.ImageSharpCompare
             var quantity = actual.Width * actual.Height;
             var absoluteError = 0;
             var pixelErrorCount = 0;
+
             for (var x = 0; x < actual.Width; x++)
             {
                 for (var y = 0; y < actual.Height; y++)
@@ -124,6 +126,7 @@ namespace Codeuctivity.ImageSharpCompare
                     pixelErrorCount += r + g + b > 0 ? 1 : 0;
                 }
             }
+
             var meanError = (double)absoluteError / quantity;
             var pixelErrorPercentage = (double)pixelErrorCount / quantity * 100;
             return new CompareResult(absoluteError, meanError, pixelErrorCount, pixelErrorPercentage);
@@ -169,22 +172,23 @@ namespace Codeuctivity.ImageSharpCompare
             {
                 throw new ArgumentNullException(nameof(expected));
             }
+
             return actual.Height == expected.Height && actual.Width == expected.Width;
         }
 
         private static Image<Rgb24> ToRgb24Image(Image actual)
         {
-            var actualPixelaccessableImage = actual as Image<Rgb24>;
-            if (actualPixelaccessableImage == null)
+            if ((actual is Image<Rgb24> actualPixelaccessableImage))
             {
-                var imageRgba32 = actual as Image<Rgba32>;
-                if (imageRgba32 != null)
-                    return Rgba32ToRgb24(imageRgba32);
-                else
-                    throw new NotImplementedException($"Pixeltype {actual.PixelType} ist not supported to be compared.");
+                return actualPixelaccessableImage;
             }
 
-            return actualPixelaccessableImage;
+            if (actual is Image<Rgba32> imageRgba32)
+            {
+                return Rgba32ToRgb24(imageRgba32);
+            }
+
+            throw new NotImplementedException($"Pixeltype {actual.PixelType} ist not supported to be compared.");
         }
 
         private static Image<Rgb24> Rgba32ToRgb24(Image<Rgba32> imageRgba32)
