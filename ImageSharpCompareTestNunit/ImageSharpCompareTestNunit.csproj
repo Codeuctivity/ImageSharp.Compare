@@ -10,15 +10,15 @@
 
 	<ItemGroup>
 		<PackageReference Include="nunit" Version="3.13.2" />
-		<PackageReference Include="SonarAnalyzer.CSharp" Version="8.32.0.39516">
+		<PackageReference Include="SonarAnalyzer.CSharp" Version="8.35.0.42613">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
-		<PackageReference Include="NUnit3TestAdapter" Version="4.1.0">
+		<PackageReference Include="NUnit3TestAdapter" Version="4.2.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
 	</ItemGroup>
 
 	<ItemGroup>

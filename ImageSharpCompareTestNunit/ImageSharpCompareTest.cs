@@ -1,4 +1,4 @@
-using Codeuctivity;
+using Codeuctivity.ImageSharpCompare;
 using NUnit.Framework;
 using System.IO;
 

@@ -1,10 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<RepositoryUrl>https://github.com/Codeuctivity/ImageSharp.Compare</RepositoryUrl>
-		<PackageTags>Compare Image JPG PNG BMP</PackageTags>
+		<PackageTags>Compare Image JPG PNG BMP Linux Windows MacOs</PackageTags>
 		<Authors>Stefan Seeland</Authors>
 		<Company>Codeuctivity</Company>
 		<Version Condition="'$(CURRENT_VERSION)' != ''">$(CURRENT_VERSION)</Version>
@@ -12,7 +12,7 @@
 		<AssemblyVersion>$(Version)</AssemblyVersion>
 		<FileVersion>$(Version)</FileVersion>
 		<PackageVersion>$(Version)</PackageVersion>
-		<PackageReleaseNotes>$(LAST_COMMIT_MESSAGE)</PackageReleaseNotes>    
+		<PackageReleaseNotes>$(LAST_COMMIT_MESSAGE)</PackageReleaseNotes>
 		<PackageIcon>NugetIcon.png</PackageIcon>
 		<PackageProjectUrl>https://github.com/Codeuctivity/ImageSharp.Compare</PackageProjectUrl>
 		<Description>Compares Images and calculates mean error, absolute error and diff image. Supports optional tolerance mask/images to ignore areas of an image. Use this for automated visual comparing in your unit tests.</Description>
@@ -24,17 +24,29 @@
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
-		<LangVersion>8.0</LangVersion>
 		<Nullable>enable</Nullable>
-		<PackageId>ImageSharpCompare</PackageId>
-		<Product>ImageSharpCompare</Product>
+		<LangVersion>8.0</LangVersion>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<PackageId>Codeuctivity.ImageSharpCompare</PackageId>
+		<PackageReadmeFile>nugetReadme.md</PackageReadmeFile>
+    <Product>Codeuctivity.ImageSharpCompare</Product>
 		<AssemblyName>Codeuctivity.ImageSharpCompare</AssemblyName>
 		<RootNamespace>Codeuctivity.ImageSharpCompare</RootNamespace>
-		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
+	  <Optimize>True</Optimize>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0|AnyCPU'">
+	  <Optimize>True</Optimize>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
+		<None Include="docs\nugetReadme.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="SixLabors.ImageSharp" Version="2.0.0" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
 		<PackageReference Include="SonarAnalyzer.CSharp" Version="8.32.0.39516">
 			<PrivateAssets>all</PrivateAssets>
@@ -47,4 +59,4 @@
 		<None Include="NugetIcon.png" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
-</Project>
+</Project>	

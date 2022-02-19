@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Codeuctivity
+namespace Codeuctivity.ImageSharpCompare
 {
     /// <summary>
     /// ImageSharpCompareException gets thrown if comparing of images fails
