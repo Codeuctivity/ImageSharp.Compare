@@ -69,7 +69,7 @@ namespace Codeuctivity.ImageSharpCompare
         }
 
         /// <summary>
-        /// Compares two images for equivalence
+        /// Calculates ICompareResult expressing the amount of difference of both images
         /// </summary>
         /// <param name="pathActualImage"></param>
         /// <param name="pathExpectedImage"></param>
@@ -82,7 +82,7 @@ namespace Codeuctivity.ImageSharpCompare
         }
 
         /// <summary>
-        /// Compares two images for equivalence
+        /// Calculates ICompareResult expressing the amount of difference of both images
         /// </summary>
         /// <param name="actualImage"></param>
         /// <param name="expectedImage"></param>
@@ -95,7 +95,7 @@ namespace Codeuctivity.ImageSharpCompare
         }
 
         /// <summary>
-        /// Compares two images for equivalence
+        /// Calculates ICompareResult expressing the amount of difference of both images
         /// </summary>
         /// <param name="actual"></param>
         /// <param name="expected"></param>
@@ -133,7 +133,7 @@ namespace Codeuctivity.ImageSharpCompare
         }
 
         /// <summary>
-        /// Compares two images for equivalence using a mask image for tolerated difference between the two images
+        /// Calculates ICompareResult expressing the amount of difference of both images using a mask image for tolerated difference between the two images
         /// </summary>
         /// <param name="pathActualImage"></param>
         /// <param name="pathExpectedImage"></param>
@@ -148,7 +148,7 @@ namespace Codeuctivity.ImageSharpCompare
         }
 
         /// <summary>
-        /// Compares two images for equivalence
+        /// Calculates ICompareResult expressing the amount of difference of both images
         /// </summary>
         /// <param name="actualImage"></param>
         /// <param name="expectedImage"></param>
@@ -188,7 +188,7 @@ namespace Codeuctivity.ImageSharpCompare
                 return Rgba32ToRgb24(imageRgba32);
             }
 
-            throw new NotImplementedException($"Pixeltype {actual.PixelType} ist not supported to be compared.");
+            throw new NotImplementedException($"Pixel type {actual.PixelType} is not supported to be compared.");
         }
 
         private static Image<Rgb24> Rgba32ToRgb24(Image<Rgba32> imageRgba32)
@@ -209,7 +209,7 @@ namespace Codeuctivity.ImageSharpCompare
         }
 
         /// <summary>
-        /// Compares two images for equivalence using a mask image for tolerated difference between the two images
+        /// Calculates ICompareResult expressing the amount of difference of both images using a image mask for tolerated difference between the two images
         /// </summary>
         /// <param name="actual"></param>
         /// <param name="expected"></param>
