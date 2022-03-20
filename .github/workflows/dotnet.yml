@@ -19,8 +19,8 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: | 
-      3.1.x
-      6.0.x
+          3.1.x
+          6.0.x
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
@@ -38,8 +38,8 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: | 
-      3.1.x
-      6.0.x
+          3.1.x
+          6.0.x
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
@@ -67,8 +67,8 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: | 
-      3.1.x
-      6.0.x
+          3.1.x
+          6.0.x
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
