@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/ImageSharpCompareTestNunit/bin/Debug/netcoreapp3.1/ImageSharpCompareTestNunit.dll",
+            "program": "${workspaceFolder}/ImageSharpCompareTestNunit/bin/Debug/net6.0/ImageSharpCompareTestNunit.dll",
             "args": [],
             "cwd": "${workspaceFolder}/ImageSharpCompareTestNunit",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console

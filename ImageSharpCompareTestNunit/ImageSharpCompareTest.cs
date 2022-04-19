@@ -1,5 +1,6 @@
 using Codeuctivity.ImageSharpCompare;
 using NUnit.Framework;
+using System;
 using System.IO;
 
 namespace ImageSharpCompareTestNunit
@@ -18,7 +19,10 @@ namespace ImageSharpCompareTestNunit
         [TestCase(png0, png0)]
         public void ShouldVerifyThatImagesAreEqual(string pathActual, string pathExpected)
         {
-            Assert.That(ImageSharpCompare.ImagesAreEqual(pathActual, pathExpected), Is.True);
+            var absolutePathActual = Path.Combine(AppContext.BaseDirectory, pathActual);
+            var absolutePathExpected = Path.Combine(AppContext.BaseDirectory, pathExpected);
+
+            Assert.That(ImageSharpCompare.ImagesAreEqual(absolutePathActual, absolutePathExpected), Is.True);
         }
 
         [Test]
@@ -26,8 +30,11 @@ namespace ImageSharpCompareTestNunit
         [TestCase(png0, png0)]
         public void ShouldVerifyThatImageStreamsAreEqual(string pathActual, string pathExpected)
         {
-            using var actual = new FileStream(pathActual, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            using var expected = new FileStream(pathExpected, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            var absolutePathActual = Path.Combine(AppContext.BaseDirectory, pathActual);
+            var absolutePathExpected = Path.Combine(AppContext.BaseDirectory, pathExpected);
+
+            using var actual = new FileStream(absolutePathActual, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            using var expected = new FileStream(absolutePathExpected, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
             Assert.That(ImageSharpCompare.ImagesAreEqual(actual, expected), Is.True);
         }
@@ -42,7 +49,10 @@ namespace ImageSharpCompareTestNunit
         [TestCase(pngBlack, pngWhite, 3060, 765, 4, 100.0d)]
         public void ShouldVerifyThatImagesAreSemiEqual(string pathPic1, string pathPic2, int expectedAbsoluteError, double expectedMeanError, int expectedPixelErrorCount, double expectedPixelErrorPercentage)
         {
-            var diff = ImageSharpCompare.CalcDiff(pathPic1, pathPic2);
+            var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
+            var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
+
+            var diff = ImageSharpCompare.CalcDiff(absolutePathPic1, absolutePathPic2);
             Assert.That(diff.AbsoluteError, Is.EqualTo(expectedAbsoluteError), "AbsoluteError");
             Assert.That(diff.MeanError, Is.EqualTo(expectedMeanError), "MeanError");
             Assert.That(diff.PixelErrorCount, Is.EqualTo(expectedPixelErrorCount), "PixelErrorCount");
@@ -59,8 +69,11 @@ namespace ImageSharpCompareTestNunit
         [TestCase(pngBlack, pngWhite, 3060, 765, 4, 100.0d)]
         public void ShouldVerifyThatImageStreamsAreSemiEqual(string pathPic1, string pathPic2, int expectedAbsoluteError, double expectedMeanError, int expectedPixelErrorCount, double expectedPixelErrorPercentage)
         {
-            using var pic1 = new FileStream(pathPic1, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            using var pic2 = new FileStream(pathPic2, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
+            var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
+
+            using var pic1 = new FileStream(absolutePathPic1, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            using var pic2 = new FileStream(absolutePathPic2, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
             var diff = ImageSharpCompare.CalcDiff(pic1, pic2);
             Assert.That(diff.AbsoluteError, Is.EqualTo(expectedAbsoluteError), "AbsoluteError");
@@ -72,24 +85,35 @@ namespace ImageSharpCompareTestNunit
         [TestCase(png0, png1, 0, 0, 0, 0)]
         public void Diffmask(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage)
         {
-            using (var fileStreamDifferenceMask = File.Create("differenceMask.png"))
-            using (var maskImage = ImageSharpCompare.CalcDiffMaskImage(pathPic1, pathPic2))
+            var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
+            var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
+            var differenceMask = Path.GetTempFileName() + "differenceMask.png";
+
+            using (var fileStreamDifferenceMask = File.Create(differenceMask))
+            using (var maskImage = ImageSharpCompare.CalcDiffMaskImage(absolutePathPic1, absolutePathPic2))
             {
                 SixLabors.ImageSharp.ImageExtensions.SaveAsPng(maskImage, fileStreamDifferenceMask);
             }
 
-            var maskedDiff = ImageSharpCompare.CalcDiff(pathPic1, pathPic2, "differenceMask.png");
+            var maskedDiff = ImageSharpCompare.CalcDiff(absolutePathPic1, absolutePathPic2, differenceMask);
+            File.Delete(differenceMask);
+
             Assert.That(maskedDiff.AbsoluteError, Is.EqualTo(expectedAbsoluteError), "AbsoluteError");
             Assert.That(maskedDiff.MeanError, Is.EqualTo(expectedMeanError), "MeanError");
             Assert.That(maskedDiff.PixelErrorCount, Is.EqualTo(expectedPixelErrorCount), "PixelErrorCount");
             Assert.That(maskedDiff.PixelErrorPercentage, Is.EqualTo(expectedPixelErrorPercentage), "PixelErrorPercentage");
+
+
         }
 
         [TestCase(png0, png1, 0, 0, 0, 0)]
         public void DiffmaskSteams(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage)
         {
-            using var pic1 = new FileStream(pathPic1, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            using var pic2 = new FileStream(pathPic2, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
+            var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
+
+            using var pic1 = new FileStream(absolutePathPic1, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            using var pic2 = new FileStream(absolutePathPic2, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
             using var maskImage = ImageSharpCompare.CalcDiffMaskImage(pic1, pic2);
 
@@ -111,7 +135,10 @@ namespace ImageSharpCompareTestNunit
         [TestCase(jpg1, png1)]
         public void ShouldVerifyThatImagesAreNotEqual(string pathActual, string pathExpected)
         {
-            Assert.That(ImageSharpCompare.ImagesAreEqual(pathActual, pathExpected), Is.False);
+            var absolutePathActual = Path.Combine(AppContext.BaseDirectory, pathActual);
+            var absolutePathExpected = Path.Combine(AppContext.BaseDirectory, pathExpected);
+
+            Assert.That(ImageSharpCompare.ImagesAreEqual(absolutePathActual, absolutePathExpected), Is.False);
         }
 
         [Test]
@@ -122,8 +149,11 @@ namespace ImageSharpCompareTestNunit
         [TestCase(jpg1, png1)]
         public void ShouldVerifyThatImageStreamAreNotEqual(string pathActual, string pathExpected)
         {
-            using var actual = new FileStream(pathActual, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            using var expected = new FileStream(pathExpected, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            var absolutePathActual = Path.Combine(AppContext.BaseDirectory, pathActual);
+            var absolutePathExpected = Path.Combine(AppContext.BaseDirectory, pathExpected);
+
+            using var actual = new FileStream(absolutePathActual, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            using var expected = new FileStream(absolutePathExpected, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
             Assert.That(ImageSharpCompare.ImagesAreEqual(actual, expected), Is.False);
         }
