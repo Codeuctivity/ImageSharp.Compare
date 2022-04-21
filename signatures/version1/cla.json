@@ -1,3 +1,12 @@
 {
-   "signedContributors": []
+  "signedContributors": [
+    {
+      "name": "stesee",
+      "id": 168659,
+      "comment_id": 1105505346,
+      "created_at": "2022-04-21T17:38:17Z",
+      "repoId": 216339629,
+      "pullRequestNo": 30
+    }
+  ]
 }
