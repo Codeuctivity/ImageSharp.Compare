@@ -15,6 +15,54 @@ namespace ImageSharpCompareTestNunit
         private const string pngWhite = "../../../TestData/White.png";
 
         [Test]
+        [TestCase(jpg0, jpg0, true)]
+        [TestCase(png0, png0, true)]
+        [TestCase(png0, jpg0, true)]
+        [TestCase(png0, jpg1, true)]
+        [TestCase(png0, pngBlack, false)]
+        public void ShouldVerifyThatImagesFromFilepathSizeAreEqual(string pathActual, string pathExpected, bool expectedOutcome)
+        {
+            var absolutePathActual = Path.Combine(AppContext.BaseDirectory, pathActual);
+            var absolutePathExpected = Path.Combine(AppContext.BaseDirectory, pathExpected);
+
+            Assert.That(ImageSharpCompare.ImagesHaveEqualSize(absolutePathActual, absolutePathExpected), Is.EqualTo(expectedOutcome));
+        }
+
+        [Test]
+        [TestCase(jpg0, jpg0, true)]
+        [TestCase(png0, png0, true)]
+        [TestCase(png0, jpg0, true)]
+        [TestCase(png0, jpg1, true)]
+        [TestCase(png0, pngBlack, false)]
+        public void ShouldVerifyThatImagesSizeAreEqual(string pathActual, string pathExpected, bool expectedOutcome)
+        {
+            var absolutePathActual = Path.Combine(AppContext.BaseDirectory, pathActual);
+            var absolutePathExpected = Path.Combine(AppContext.BaseDirectory, pathExpected);
+
+            using var actual = SixLabors.ImageSharp.Image.Load(absolutePathActual);
+            using var expected = SixLabors.ImageSharp.Image.Load(absolutePathExpected);
+
+            Assert.That(ImageSharpCompare.ImagesHaveEqualSize(absolutePathActual, absolutePathExpected), Is.EqualTo(expectedOutcome));
+        }
+
+        [Test]
+        [TestCase(jpg0, jpg0, true)]
+        [TestCase(png0, png0, true)]
+        [TestCase(png0, jpg0, true)]
+        [TestCase(png0, jpg1, true)]
+        [TestCase(png0, pngBlack, false)]
+        public void ShouldVerifyThatImageStreamsSizeAreEqual(string pathActual, string pathExpected, bool expectedOutcome)
+        {
+            var absolutePathActual = Path.Combine(AppContext.BaseDirectory, pathActual);
+            var absolutePathExpected = Path.Combine(AppContext.BaseDirectory, pathExpected);
+
+            using var actual = new FileStream(absolutePathActual, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            using var expected = new FileStream(absolutePathExpected, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+
+            Assert.That(ImageSharpCompare.ImagesHaveEqualSize(absolutePathActual, absolutePathExpected), Is.EqualTo(expectedOutcome));
+        }
+
+        [Test]
         [TestCase(jpg0, jpg0)]
         [TestCase(png0, png0)]
         public void ShouldVerifyThatImagesAreEqual(string pathActual, string pathExpected)
@@ -102,8 +150,6 @@ namespace ImageSharpCompareTestNunit
             Assert.That(maskedDiff.MeanError, Is.EqualTo(expectedMeanError), "MeanError");
             Assert.That(maskedDiff.PixelErrorCount, Is.EqualTo(expectedPixelErrorCount), "PixelErrorCount");
             Assert.That(maskedDiff.PixelErrorPercentage, Is.EqualTo(expectedPixelErrorPercentage), "PixelErrorPercentage");
-
-
         }
 
         [TestCase(png0, png1, 0, 0, 0, 0)]
@@ -156,6 +202,17 @@ namespace ImageSharpCompareTestNunit
             using var expected = new FileStream(absolutePathExpected, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
             Assert.That(ImageSharpCompare.ImagesAreEqual(actual, expected), Is.False);
+        }
+
+        [TestCase(png0, pngBlack)]
+        public void ShouldVerifyThatImageWithDifferentSizeThrows(string pathPic1, string pathPic2)
+        {
+            var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
+            var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
+
+            var exception = Assert.Throws<ImageSharpCompareException>(() => ImageSharpCompare.CalcDiff(absolutePathPic1, absolutePathPic2));
+
+            Assert.That(exception?.Message, Is.EqualTo("Size of images differ."));
         }
     }
 }
