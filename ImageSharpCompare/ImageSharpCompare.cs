@@ -10,7 +10,44 @@ namespace Codeuctivity.ImageSharpCompare
     /// </summary>
     public static class ImageSharpCompare
     {
-        private const string sizeDiffersExceptionMessage = "Dimension of images differ";
+        private const string sizeDiffersExceptionMessage = "Size of images differ.";
+
+        /// <summary>
+        /// Is true if width and height of both images are equal
+        /// </summary>
+        /// <param name="pathImageActual"></param>
+        /// <param name="pathImageExpected"></param>
+        /// <returns></returns>
+        public static bool ImagesHaveEqualSize(string pathImageActual, string pathImageExpected)
+        {
+            using var actualImage = Image.Load(pathImageActual);
+            using var expectedImage = Image.Load(pathImageExpected);
+            return ImagesHaveEqualSize(actualImage, expectedImage);
+        }
+
+        /// <summary>
+        /// Is true if width and height of both images are equal
+        /// </summary>
+        /// <param name="actual"></param>
+        /// <param name="expected"></param>
+        /// <returns></returns>
+        public static bool ImagesHaveEqualSize(Stream actual, Stream expected)
+        {
+            using var actualImage = Image.Load(actual);
+            using var expectedImage = Image.Load(expected);
+            return ImagesHaveEqualSize(actualImage, expectedImage);
+        }
+
+        /// <summary>
+        /// Is true if width and height of both images are equal
+        /// </summary>
+        /// <param name="actualImage"></param>
+        /// <param name="expectedImage"></param>
+        /// <returns></returns>
+        public static bool ImagesHaveEqualSize(Image actualImage, Image expectedImage)
+        {
+            return ImagesHaveSameDimension(actualImage, expectedImage);
+        }
 
         /// <summary>
         /// Compares two images for equivalence
@@ -51,8 +88,8 @@ namespace Codeuctivity.ImageSharpCompare
                 return false;
             }
 
-            Image<Rgb24>? actualPixelaccessableImage = ToRgb24Image(actual);
-            Image<Rgb24>? expectedPixelaccessableImage = ToRgb24Image(expected);
+            using var actualPixelaccessableImage = ToRgb24Image(actual);
+            using var expectedPixelaccessableImage = ToRgb24Image(expected);
 
             for (var x = 0; x < actual.Width; x++)
             {
@@ -107,8 +144,8 @@ namespace Codeuctivity.ImageSharpCompare
                 throw new ImageSharpCompareException(sizeDiffersExceptionMessage);
             }
 
-            var actualRgb24 = ToRgb24Image(actual);
-            var expectedRgb24 = ToRgb24Image(expected);
+            using var actualRgb24 = ToRgb24Image(actual);
+            using var expectedRgb24 = ToRgb24Image(expected);
 
             var quantity = actual.Width * actual.Height;
             var absoluteError = 0;
@@ -178,7 +215,7 @@ namespace Codeuctivity.ImageSharpCompare
 
         private static Image<Rgb24> ToRgb24Image(Image actual)
         {
-            if ((actual is Image<Rgb24> actualPixelaccessableImage))
+            if (actual is Image<Rgb24> actualPixelaccessableImage)
             {
                 return actualPixelaccessableImage;
             }
@@ -218,7 +255,9 @@ namespace Codeuctivity.ImageSharpCompare
         public static ICompareResult CalcDiff(Image actual, Image expected, Image maskImage)
         {
             if (!ImagesHaveSameDimension(actual, expected))
+            {
                 throw new ImageSharpCompareException(sizeDiffersExceptionMessage);
+            }
 
             if (maskImage == null)
             {
@@ -229,9 +268,9 @@ namespace Codeuctivity.ImageSharpCompare
             var absoluteError = 0;
             var pixelErrorCount = 0;
 
-            var actualRgb24 = ToRgb24Image(actual);
-            var expectedRgb24 = ToRgb24Image(expected);
-            var maskImageRgb24 = ToRgb24Image(maskImage);
+            using var actualRgb24 = ToRgb24Image(actual);
+            using var expectedRgb24 = ToRgb24Image(expected);
+            using var maskImageRgb24 = ToRgb24Image(maskImage);
 
             for (var x = 0; x < actual.Width; x++)
             {
@@ -307,8 +346,8 @@ namespace Codeuctivity.ImageSharpCompare
                 throw new ImageSharpCompareException(sizeDiffersExceptionMessage);
             }
 
-            var actualRgb24 = ToRgb24Image(actual);
-            var expectedRgb24 = ToRgb24Image(expected);
+            using var actualRgb24 = ToRgb24Image(actual);
+            using var expectedRgb24 = ToRgb24Image(expected);
 
             var maskImage = new Image<Rgb24>(actual.Width, actual.Height);
 
@@ -316,11 +355,12 @@ namespace Codeuctivity.ImageSharpCompare
             {
                 for (var y = 0; y < actual.Height; y++)
                 {
-                    var pixel = new Rgb24();
-
-                    pixel.R = (byte)Math.Abs(actualRgb24[x, y].R - expectedRgb24[x, y].R);
-                    pixel.G = (byte)Math.Abs(actualRgb24[x, y].G - expectedRgb24[x, y].G);
-                    pixel.B = (byte)Math.Abs(actualRgb24[x, y].B - expectedRgb24[x, y].B);
+                    var pixel = new Rgb24
+                    {
+                        R = (byte)Math.Abs(actualRgb24[x, y].R - expectedRgb24[x, y].R),
+                        G = (byte)Math.Abs(actualRgb24[x, y].G - expectedRgb24[x, y].G),
+                        B = (byte)Math.Abs(actualRgb24[x, y].B - expectedRgb24[x, y].B)
+                    };
 
                     maskImage[x, y] = pixel;
                 }
