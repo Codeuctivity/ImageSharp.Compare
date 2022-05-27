@@ -41,7 +41,8 @@
         {
             "label": "update nuget packages",
             "type": "shell",
-            "command": "'./.vscode/updateNuget.sh'"
+            "command": "'./.vscode/updateNuget.sh'",
+            "problemMatcher": []
         }
     ]
 }
