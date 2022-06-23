@@ -465,9 +465,13 @@ namespace Codeuctivity.ImageSharpCompare
             finally
             {
                 if (ownsActual)
+                {
                     actualRgb24?.Dispose();
+                }
                 if (ownsExpected)
+                {
                     expectedRgb24?.Dispose();
+                }
             }
         }
 
