@@ -96,10 +96,10 @@ namespace Codeuctivity.ImageSharpCompare
             }
             finally
             {
-                if (ownsActual && actualPixelaccessableImage != null)
-                    actualPixelaccessableImage.Dispose();
-                if (ownsExpected && expectedPixelaccessableImage != null)
-                    expectedPixelaccessableImage.Dispose();
+                if (ownsActual)
+                    actualPixelaccessableImage?.Dispose();
+                if (ownsExpected)
+                    expectedPixelaccessableImage?.Dispose();
             }
         }
 
@@ -178,10 +178,10 @@ namespace Codeuctivity.ImageSharpCompare
             }
             finally
             {
-                if (ownsActual && actualRgb24 != null)
-                    actualRgb24.Dispose();
-                if (ownsExpected && expectedRgb24 != null)
-                    expectedRgb24.Dispose();
+                if (ownsActual)
+                    actualRgb24?.Dispose();
+                if (ownsExpected)
+                    expectedRgb24?.Dispose();
             }
         }
 
@@ -207,9 +207,12 @@ namespace Codeuctivity.ImageSharpCompare
             {
                 for (var y = 0; y < actual.Height; y++)
                 {
-                    var r = Math.Abs(expected[x, y].R - actual[x, y].R);
-                    var g = Math.Abs(expected[x, y].G - actual[x, y].G);
-                    var b = Math.Abs(expected[x, y].B - actual[x, y].B);
+                    var actualPixel = actual[x, y];
+                    var expectedPixel = expected[x, y];
+
+                    var r = Math.Abs(expectedPixel.R - actualPixel.R);
+                    var g = Math.Abs(expectedPixel.G - actualPixel.G);
+                    var b = Math.Abs(expectedPixel.B - actualPixel.B);
                     absoluteError = absoluteError + r + g + b;
 
                     pixelErrorCount += r + g + b > 0 ? 1 : 0;
@@ -329,12 +332,12 @@ namespace Codeuctivity.ImageSharpCompare
             }
             finally
             {
-                if (ownsActual && actualRgb24 != null)
-                    actualRgb24.Dispose();
-                if (ownsExpected && expectedRgb24 != null)
-                    expectedRgb24.Dispose();
-                if (ownsMask && maskImageRgb24 != null)
-                    maskImageRgb24.Dispose();
+                if (ownsActual)
+                    actualRgb24?.Dispose();
+                if (ownsExpected)
+                    expectedRgb24?.Dispose();
+                if (ownsMask)
+                    maskImageRgb24?.Dispose();
             }
         }
 
@@ -366,9 +369,12 @@ namespace Codeuctivity.ImageSharpCompare
                 for (var y = 0; y < actual.Height; y++)
                 {
                     var maskImagePixel = maskImage[x, y];
-                    var r = Math.Abs(expected[x, y].R - actual[x, y].R);
-                    var g = Math.Abs(expected[x, y].G - actual[x, y].G);
-                    var b = Math.Abs(expected[x, y].B - actual[x, y].B);
+                    var actualPixel = actual[x, y];
+                    var expectedPixel = expected[x, y];
+
+                    var r = Math.Abs(expectedPixel.R - actualPixel.R);
+                    var g = Math.Abs(expectedPixel.G - actualPixel.G);
+                    var b = Math.Abs(expectedPixel.B - actualPixel.B);
 
                     var error = 0;
 
@@ -444,10 +450,10 @@ namespace Codeuctivity.ImageSharpCompare
             }
             finally
             {
-                if (ownsActual && actualRgb24 != null)
-                    actualRgb24.Dispose();
-                if (ownsExpected && expectedRgb24 != null)
-                    expectedRgb24.Dispose();
+                if (ownsActual)
+                    actualRgb24?.Dispose();
+                if (ownsExpected)
+                    expectedRgb24?.Dispose();
             }
         }
 
@@ -470,11 +476,14 @@ namespace Codeuctivity.ImageSharpCompare
             {
                 for (var y = 0; y < actual.Height; y++)
                 {
+                    var actualPixel = actual[x, y];
+                    var expectedPixel = expected[x, y];
+
                     var pixel = new Rgb24
                     {
-                        R = (byte)Math.Abs(actual[x, y].R - expected[x, y].R),
-                        G = (byte)Math.Abs(actual[x, y].G - expected[x, y].G),
-                        B = (byte)Math.Abs(actual[x, y].B - expected[x, y].B)
+                        R = (byte)Math.Abs(actualPixel.R - expectedPixel.R),
+                        G = (byte)Math.Abs(actualPixel.G - expectedPixel.G),
+                        B = (byte)Math.Abs(actualPixel.B - expectedPixel.B)
                     };
 
                     maskImage[x, y] = pixel;
