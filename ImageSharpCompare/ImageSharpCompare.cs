@@ -97,9 +97,13 @@ namespace Codeuctivity.ImageSharpCompare
             finally
             {
                 if (ownsActual)
+                {
                     actualPixelaccessableImage?.Dispose();
+                }
                 if (ownsExpected)
+                {
                     expectedPixelaccessableImage?.Dispose();
+                }
             }
         }
 
@@ -179,9 +183,13 @@ namespace Codeuctivity.ImageSharpCompare
             finally
             {
                 if (ownsActual)
+                {
                     actualRgb24?.Dispose();
+                }
                 if (ownsExpected)
+                {
                     expectedRgb24?.Dispose();
+                }
             }
         }
 
@@ -333,11 +341,17 @@ namespace Codeuctivity.ImageSharpCompare
             finally
             {
                 if (ownsActual)
+                {
                     actualRgb24?.Dispose();
+                }
                 if (ownsExpected)
+                {
                     expectedRgb24?.Dispose();
+                }
                 if (ownsMask)
+                {
                     maskImageRgb24?.Dispose();
+                }
             }
         }
 
