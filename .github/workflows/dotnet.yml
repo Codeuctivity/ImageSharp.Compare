@@ -81,6 +81,7 @@ jobs:
           ls ./ImageSharpCompare/bin/Release
           dotnet nuget push ./ImageSharpCompare/bin/Release/*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_TEST_TOKEN}} --source https://apiint.nugettest.org/v3/index.json
     - uses: "marvinpinto/action-automatic-releases@latest"
+      if: github.ref == 'refs/heads/main'
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "latest-prerelease"
