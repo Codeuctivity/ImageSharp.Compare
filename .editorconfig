@@ -11,3 +11,9 @@ csharp_style_var_when_type_is_apparent = true:warning
 [*.{cs,vb}]
 tab_width=4
 indent_size=4
+
+# Code-block preferences - reflecting codacy defaults
+csharp_prefer_braces = true:warning
+
+# IDE0011: Add braces - reflecting codacy defaults
+dotnet_diagnostic.IDE0011.severity = warning

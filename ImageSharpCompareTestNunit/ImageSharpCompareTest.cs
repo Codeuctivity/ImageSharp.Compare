@@ -112,7 +112,11 @@ namespace ImageSharpCompareTestNunit
         {
             var bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
             var field = typeof(T).GetField(fieldName, bindFlags);
-            if (field == null) throw new ArgumentNullException(fieldName);
+            if (field == null)
+            {
+                throw new ArgumentNullException(fieldName);
+            }
+
             return field.GetValue(instance);
         }
 
