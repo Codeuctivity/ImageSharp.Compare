@@ -193,7 +193,6 @@ namespace Codeuctivity.ImageSharpCompare
             }
         }
 
-
         /// <summary>
         /// Calculates ICompareResult expressing the amount of difference of both images
         /// </summary>
