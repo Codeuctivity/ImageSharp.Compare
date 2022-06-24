@@ -83,19 +83,48 @@ namespace Codeuctivity.ImageSharpCompare
         /// <returns>True if every pixel of actual is equal to expected</returns>
         public static bool ImagesAreEqual(Image actual, Image expected)
         {
+            var ownsActual = false;
+            var ownsExpected = false;
+            Image<Rgb24>? actualPixelaccessableImage = null;
+            Image<Rgb24>? expectedPixelaccessableImage = null;
+            try
+            {
+                actualPixelaccessableImage = ToRgb24Image(actual, out ownsActual);
+                expectedPixelaccessableImage = ToRgb24Image(expected, out ownsExpected);
+
+                return ImagesAreEqual(actualPixelaccessableImage, expectedPixelaccessableImage);
+            }
+            finally
+            {
+                if (ownsActual)
+                {
+                    actualPixelaccessableImage?.Dispose();
+                }
+                if (ownsExpected)
+                {
+                    expectedPixelaccessableImage?.Dispose();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Compares two images for equivalence
+        /// </summary>
+        /// <param name="actual"></param>
+        /// <param name="expected"></param>
+        /// <returns>True if every pixel of actual is equal to expected</returns>
+        public static bool ImagesAreEqual(Image<Rgb24> actual, Image<Rgb24> expected)
+        {
             if (!ImagesHaveSameDimension(actual, expected))
             {
                 return false;
             }
 
-            using var actualPixelaccessableImage = ToRgb24Image(actual);
-            using var expectedPixelaccessableImage = ToRgb24Image(expected);
-
             for (var x = 0; x < actual.Width; x++)
             {
                 for (var y = 0; y < actual.Height; y++)
                 {
-                    if (!actualPixelaccessableImage[x, y].Equals(expectedPixelaccessableImage[x, y]))
+                    if (!actual[x, y].Equals(expected[x, y]))
                     {
                         return false;
                     }
@@ -139,13 +168,43 @@ namespace Codeuctivity.ImageSharpCompare
         /// <returns>Mean and absolute pixel error</returns>
         public static ICompareResult CalcDiff(Image actual, Image expected)
         {
+            var ownsActual = false;
+            var ownsExpected = false;
+            Image<Rgb24>? actualRgb24 = null;
+            Image<Rgb24>? expectedRgb24 = null;
+
+            try
+            {
+                actualRgb24 = ToRgb24Image(actual, out ownsActual);
+                expectedRgb24 = ToRgb24Image(expected, out ownsExpected);
+
+                return CalcDiff(actualRgb24, expectedRgb24);
+            }
+            finally
+            {
+                if (ownsActual)
+                {
+                    actualRgb24?.Dispose();
+                }
+                if (ownsExpected)
+                {
+                    expectedRgb24?.Dispose();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Calculates ICompareResult expressing the amount of difference of both images
+        /// </summary>
+        /// <param name="actual"></param>
+        /// <param name="expected"></param>
+        /// <returns>Mean and absolute pixel error</returns>
+        public static ICompareResult CalcDiff(Image<Rgb24> actual, Image<Rgb24> expected)
+        {
             if (!ImagesHaveSameDimension(actual, expected))
             {
                 throw new ImageSharpCompareException(sizeDiffersExceptionMessage);
             }
-
-            using var actualRgb24 = ToRgb24Image(actual);
-            using var expectedRgb24 = ToRgb24Image(expected);
 
             var quantity = actual.Width * actual.Height;
             var absoluteError = 0;
@@ -155,9 +214,12 @@ namespace Codeuctivity.ImageSharpCompare
             {
                 for (var y = 0; y < actual.Height; y++)
                 {
-                    var r = Math.Abs(expectedRgb24[x, y].R - actualRgb24[x, y].R);
-                    var g = Math.Abs(expectedRgb24[x, y].G - actualRgb24[x, y].G);
-                    var b = Math.Abs(expectedRgb24[x, y].B - actualRgb24[x, y].B);
+                    var actualPixel = actual[x, y];
+                    var expectedPixel = expected[x, y];
+
+                    var r = Math.Abs(expectedPixel.R - actualPixel.R);
+                    var g = Math.Abs(expectedPixel.G - actualPixel.G);
+                    var b = Math.Abs(expectedPixel.B - actualPixel.B);
                     absoluteError = absoluteError + r + g + b;
 
                     pixelErrorCount += r + g + b > 0 ? 1 : 0;
@@ -213,22 +275,28 @@ namespace Codeuctivity.ImageSharpCompare
             return actual.Height == expected.Height && actual.Width == expected.Width;
         }
 
-        private static Image<Rgb24> ToRgb24Image(Image actual)
+        private static Image<Rgb24> ToRgb24Image(Image actual, out bool ownsImage)
         {
             if (actual is Image<Rgb24> actualPixelaccessableImage)
             {
+                ownsImage = false;
                 return actualPixelaccessableImage;
             }
 
             if (actual is Image<Rgba32> imageRgba32)
             {
-                return Rgba32ToRgb24(imageRgba32);
+                ownsImage = true;
+                return ConvertRgba32ToRgb24(imageRgba32);
             }
 
             throw new NotImplementedException($"Pixel type {actual.PixelType} is not supported to be compared.");
         }
 
-        private static Image<Rgb24> Rgba32ToRgb24(Image<Rgba32> imageRgba32)
+        /// <summary>
+        /// Converts a Rgba32 Image to Rgb24 one
+        /// </summary>
+        /// <param name="imageRgba32"></param>
+        public static Image<Rgb24> ConvertRgba32ToRgb24(Image<Rgba32> imageRgba32)
         {
             var maskRgb24 = new Image<Rgb24>(imageRgba32.Width, imageRgba32.Height);
 
@@ -254,6 +322,47 @@ namespace Codeuctivity.ImageSharpCompare
         /// <returns>Mean and absolute pixel error</returns>
         public static ICompareResult CalcDiff(Image actual, Image expected, Image maskImage)
         {
+            var ownsActual = false;
+            var ownsExpected = false;
+            var ownsMask = false;
+            Image<Rgb24>? actualRgb24 = null;
+            Image<Rgb24>? expectedRgb24 = null;
+            Image<Rgb24>? maskImageRgb24 = null;
+
+            try
+            {
+                actualRgb24 = ToRgb24Image(actual, out ownsActual);
+                expectedRgb24 = ToRgb24Image(expected, out ownsExpected);
+                maskImageRgb24 = ToRgb24Image(maskImage, out ownsMask);
+
+                return CalcDiff(actualRgb24, expectedRgb24, maskImageRgb24);
+            }
+            finally
+            {
+                if (ownsActual)
+                {
+                    actualRgb24?.Dispose();
+                }
+                if (ownsExpected)
+                {
+                    expectedRgb24?.Dispose();
+                }
+                if (ownsMask)
+                {
+                    maskImageRgb24?.Dispose();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Calculates ICompareResult expressing the amount of difference of both images using a image mask for tolerated difference between the two images
+        /// </summary>
+        /// <param name="actual"></param>
+        /// <param name="expected"></param>
+        /// <param name="maskImage"></param>
+        /// <returns>Mean and absolute pixel error</returns>
+        public static ICompareResult CalcDiff(Image<Rgb24> actual, Image<Rgb24> expected, Image<Rgb24> maskImage)
+        {
             if (!ImagesHaveSameDimension(actual, expected))
             {
                 throw new ImageSharpCompareException(sizeDiffersExceptionMessage);
@@ -268,18 +377,17 @@ namespace Codeuctivity.ImageSharpCompare
             var absoluteError = 0;
             var pixelErrorCount = 0;
 
-            using var actualRgb24 = ToRgb24Image(actual);
-            using var expectedRgb24 = ToRgb24Image(expected);
-            using var maskImageRgb24 = ToRgb24Image(maskImage);
-
             for (var x = 0; x < actual.Width; x++)
             {
                 for (var y = 0; y < actual.Height; y++)
                 {
-                    var maskImagePixel = maskImageRgb24[x, y];
-                    var r = Math.Abs(expectedRgb24[x, y].R - actualRgb24[x, y].R);
-                    var g = Math.Abs(expectedRgb24[x, y].G - actualRgb24[x, y].G);
-                    var b = Math.Abs(expectedRgb24[x, y].B - actualRgb24[x, y].B);
+                    var maskImagePixel = maskImage[x, y];
+                    var actualPixel = actual[x, y];
+                    var expectedPixel = expected[x, y];
+
+                    var r = Math.Abs(expectedPixel.R - actualPixel.R);
+                    var g = Math.Abs(expectedPixel.G - actualPixel.G);
+                    var b = Math.Abs(expectedPixel.B - actualPixel.B);
 
                     var error = 0;
 
@@ -341,13 +449,43 @@ namespace Codeuctivity.ImageSharpCompare
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
         public static Image CalcDiffMaskImage(Image actual, Image expected)
         {
+            var ownsActual = false;
+            var ownsExpected = false;
+            Image<Rgb24>? actualRgb24 = null;
+            Image<Rgb24>? expectedRgb24 = null;
+
+            try
+            {
+                actualRgb24 = ToRgb24Image(actual, out ownsActual);
+                expectedRgb24 = ToRgb24Image(expected, out ownsExpected);
+
+                return CalcDiffMaskImage(actualRgb24, expectedRgb24);
+            }
+            finally
+            {
+                if (ownsActual)
+                {
+                    actualRgb24?.Dispose();
+                }
+                if (ownsExpected)
+                {
+                    expectedRgb24?.Dispose();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Creates a diff mask image of two images
+        /// </summary>
+        /// <param name="actual"></param>
+        /// <param name="expected"></param>
+        /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
+        public static Image CalcDiffMaskImage(Image<Rgb24> actual, Image<Rgb24> expected)
+        {
             if (!ImagesHaveSameDimension(actual, expected))
             {
                 throw new ImageSharpCompareException(sizeDiffersExceptionMessage);
             }
-
-            using var actualRgb24 = ToRgb24Image(actual);
-            using var expectedRgb24 = ToRgb24Image(expected);
 
             var maskImage = new Image<Rgb24>(actual.Width, actual.Height);
 
@@ -355,11 +493,14 @@ namespace Codeuctivity.ImageSharpCompare
             {
                 for (var y = 0; y < actual.Height; y++)
                 {
+                    var actualPixel = actual[x, y];
+                    var expectedPixel = expected[x, y];
+
                     var pixel = new Rgb24
                     {
-                        R = (byte)Math.Abs(actualRgb24[x, y].R - expectedRgb24[x, y].R),
-                        G = (byte)Math.Abs(actualRgb24[x, y].G - expectedRgb24[x, y].G),
-                        B = (byte)Math.Abs(actualRgb24[x, y].B - expectedRgb24[x, y].B)
+                        R = (byte)Math.Abs(actualPixel.R - expectedPixel.R),
+                        G = (byte)Math.Abs(actualPixel.G - expectedPixel.G),
+                        B = (byte)Math.Abs(actualPixel.B - expectedPixel.B)
                     };
 
                     maskImage[x, y] = pixel;
