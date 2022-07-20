@@ -8,6 +8,8 @@ Inspired by the image compare feature "Visual verification API" of [TestApi](htt
 
 ImageSharpCompare focus on os agnostic support and therefore depends on [SixLabors.ImageSharp](https://github.com/SixLabors/ImageSharp).
 
+**NOTE**: for now the comparer will only work with **RGB** components and totally ignores **A**lpha-channell.
+
 ## Example simple show cases
 
 ```csharp
