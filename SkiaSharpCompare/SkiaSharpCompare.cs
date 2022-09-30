@@ -291,8 +291,23 @@ namespace Codeuctivity.ImageSharpCompare
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
         public static SKBitmap CalcDiffMaskImage(Stream actualImage, Stream expectedImage)
         {
-            using var actual = SKBitmap.Decode(actualImage);
-            using var expected = SKBitmap.Decode(expectedImage);
+            if (actualImage.CanSeek)
+            {
+                actualImage.Position = 0;
+            }
+            if (expectedImage.CanSeek)
+            {
+                expectedImage.Position = 0;
+            }
+
+            using var actualImageCopy = new MemoryStream();
+            using var expectedImageCopy = new MemoryStream();
+            actualImage.CopyTo(actualImageCopy);
+            expectedImage.CopyTo(expectedImageCopy);
+            actualImageCopy.Position = 0;
+            expectedImageCopy.Position = 0;
+            using var actual = SKBitmap.Decode(actualImageCopy);
+            using var expected = SKBitmap.Decode(expectedImageCopy);
             return CalcDiffMaskImage(actual, expected);
         }
 
@@ -318,10 +333,10 @@ namespace Codeuctivity.ImageSharpCompare
                     var actualPixel = actual.GetPixel(x, y);
                     var expectedPixel = expected.GetPixel(x, y);
 
-                    var pixel = new SKColor();
-                    pixel.WithRed((byte)Math.Abs(actualPixel.Red - expectedPixel.Red));
-                    pixel.WithGreen((byte)Math.Abs(actualPixel.Green - expectedPixel.Green));
-                    pixel.WithBlue((byte)Math.Abs(actualPixel.Blue - expectedPixel.Blue));
+                    var red = (byte)Math.Abs(actualPixel.Red - expectedPixel.Red);
+                    var green = (byte)Math.Abs(actualPixel.Green - expectedPixel.Green);
+                    var blue = (byte)Math.Abs(actualPixel.Blue - expectedPixel.Blue);
+                    var pixel = new SKColor(red, green, blue);
 
                     maskImage.SetPixel(x, y, pixel);
                 }

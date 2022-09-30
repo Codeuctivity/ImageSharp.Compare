@@ -104,11 +104,11 @@ namespace ImageSharpCompareTestNunit
         }
 
         [Test]
-        [TestCase(jpg0Rgb24, png0Rgba32, 384538, 2.3789191061839596d, 140855, 87.139021553537404d)]
-        [TestCase(jpg1Rgb24, png1Rgba32, 382669, 2.3673566603152607d, 140893, 87.162530004206772d)]
+        [TestCase(jpg0Rgb24, png0Rgba32, 461891, 2.8574583652965777d, 158087, 97.799485288659028d)]
+        [TestCase(jpg1Rgb24, png1Rgba32, 460034, 2.8459701566405187d, 158121, 97.820519165573728d)]
         [TestCase(png1Rgba32, png1Rgba32, 0, 0, 0, 0)]
         [TestCase(jpg1Rgb24, jpg1Rgb24, 0, 0, 0, 0)]
-        [TestCase(jpg0Rgb24, jpg1Rgb24, 208832, 1.2919254658385093d, 2089, 1.2923461433768035d)]
+        [TestCase(jpg0Rgb24, jpg1Rgb24, 208890, 1.2922842790329365d, 2101, 1.2997698646408156d)]
         [TestCase(png0Rgba32, png1Rgba32, 203027, 1.25601321422385d, 681, 0.42129618173269651d)]
         [TestCase(pngBlack, pngWhite, 3060, 765, 4, 100.0d)]
         public void ShouldVerifyThatImagesAreSemiEqual(string pathPic1, string pathPic2, int expectedAbsoluteError, double expectedMeanError, int expectedPixelErrorCount, double expectedPixelErrorPercentage)
@@ -124,11 +124,11 @@ namespace ImageSharpCompareTestNunit
         }
 
         [Test]
-        [TestCase(jpg0Rgb24, png0Rgba32, 461891, 2.8574583652965777d, 140855, 87.139021553537404d)]
-        [TestCase(jpg1Rgb24, png1Rgba32, 460034, 2.8459701566405187d, 140893, 87.162530004206772d)]
+        [TestCase(jpg0Rgb24, png0Rgba32, 461891, 2.8574583652965777d, 158087, 97.799485288659028d)]
+        [TestCase(jpg1Rgb24, png1Rgba32, 460034, 2.8459701566405187d, 158121, 97.820519165573728d)]
         [TestCase(png1Rgba32, png1Rgba32, 0, 0, 0, 0)]
         [TestCase(jpg1Rgb24, jpg1Rgb24, 0, 0, 0, 0)]
-        [TestCase(jpg0Rgb24, jpg1Rgb24, 208890, 1.2922842790329365d, 2089, 1.2923461433768035d)]
+        [TestCase(jpg0Rgb24, jpg1Rgb24, 208890, 1.2922842790329365d, 2101, 1.2997698646408156d)]
         [TestCase(png0Rgba32, png1Rgba32, 203027, 1.25601321422385d, 681, 0.42129618173269651d)]
         [TestCase(pngBlack, pngWhite, 3060, 765, 4, 100.0d)]
         public void ShouldVerifyThatImageStreamsAreSemiEqual(string pathPic1, string pathPic2, int expectedAbsoluteError, double expectedMeanError, int expectedPixelErrorCount, double expectedPixelErrorPercentage)
