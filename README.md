@@ -6,7 +6,7 @@ Compares images
 
 Inspired by the image compare feature "Visual verification API" of [TestApi](https://blogs.msdn.microsoft.com/ivo_manolov/2009/04/20/introduction-to-testapi-part-3-visual-verification-apis/) this code supports comparing images by using a tolerance mask image. That tolerance mask image is a valid image by itself and can be manipulated.
 
-SkiaSharpCompare focus on os agnostic support and therefore depends on [SixLaborsSkiaSharp](https://github.com/mono/SkiaSharp).
+SkiaSharpCompare focus on os agnostic support and therefore depends on [SkiaSharp](https://github.com/mono/SkiaSharp).
 
 **NOTE**: For now the comparer ignores **A**lpha-channel.
 
