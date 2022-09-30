@@ -1,6 +1,6 @@
 name: .NET build and test
 env:
-  CURRENT_VERSION: 2.0.${{ github.run_number }}
+  CURRENT_VERSION: 0.0.${{ github.run_number }}
   LAST_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
 
 on:
@@ -47,7 +47,7 @@ jobs:
           NUGET_TOKEN_EXISTS: ${{ secrets.NUGET_TOKEN }}
       if:  env.NUGET_TOKEN_EXISTS != ''
       run: |
-          dotnet nuget push ./ImageSharpCompare/bin/Release/*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_TOKEN}} --source https://api.nuget.org/v3/index.json
+          dotnet nuget push ./SkiaSharpCompare/bin/Release/*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_TOKEN}} --source https://api.nuget.org/v3/index.json
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
@@ -55,8 +55,8 @@ jobs:
         prerelease: false
         title: "Release Build"
         files: |
-          ./ImageSharpCompare/bin/Release/*.nupkg
-          ./ImageSharpCompare/bin/Release/*.snupkg
+          ./SkiaSharpCompare/bin/Release/*.nupkg
+          ./SkiaSharpCompare/bin/Release/*.snupkg
 
   deployTest:
     if: github.ref != 'refs/heads/release'
@@ -78,8 +78,8 @@ jobs:
           NUGET_TOKEN_EXISTS: ${{ secrets.NUGET_TEST_TOKEN }}
       if:  env.NUGET_TOKEN_EXISTS != ''
       run: |
-          ls ./ImageSharpCompare/bin/Release
-          dotnet nuget push ./ImageSharpCompare/bin/Release/*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_TEST_TOKEN}} --source https://apiint.nugettest.org/v3/index.json
+          ls ./SkiaSharpCompare/bin/Release
+          dotnet nuget push ./SkiaSharpCompare/bin/Release/*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_TEST_TOKEN}} --source https://apiint.nugettest.org/v3/index.json
     - uses: "marvinpinto/action-automatic-releases@latest"
       if: github.ref == 'refs/heads/main'
       with:
@@ -88,5 +88,5 @@ jobs:
         prerelease: true
         title: "Prerelease Build"
         files: |
-          ./ImageSharpCompare/bin/Release/*.nupkg
-          ./ImageSharpCompare/bin/Release/*.snupkg
+          ./SkiaSharpCompare/bin/Release/*.nupkg
+          ./SkiaSharpCompare/bin/Release/*.snupkg
