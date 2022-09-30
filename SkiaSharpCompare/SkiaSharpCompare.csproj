@@ -11,15 +11,15 @@
 		<Version Condition="'$(CURRENT_VERSION)' == ''">0.0.1</Version>
 		<AssemblyVersion>$(Version)</AssemblyVersion>
 		<FileVersion>$(Version)</FileVersion>
-		<PackageVersion>$(Version)</PackageVersion>
+		<PackageVersion>$(Version)-prerelease</PackageVersion>
 		<PackageReleaseNotes>$(LAST_COMMIT_MESSAGE)</PackageReleaseNotes>
 		<PackageIcon>NugetIcon.png</PackageIcon>
 		<PackageProjectUrl>https://github.com/Codeuctivity/ImageSharp.Compare</PackageProjectUrl>
 		<Description>Compares Images and calculates mean error, absolute error and diff image. Supports optional tolerance mask/images to ignore areas of an image. Use this for automated visual comparing in your unit tests.</Description>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-		<AssemblyOriginatorKeyFile>ImageSharpCompare.snk</AssemblyOriginatorKeyFile>
-		<SignAssembly>true</SignAssembly>
+		<AssemblyOriginatorKeyFile>SkiaSharpCompare.snk</AssemblyOriginatorKeyFile>
+		<SignAssembly>True</SignAssembly>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -27,11 +27,11 @@
 		<Nullable>enable</Nullable>
 		<LangVersion>8.0</LangVersion>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
-		<PackageId>Codeuctivity.ImageSharpCompare</PackageId>
+		<PackageId>Codeuctivity.SkiaSharpCompare</PackageId>
 		<PackageReadmeFile>nugetReadme.md</PackageReadmeFile>
-    <Product>Codeuctivity.ImageSharpCompare</Product>
-		<AssemblyName>Codeuctivity.ImageSharpCompare</AssemblyName>
-		<RootNamespace>Codeuctivity.ImageSharpCompare</RootNamespace>
+    <Product>Codeuctivity.SkiaSharpCompare</Product>
+		<AssemblyName>Codeuctivity.SkiaSharpCompare</AssemblyName>
+		<RootNamespace>Codeuctivity.SkiaSharpCompare</RootNamespace>
 		<ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
@@ -46,9 +46,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="SixLabors.ImageSharp" Version="2.1.3" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
-		<PackageReference Include="SonarAnalyzer.CSharp" Version="8.40.0.48530">
+		<PackageReference Include="SkiaSharp" Version="2.88.2" />
+		<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.2" />
+		<PackageReference Include="SonarAnalyzer.CSharp" Version="8.45.0.54064">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>

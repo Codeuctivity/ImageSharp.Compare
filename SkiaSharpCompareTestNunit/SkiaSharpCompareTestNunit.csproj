@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT' ">net472;net6.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT' ">net48;net6.0</TargetFrameworks>
     <TargetFrameworks Condition="'$(OS)' != 'Windows_NT' ">net6.0</TargetFrameworks>
 		<IsPackable>false</IsPackable>
 		<LangVersion>8.0</LangVersion>
@@ -31,7 +31,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\ImageSharpCompare\ImageSharpCompare.csproj" />
+	  <ProjectReference Include="..\SkiaSharpCompare\SkiaSharpCompare.csproj" />
 	</ItemGroup>
 
 </Project>

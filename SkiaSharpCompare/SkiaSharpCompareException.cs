@@ -7,12 +7,12 @@ namespace Codeuctivity.ImageSharpCompare
     /// ImageSharpCompareException gets thrown if comparing of images fails
     /// </summary>
     [Serializable]
-    public class ImageSharpCompareException : Exception
+    public class SkiaSharpCompareException : Exception
     {
         /// <summary>
         /// ImageSharpCompareException gets thrown if comparing of images fails
         /// </summary>
-        public ImageSharpCompareException()
+        public SkiaSharpCompareException()
         {
         }
 
@@ -21,7 +21,7 @@ namespace Codeuctivity.ImageSharpCompare
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-        public ImageSharpCompareException(string message) : base(message)
+        public SkiaSharpCompareException(string message) : base(message)
         {
         }
 
@@ -31,7 +31,7 @@ namespace Codeuctivity.ImageSharpCompare
         /// <param name="message"></param>
         /// <param name="innerException"></param>
         /// <returns></returns>
-        public ImageSharpCompareException(string message, Exception innerException) : base(message, innerException)
+        public SkiaSharpCompareException(string message, Exception innerException) : base(message, innerException)
         {
         }
 
@@ -41,7 +41,7 @@ namespace Codeuctivity.ImageSharpCompare
         /// <param name="info"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        protected ImageSharpCompareException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected SkiaSharpCompareException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

@@ -6,8 +6,8 @@ Linux, Windows, MacOs supported.
 Basic example:
 
 ```csharp
-bool isEqual = ImageSharpCompare.ImagesAreEqual("actual.png", "expected.png");
+bool isEqual = SkiaSharpCompare.ImagesAreEqual("actual.png", "expected.png");
 
 // calcs MeanError, AbsoluteError, PixelErrorCount and PixelErrorPercentage
-ICompareResult calcDiff = ImageSharpCompare.CalcDiff("actual.png", "expected.png");
+ICompareResult calcDiff = SkiaSharpCompare.CalcDiff("actual.png", "expected.png");
 ```
