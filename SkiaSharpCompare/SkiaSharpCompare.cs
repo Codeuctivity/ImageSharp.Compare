@@ -2,10 +2,10 @@
 using System;
 using System.IO;
 
-namespace Codeuctivity.ImageSharpCompare
+namespace Codeuctivity.SkiaSharpCompare
 {
     /// <summary>
-    /// ImageSharpCompare, compares images. Use this class to compare images using a third image as mask of regions where your two compared images may differ. An alpha channel is ignored.
+    /// SkiaSharpCompare, compares images. Use this class to compare images using a third image as mask of regions where your two compared images may differ. An alpha channel is ignored.
     /// </summary>
     public static class SkiaSharpCompare
     {

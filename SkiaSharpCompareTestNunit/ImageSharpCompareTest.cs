@@ -1,11 +1,11 @@
-using Codeuctivity.ImageSharpCompare;
+using Codeuctivity.SkiaSharpCompare;
 using NUnit.Framework;
 using SkiaSharp;
 using System;
 using System.IO;
 using System.Reflection;
 
-namespace ImageSharpCompareTestNunit
+namespace SkiaSharpCompareTestNunit
 {
     public class IntegrationTest
     {

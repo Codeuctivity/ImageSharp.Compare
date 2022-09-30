@@ -1,23 +1,23 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Codeuctivity.ImageSharpCompare
+namespace Codeuctivity.SkiaSharpCompare
 {
     /// <summary>
-    /// ImageSharpCompareException gets thrown if comparing of images fails
+    /// SkiaSharpCompareException gets thrown if comparing of images fails
     /// </summary>
     [Serializable]
     public class SkiaSharpCompareException : Exception
     {
         /// <summary>
-        /// ImageSharpCompareException gets thrown if comparing of images fails
+        /// SkiaSharpCompareException gets thrown if comparing of images fails
         /// </summary>
         public SkiaSharpCompareException()
         {
         }
 
         /// <summary>
-        /// ImageSharpCompareException gets thrown if comparing of images fails
+        /// SkiaSharpCompareException gets thrown if comparing of images fails
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
@@ -26,7 +26,7 @@ namespace Codeuctivity.ImageSharpCompare
         }
 
         /// <summary>
-        /// ImageSharpCompareException gets thrown if comparing of images fails
+        /// SkiaSharpCompareException gets thrown if comparing of images fails
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
@@ -36,7 +36,7 @@ namespace Codeuctivity.ImageSharpCompare
         }
 
         /// <summary>
-        /// ImageSharpCompareException gets thrown if comparing of images fails
+        /// SkiaSharpCompareException gets thrown if comparing of images fails
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>

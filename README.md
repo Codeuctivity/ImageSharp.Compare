@@ -2,7 +2,7 @@
 
 Compares images
 
-[![.github/workflows/dotnet.yml](https://github.com/Codeuctivity/SkiaSharp.CompareCompare/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Codeuctivity/SkiaSharp.CompareCompare/actions/workflows/dotnet.yml) [![Nuget](https://img.shields.io/nuget/v/Codeuctivity.SkiaSharpCompare.svg)](https://www.nuget.org/packages/Codeuctivity.SkiaSharpCompare/) [![Donate](https://img.shields.io/static/v1?label=Paypal&message=Donate&color=informational)](https://www.paypal.com/donate?hosted_button_id=7M7UFMMRTS7UE)
+[![.NET build and test](https://github.com/Codeuctivity/SkiaSharp.Compare/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Codeuctivity/SkiaSharp.Compare/actions/workflows/dotnet.yml) [![Nuget](https://img.shields.io/nuget/v/Codeuctivity.SkiaSharpCompare.svg)](https://www.nuget.org/packages/Codeuctivity.SkiaSharpCompare/) [![Donate](https://img.shields.io/static/v1?label=Paypal&message=Donate&color=informational)](https://www.paypal.com/donate?hosted_button_id=7M7UFMMRTS7UE)
 
 Inspired by the image compare feature "Visual verification API" of [TestApi](https://blogs.msdn.microsoft.com/ivo_manolov/2009/04/20/introduction-to-testapi-part-3-visual-verification-apis/) this code supports comparing images by using a tolerance mask image. That tolerance mask image is a valid image by itself and can be manipulated.
 
