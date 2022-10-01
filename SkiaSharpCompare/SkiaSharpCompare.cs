@@ -5,7 +5,7 @@ using System.IO;
 namespace Codeuctivity.SkiaSharpCompare
 {
     /// <summary>
-    /// SkiaSharpCompare, compares images. Use this class to compare images using a third image as mask of regions where your two compared images may differ. An alpha channel is ignored.
+    /// SkiaSharpCompare, compares images. An alpha channel is ignored.
     /// </summary>
     public static class SkiaSharpCompare
     {
