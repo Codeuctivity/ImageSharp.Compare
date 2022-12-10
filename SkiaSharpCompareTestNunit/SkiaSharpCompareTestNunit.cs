@@ -92,7 +92,7 @@ namespace SkiaSharpCompareTestNunit
         [Test]
         [TestCase(jpg0Rgb24, jpg0Rgb24)]
         [TestCase(png0Rgba32, png0Rgba32)]
-        public void ShouldVerifyThatImageSharpImagesAreEqual(string pathActual, string pathExpected)
+        public void ShouldVerifyThatSkiaSharpImagesAreEqual(string pathActual, string pathExpected)
         {
             var absolutePathActual = Path.Combine(AppContext.BaseDirectory, pathActual);
             var absolutePathExpected = Path.Combine(AppContext.BaseDirectory, pathExpected);
@@ -176,7 +176,7 @@ namespace SkiaSharpCompareTestNunit
 
         [TestCase(png0Rgba32, png1Rgba32, 0, 0, 0, 0)]
         [TestCase(jpg0Rgb24, jpg1Rgb24, 0, 0, 0, 0)]
-        public void ShoulCalcDiffmaskImageSharp(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage)
+        public void ShoulCalcDiffmaskSkiaSharp(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage)
         {
             var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
             var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
