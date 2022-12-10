@@ -11,7 +11,6 @@ jobs:
     steps:
       - name: "CLA Assistant"
         if: (github.event.comment.body == 'recheck' || github.event.comment.body == 'I have read the CLA Document and I hereby sign the CLA') || github.event_name == 'pull_request_target'
-        # Beta Release
         uses: cla-assistant/github-action@v2.2.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -19,10 +18,10 @@ jobs:
           PERSONAL_ACCESS_TOKEN : ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         with:
           path-to-signatures: 'signatures/version1/cla.json'
-          path-to-document: 'https://github.com/Codeuctivity/ImageSharp.Compare/cla.md' # e.g. a CLA or a DCO document
+          path-to-document: 'https://github.com/Codeuctivity/ImageSharp.Compare/blob/main/cla.md' # e.g. a CLA or a DCO document
           # branch should not be protected
-          branch: 'main'
-          allowlist: dependabot[bot]
+          branch: 'cla'
+          allowlist: dependabot[bot],stesee
 
          #below are the optional inputs - If the optional inputs are not given, then default values will be taken
          #remote-organization-name: enter the remote organization name where the signatures should be stored (Default is storing the signatures in the same repository)

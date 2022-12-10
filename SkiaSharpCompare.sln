@@ -6,8 +6,11 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A1B6F6C3-ECBE-471C-AE18-199DEF5982C3}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		.github\workflows\cla.yml = .github\workflows\cla.yml
+		.github\dependabot.yml = .github\dependabot.yml
 		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
 		README.md = README.md
+		.github\workflows\stale.yml = .github\workflows\stale.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SkiaSharpCompare", "SkiaSharpCompare\SkiaSharpCompare.csproj", "{556DA894-7456-4DE2-9E02-3815FE159D7F}"

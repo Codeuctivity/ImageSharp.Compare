@@ -49,7 +49,7 @@
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
 		<PackageReference Include="SkiaSharp" Version="2.88.2" />
 		<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.2" />
-		<PackageReference Include="SonarAnalyzer.CSharp" Version="8.45.0.54064">
+		<PackageReference Include="SonarAnalyzer.CSharp" Version="8.49.0.57237">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
