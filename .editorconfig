@@ -17,3 +17,6 @@ csharp_prefer_braces = true:warning
 
 # IDE0011: Add braces - reflecting codacy defaults
 dotnet_diagnostic.IDE0011.severity = warning
+
+# IDE0046: Convert to conditional expression
+dotnet_style_prefer_conditional_expression_over_return = false

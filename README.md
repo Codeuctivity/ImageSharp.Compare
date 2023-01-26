@@ -8,7 +8,7 @@ Inspired by the image compare feature "Visual verification API" of [TestApi](htt
 
 ImageSharpCompare focus on os agnostic support and therefore depends on [SixLabors.ImageSharp](https://github.com/SixLabors/ImageSharp).
 
-**NOTE**: for now the comparer will only work with **RGB** components and totally ignores **A**lpha-channell.
+**NOTE**: Alpha-channel is ignored.
 
 ## Example simple show cases
 
@@ -33,7 +33,7 @@ Imagine two images you want to compare, and want to accept the found difference 
 
 ### Tolerance mask image
 
-using "compare.CalcDiff" you can calc a diff mask from actual and reference image
+`CalcDiffMaskImage` is used to calc a diff mask from an actual and a reference image
 
 Example - Create difference image
 
