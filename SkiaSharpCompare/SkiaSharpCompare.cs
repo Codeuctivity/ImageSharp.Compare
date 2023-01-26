@@ -7,7 +7,7 @@ namespace Codeuctivity.SkiaSharpCompare
     /// <summary>
     /// SkiaSharpCompare, compares images. An alpha channel is ignored.
     /// </summary>
-    public static class SkiaSharpCompare
+    public static class Compare
     {
         private const string sizeDiffersExceptionMessage = "Size of images differ.";
 
@@ -194,21 +194,6 @@ namespace Codeuctivity.SkiaSharpCompare
             return CalcDiff(actual, expected, maskImage);
         }
 
-        private static bool ImagesHaveSameDimension(SKBitmap actual, SKBitmap expected)
-        {
-            if (actual == null)
-            {
-                throw new ArgumentNullException(nameof(actual));
-            }
-
-            if (expected == null)
-            {
-                throw new ArgumentNullException(nameof(expected));
-            }
-
-            return actual.Height == expected.Height && actual.Width == expected.Width;
-        }
-
         /// <summary>
         /// Calculates ICompareResult expressing the amount of difference of both images using a image mask for tolerated difference between the two images
         /// </summary>
@@ -291,6 +276,16 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
         public static SKBitmap CalcDiffMaskImage(Stream actualImage, Stream expectedImage)
         {
+            if (actualImage == null)
+            {
+                throw new ArgumentNullException(nameof(actualImage));
+            }
+
+            if (expectedImage == null)
+            {
+                throw new ArgumentNullException(nameof(expectedImage));
+            }
+
             if (actualImage.CanSeek)
             {
                 actualImage.Position = 0;
@@ -342,6 +337,21 @@ namespace Codeuctivity.SkiaSharpCompare
                 }
             }
             return maskImage;
+        }
+
+        private static bool ImagesHaveSameDimension(SKBitmap actual, SKBitmap expected)
+        {
+            if (actual == null)
+            {
+                throw new ArgumentNullException(nameof(actual));
+            }
+
+            if (expected == null)
+            {
+                throw new ArgumentNullException(nameof(expected));
+            }
+
+            return actual.Height == expected.Height && actual.Width == expected.Width;
         }
     }
 }
