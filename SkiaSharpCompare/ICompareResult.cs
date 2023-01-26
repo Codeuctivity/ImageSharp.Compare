@@ -1,4 +1,4 @@
-﻿namespace Codeuctivity.SkiaSharpCompare
+﻿namespace Codeuctivity.SkiaSharpCompare.SkiaSharpCompare
 {
     /// <summary>
     /// Dto - of compared images

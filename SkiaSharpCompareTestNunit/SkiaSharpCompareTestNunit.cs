@@ -3,7 +3,6 @@ using NUnit.Framework;
 using SkiaSharp;
 using System;
 using System.IO;
-using System.Reflection;
 
 namespace SkiaSharpCompareTestNunit
 {
@@ -27,7 +26,7 @@ namespace SkiaSharpCompareTestNunit
             var absolutePathActual = Path.Combine(AppContext.BaseDirectory, pathActual);
             var absolutePathExpected = Path.Combine(AppContext.BaseDirectory, pathExpected);
 
-            Assert.That(SkiaSharpCompare.ImagesHaveEqualSize(absolutePathActual, absolutePathExpected), Is.EqualTo(expectedOutcome));
+            Assert.That(Compare.ImagesHaveEqualSize(absolutePathActual, absolutePathExpected), Is.EqualTo(expectedOutcome));
         }
 
         [Test]
@@ -44,7 +43,7 @@ namespace SkiaSharpCompareTestNunit
             using var actual = SKBitmap.Decode(absolutePathActual);
             using var expected = SKBitmap.Decode(absolutePathExpected);
 
-            Assert.That(SkiaSharpCompare.ImagesHaveEqualSize(absolutePathActual, absolutePathExpected), Is.EqualTo(expectedOutcome));
+            Assert.That(Compare.ImagesHaveEqualSize(absolutePathActual, absolutePathExpected), Is.EqualTo(expectedOutcome));
         }
 
         [Test]
@@ -61,7 +60,7 @@ namespace SkiaSharpCompareTestNunit
             using var actual = new FileStream(absolutePathActual, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             using var expected = new FileStream(absolutePathExpected, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
-            Assert.That(SkiaSharpCompare.ImagesHaveEqualSize(absolutePathActual, absolutePathExpected), Is.EqualTo(expectedOutcome));
+            Assert.That(Compare.ImagesHaveEqualSize(absolutePathActual, absolutePathExpected), Is.EqualTo(expectedOutcome));
         }
 
         [Test]
@@ -72,7 +71,7 @@ namespace SkiaSharpCompareTestNunit
             var absolutePathActual = Path.Combine(AppContext.BaseDirectory, pathActual);
             var absolutePathExpected = Path.Combine(AppContext.BaseDirectory, pathExpected);
 
-            Assert.That(SkiaSharpCompare.ImagesAreEqual(absolutePathActual, absolutePathExpected), Is.True);
+            Assert.That(Compare.ImagesAreEqual(absolutePathActual, absolutePathExpected), Is.True);
         }
 
         [Test]
@@ -86,7 +85,7 @@ namespace SkiaSharpCompareTestNunit
             using var actual = new FileStream(absolutePathActual, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             using var expected = new FileStream(absolutePathExpected, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
-            Assert.That(SkiaSharpCompare.ImagesAreEqual(actual, expected), Is.True);
+            Assert.That(Compare.ImagesAreEqual(actual, expected), Is.True);
         }
 
         [Test]
@@ -100,7 +99,7 @@ namespace SkiaSharpCompareTestNunit
             using var actual = SKBitmap.Decode(absolutePathActual);
             using var expected = SKBitmap.Decode(absolutePathExpected);
 
-            Assert.That(SkiaSharpCompare.ImagesAreEqual(actual, expected), Is.True);
+            Assert.That(Compare.ImagesAreEqual(actual, expected), Is.True);
         }
 
         [Test]
@@ -116,7 +115,7 @@ namespace SkiaSharpCompareTestNunit
             var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
             var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
 
-            var diff = SkiaSharpCompare.CalcDiff(absolutePathPic1, absolutePathPic2);
+            var diff = Compare.CalcDiff(absolutePathPic1, absolutePathPic2);
             Assert.That(diff.AbsoluteError, Is.EqualTo(expectedAbsoluteError), "AbsoluteError");
             Assert.That(diff.MeanError, Is.EqualTo(expectedMeanError), "MeanError");
             Assert.That(diff.PixelErrorCount, Is.EqualTo(expectedPixelErrorCount), "PixelErrorCount");
@@ -139,7 +138,7 @@ namespace SkiaSharpCompareTestNunit
             using var pic1 = new FileStream(absolutePathPic1, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             using var pic2 = new FileStream(absolutePathPic2, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
-            var diff = SkiaSharpCompare.CalcDiff(pic1, pic2);
+            var diff = Compare.CalcDiff(pic1, pic2);
             Assert.That(diff.AbsoluteError, Is.EqualTo(expectedAbsoluteError), "AbsoluteError");
             Assert.That(diff.MeanError, Is.EqualTo(expectedMeanError), "MeanError");
             Assert.That(diff.PixelErrorCount, Is.EqualTo(expectedPixelErrorCount), "PixelErrorCount");
@@ -154,12 +153,12 @@ namespace SkiaSharpCompareTestNunit
             var differenceMask = Path.GetTempFileName() + "differenceMask.png";
 
             using (var fileStreamDifferenceMask = File.Create(differenceMask))
-            using (var maskImage = SkiaSharpCompare.CalcDiffMaskImage(absolutePathPic1, absolutePathPic2))
+            using (var maskImage = Compare.CalcDiffMaskImage(absolutePathPic1, absolutePathPic2))
             {
                 SaveAsPng(maskImage, fileStreamDifferenceMask);
             }
 
-            var maskedDiff = SkiaSharpCompare.CalcDiff(absolutePathPic1, absolutePathPic2, differenceMask);
+            var maskedDiff = Compare.CalcDiff(absolutePathPic1, absolutePathPic2, differenceMask);
             File.Delete(differenceMask);
 
             Assert.That(maskedDiff.AbsoluteError, Is.EqualTo(expectedAbsoluteError), "AbsoluteError");
@@ -186,31 +185,19 @@ namespace SkiaSharpCompareTestNunit
             using var absolutePic2 = SKBitmap.Decode(absolutePathPic2);
 
             using (var fileStreamDifferenceMask = File.Create(differenceMaskPicPath))
-            using (var maskImage = SkiaSharpCompare.CalcDiffMaskImage(absolutePic1, absolutePic2))
+            using (var maskImage = Compare.CalcDiffMaskImage(absolutePic1, absolutePic2))
             {
                 SaveAsPng(maskImage, fileStreamDifferenceMask);
             }
 
             using var differenceMaskPic = SKBitmap.Decode(differenceMaskPicPath);
-            var maskedDiff = SkiaSharpCompare.CalcDiff(absolutePic1, absolutePic2, differenceMaskPic);
+            var maskedDiff = Compare.CalcDiff(absolutePic1, absolutePic2, differenceMaskPic);
             File.Delete(differenceMaskPicPath);
 
             Assert.That(maskedDiff.AbsoluteError, Is.EqualTo(expectedAbsoluteError), "AbsoluteError");
             Assert.That(maskedDiff.MeanError, Is.EqualTo(expectedMeanError), "MeanError");
             Assert.That(maskedDiff.PixelErrorCount, Is.EqualTo(expectedPixelErrorCount), "PixelErrorCount");
             Assert.That(maskedDiff.PixelErrorPercentage, Is.EqualTo(expectedPixelErrorPercentage), "PixelErrorPercentage");
-        }
-
-        private static object? GetInstanceField<T>(T instance, string fieldName)
-        {
-            var bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
-            var field = typeof(T).GetField(fieldName, bindFlags);
-            if (field == null)
-            {
-                throw new ArgumentNullException(fieldName);
-            }
-
-            return field.GetValue(instance);
         }
 
         [TestCase(png0Rgba32, png1Rgba32, 0, 0, 0, 0)]
@@ -222,12 +209,12 @@ namespace SkiaSharpCompareTestNunit
             using var pic1 = new FileStream(absolutePathPic1, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             using var pic2 = new FileStream(absolutePathPic2, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
-            using var maskImage = SkiaSharpCompare.CalcDiffMaskImage(pic1, pic2);
+            using var maskImage = Compare.CalcDiffMaskImage(pic1, pic2);
 
             pic1.Position = 0;
             pic2.Position = 0;
 
-            var maskedDiff = SkiaSharpCompare.CalcDiff(pic1, pic2, maskImage);
+            var maskedDiff = Compare.CalcDiff(pic1, pic2, maskImage);
             Assert.That(maskedDiff.AbsoluteError, Is.EqualTo(expectedAbsoluteError), "AbsoluteError");
             Assert.That(maskedDiff.MeanError, Is.EqualTo(expectedMeanError), "MeanError");
             Assert.That(maskedDiff.PixelErrorCount, Is.EqualTo(expectedPixelErrorCount), "PixelErrorCount");
@@ -245,7 +232,7 @@ namespace SkiaSharpCompareTestNunit
             var absolutePathActual = Path.Combine(AppContext.BaseDirectory, pathActual);
             var absolutePathExpected = Path.Combine(AppContext.BaseDirectory, pathExpected);
 
-            Assert.That(SkiaSharpCompare.ImagesAreEqual(absolutePathActual, absolutePathExpected), Is.False);
+            Assert.That(Compare.ImagesAreEqual(absolutePathActual, absolutePathExpected), Is.False);
         }
 
         [Test]
@@ -262,7 +249,7 @@ namespace SkiaSharpCompareTestNunit
             using var actual = new FileStream(absolutePathActual, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             using var expected = new FileStream(absolutePathExpected, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
-            Assert.That(SkiaSharpCompare.ImagesAreEqual(actual, expected), Is.False);
+            Assert.That(Compare.ImagesAreEqual(actual, expected), Is.False);
         }
 
         [TestCase(png0Rgba32, pngBlack)]
@@ -271,7 +258,7 @@ namespace SkiaSharpCompareTestNunit
             var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
             var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
 
-            var exception = Assert.Throws<SkiaSharpCompareException>(() => SkiaSharpCompare.CalcDiff(absolutePathPic1, absolutePathPic2));
+            var exception = Assert.Throws<SkiaSharpCompareException>(() => Compare.CalcDiff(absolutePathPic1, absolutePathPic2));
 
             Assert.That(exception?.Message, Is.EqualTo("Size of images differ."));
         }
