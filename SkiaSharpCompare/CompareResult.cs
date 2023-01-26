@@ -1,5 +1,3 @@
-using Codeuctivity.SkiaSharpCompare.SkiaSharpCompare;
-
 namespace Codeuctivity.SkiaSharpCompare
 {
     /// <summary>

@@ -1,5 +1,4 @@
-﻿using Codeuctivity.SkiaSharpCompare.SkiaSharpCompare;
-using SkiaSharp;
+﻿using SkiaSharp;
 using System;
 using System.IO;
 
