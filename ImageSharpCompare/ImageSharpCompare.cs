@@ -207,7 +207,7 @@ namespace Codeuctivity.ImageSharpCompare
             }
 
             var quantity = actual.Width * actual.Height;
-            var absoluteError = 0;
+            var absoluteError = 0f;
             var pixelErrorCount = 0;
 
             for (var x = 0; x < actual.Width; x++)
@@ -217,18 +217,18 @@ namespace Codeuctivity.ImageSharpCompare
                     var actualPixel = actual[x, y];
                     var expectedPixel = expected[x, y];
 
-                    var r = Math.Abs(expectedPixel.R - actualPixel.R);
-                    var g = Math.Abs(expectedPixel.G - actualPixel.G);
-                    var b = Math.Abs(expectedPixel.B - actualPixel.B);
-                    absoluteError = absoluteError + r + g + b;
+                    var r = Math.Abs(expectedPixel.R - actualPixel.R) / 255f;
+                    var g = Math.Abs(expectedPixel.G - actualPixel.G) / 255f;
+                    var b = Math.Abs(expectedPixel.B - actualPixel.B) / 255f;
+                    absoluteError += r + g + b;
 
                     pixelErrorCount += r + g + b > 0 ? 1 : 0;
                 }
             }
 
-            var meanError = (double)absoluteError / quantity;
+            var meanError = (double)absoluteError / quantity / 3;
             var pixelErrorPercentage = (double)pixelErrorCount / quantity * 100;
-            return new CompareResult(absoluteError, meanError, pixelErrorCount, pixelErrorPercentage);
+            return new CompareResult((int)absoluteError, meanError, pixelErrorCount, pixelErrorPercentage);
         }
 
         /// <summary>
