@@ -41,8 +41,8 @@ namespace ImageSharpCompareTestNunit
             var absolutePathActual = Path.Combine(AppContext.BaseDirectory, pathActual);
             var absolutePathExpected = Path.Combine(AppContext.BaseDirectory, pathExpected);
 
-            using var actual = SixLabors.ImageSharp.Image.Load(absolutePathActual);
-            using var expected = SixLabors.ImageSharp.Image.Load(absolutePathExpected);
+            using var actual = Image.Load(absolutePathActual);
+            using var expected = Image.Load(absolutePathExpected);
 
             Assert.That(ImageSharpCompare.ImagesHaveEqualSize(absolutePathActual, absolutePathExpected), Is.EqualTo(expectedOutcome));
         }
@@ -101,23 +101,8 @@ namespace ImageSharpCompareTestNunit
             using var expected = Image.Load(absolutePathExpected);
 
             Assert.That(ImageSharpCompare.ImagesAreEqual(actual, expected), Is.True);
-
-            var isActualDiposed = (bool?)GetInstanceField(actual, "isDisposed");
-            var isExpectedDiposed = (bool?)GetInstanceField(expected, "isDisposed");
-            Assert.That(isActualDiposed, Is.False);
-            Assert.That(isExpectedDiposed, Is.False);
-        }
-
-        private static object? GetInstanceField<T>(T instance, string fieldName)
-        {
-            var bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
-            var field = typeof(T).GetField(fieldName, bindFlags);
-            if (field == null)
-            {
-                throw new ArgumentNullException(fieldName);
-            }
-
-            return field.GetValue(instance);
+            AssertDisposeBehavior(actual);
+            AssertDisposeBehavior(expected);
         }
 
         [Test]
@@ -164,7 +149,7 @@ namespace ImageSharpCompareTestNunit
         }
 
         [TestCase(png0Rgba32, png1Rgba32, 0, 0, 0, 0)]
-        public void Diffmask(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage)
+        public void ShoulCalcDiffmask(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage)
         {
             var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
             var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
@@ -173,7 +158,7 @@ namespace ImageSharpCompareTestNunit
             using (var fileStreamDifferenceMask = File.Create(differenceMask))
             using (var maskImage = ImageSharpCompare.CalcDiffMaskImage(absolutePathPic1, absolutePathPic2))
             {
-                SixLabors.ImageSharp.ImageExtensions.SaveAsPng(maskImage, fileStreamDifferenceMask);
+                ImageExtensions.SaveAsPng(maskImage, fileStreamDifferenceMask);
             }
 
             var maskedDiff = ImageSharpCompare.CalcDiff(absolutePathPic1, absolutePathPic2, differenceMask);
@@ -183,6 +168,59 @@ namespace ImageSharpCompareTestNunit
             Assert.That(maskedDiff.MeanError, Is.EqualTo(expectedMeanError), "MeanError");
             Assert.That(maskedDiff.PixelErrorCount, Is.EqualTo(expectedPixelErrorCount), "PixelErrorCount");
             Assert.That(maskedDiff.PixelErrorPercentage, Is.EqualTo(expectedPixelErrorPercentage), "PixelErrorPercentage");
+        }
+
+        [TestCase(png0Rgba32, png1Rgba32, 0, 0, 0, 0)]
+        [TestCase(jpg0Rgb24, jpg1Rgb24, 0, 0, 0, 0)]
+        public void ShoulCalcDiffmaskImageSharp(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage)
+        {
+            var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
+            var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
+            var differenceMaskPicPath = Path.GetTempFileName() + "differenceMask.png";
+
+            using var absolutePic1 = Image.Load(absolutePathPic1);
+            using var absolutePic2 = Image.Load(absolutePathPic2);
+
+            using (var fileStreamDifferenceMask = File.Create(differenceMaskPicPath))
+            using (var maskImage = ImageSharpCompare.CalcDiffMaskImage(absolutePic1, absolutePic2))
+            {
+                ImageExtensions.SaveAsPng(maskImage, fileStreamDifferenceMask);
+            }
+
+            using var differenceMaskPic = Image.Load(differenceMaskPicPath);
+            var maskedDiff = ImageSharpCompare.CalcDiff(absolutePic1, absolutePic2, differenceMaskPic);
+            File.Delete(differenceMaskPicPath);
+
+            Assert.That(maskedDiff.AbsoluteError, Is.EqualTo(expectedAbsoluteError), "AbsoluteError");
+            Assert.That(maskedDiff.MeanError, Is.EqualTo(expectedMeanError), "MeanError");
+            Assert.That(maskedDiff.PixelErrorCount, Is.EqualTo(expectedPixelErrorCount), "PixelErrorCount");
+            Assert.That(maskedDiff.PixelErrorPercentage, Is.EqualTo(expectedPixelErrorPercentage), "PixelErrorPercentage");
+
+            AssertDisposeBehavior(absolutePic1);
+            AssertDisposeBehavior(absolutePic2);
+            AssertDisposeBehavior(differenceMaskPic);
+        }
+
+        private void AssertDisposeBehavior(Image image)
+        {
+            const string imageSharpPrivateFieldNameIsDisposed = "isDisposed";
+            var isDisposed = (bool?)GetInstanceField(image, imageSharpPrivateFieldNameIsDisposed);
+            Assert.That(isDisposed, Is.False);
+            image.Dispose();
+            isDisposed = (bool?)GetInstanceField(image, imageSharpPrivateFieldNameIsDisposed);
+            Assert.That(isDisposed, Is.True);
+        }
+
+        private static object? GetInstanceField<T>(T instance, string fieldName)
+        {
+            var bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+            var field = typeof(T).GetField(fieldName, bindFlags);
+            if (field == null)
+            {
+                throw new ArgumentNullException(fieldName);
+            }
+
+            return field.GetValue(instance);
         }
 
         [TestCase(png0Rgba32, png1Rgba32, 0, 0, 0, 0)]
