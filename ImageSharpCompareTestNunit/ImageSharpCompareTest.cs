@@ -41,8 +41,8 @@ namespace ImageSharpCompareTestNunit
             var absolutePathActual = Path.Combine(AppContext.BaseDirectory, pathActual);
             var absolutePathExpected = Path.Combine(AppContext.BaseDirectory, pathExpected);
 
-            using var actual = SixLabors.ImageSharp.Image.Load(absolutePathActual);
-            using var expected = SixLabors.ImageSharp.Image.Load(absolutePathExpected);
+            using var actual = Image.Load(absolutePathActual);
+            using var expected = Image.Load(absolutePathExpected);
 
             Assert.That(ImageSharpCompare.ImagesHaveEqualSize(absolutePathActual, absolutePathExpected), Is.EqualTo(expectedOutcome));
         }
@@ -134,6 +134,12 @@ namespace ImageSharpCompareTestNunit
             var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
 
             var diff = ImageSharpCompare.CalcDiff(absolutePathPic1, absolutePathPic2);
+
+            Console.WriteLine($"PixelErrorCount: {diff.PixelErrorCount}");
+            Console.WriteLine($"PixelErrorPercentage: {diff.PixelErrorPercentage}");
+            Console.WriteLine($"AbsoluteError: {diff.AbsoluteError}");
+            Console.WriteLine($"MeanError: {diff.MeanError}");
+
             Assert.That(diff.AbsoluteError, Is.EqualTo(expectedAbsoluteError), "AbsoluteError");
             Assert.That(diff.MeanError, Is.EqualTo(expectedMeanError), "MeanError");
             Assert.That(diff.PixelErrorCount, Is.EqualTo(expectedPixelErrorCount), "PixelErrorCount");
@@ -173,7 +179,7 @@ namespace ImageSharpCompareTestNunit
             using (var fileStreamDifferenceMask = File.Create(differenceMask))
             using (var maskImage = ImageSharpCompare.CalcDiffMaskImage(absolutePathPic1, absolutePathPic2))
             {
-                SixLabors.ImageSharp.ImageExtensions.SaveAsPng(maskImage, fileStreamDifferenceMask);
+                ImageExtensions.SaveAsPng(maskImage, fileStreamDifferenceMask);
             }
 
             var maskedDiff = ImageSharpCompare.CalcDiff(absolutePathPic1, absolutePathPic2, differenceMask);

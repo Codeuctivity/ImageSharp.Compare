@@ -13,8 +13,15 @@ ImageSharpCompare focus on os agnostic support and therefore depends on [SixLabo
 ```csharp
 bool isEqual = ImageSharpCompare.ImagesAreEqual("actual.png", "expected.png");
 
-// calcs MeanError, AbsoluteError, PixelErrorCount and PixelErrorPercentage
-ICompareResult calcDiff = ImageSharpCompare.CalcDiff("actual.png", "expected.png");
+var calcDiff = ImageSharpCompare.CalcDiff("2x2PixelBlack.png", "2x2PixelWhite.png");
+Console.WriteLine($"PixelErrorCount: {diff.PixelErrorCount}");
+Console.WriteLine($"PixelErrorPercentage: {diff.PixelErrorPercentage}");
+Console.WriteLine($"AbsoluteError: {diff.AbsoluteError}");
+Console.WriteLine($"MeanError: {diff.MeanError}");
+// PixelErrorCount: 4
+// PixelErrorPercentage: 100
+// AbsoluteError: 3060
+// MeanError: 765
 ```
 
 ## Example show case allowing some tolerated diff
@@ -49,3 +56,7 @@ Example - Compare two images using the created difference image. Add white pixel
 var maskedDiff = ImageSharpCompare.CalcDiff(pathPic1, pathPic2, "differenceMask.png");
 Assert.That(maskedDiff.AbsoluteError, Is.EqualTo(0));
 ```
+
+## .net Framework specific note
+
+.net framework (an older Windows-based .NET implementation) is supported by versions 2.x.y .
