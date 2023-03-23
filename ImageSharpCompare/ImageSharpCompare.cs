@@ -1,5 +1,6 @@
 ﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 using System;
 using System.IO;
 
@@ -54,12 +55,13 @@ namespace Codeuctivity.ImageSharpCompare
         /// </summary>
         /// <param name="pathImageActual"></param>
         /// <param name="pathImageExpected"></param>
+        /// <param name="resizeOption"></param>
         /// <returns>True if every pixel of actual is equal to expected</returns>
-        public static bool ImagesAreEqual(string pathImageActual, string pathImageExpected)
+        public static bool ImagesAreEqual(string pathImageActual, string pathImageExpected, ResizeOption resizeOption = ResizeOption.DontResize)
         {
             using var actualImage = Image.Load(pathImageActual);
             using var expectedImage = Image.Load(pathImageExpected);
-            return ImagesAreEqual(actualImage, expectedImage);
+            return ImagesAreEqual(actualImage, expectedImage, resizeOption);
         }
 
         /// <summary>
@@ -67,12 +69,13 @@ namespace Codeuctivity.ImageSharpCompare
         /// </summary>
         /// <param name="actual"></param>
         /// <param name="expected"></param>
+        /// <param name="resizeOption"></param>
         /// <returns>True if every pixel of actual is equal to expected</returns>
-        public static bool ImagesAreEqual(Stream actual, Stream expected)
+        public static bool ImagesAreEqual(Stream actual, Stream expected, ResizeOption resizeOption = ResizeOption.DontResize)
         {
             using var actualImage = Image.Load(actual);
             using var expectedImage = Image.Load(expected);
-            return ImagesAreEqual(actualImage, expectedImage);
+            return ImagesAreEqual(actualImage, expectedImage, resizeOption);
         }
 
         /// <summary>
@@ -80,8 +83,9 @@ namespace Codeuctivity.ImageSharpCompare
         /// </summary>
         /// <param name="actual"></param>
         /// <param name="expected"></param>
+        /// <param name="resizeOption"></param>
         /// <returns>True if every pixel of actual is equal to expected</returns>
-        public static bool ImagesAreEqual(Image actual, Image expected)
+        public static bool ImagesAreEqual(Image actual, Image expected, ResizeOption resizeOption = ResizeOption.DontResize)
         {
             var ownsActual = false;
             var ownsExpected = false;
@@ -92,7 +96,7 @@ namespace Codeuctivity.ImageSharpCompare
                 actualPixelaccessableImage = ToRgb24Image(actual, out ownsActual);
                 expectedPixelaccessableImage = ToRgb24Image(expected, out ownsExpected);
 
-                return ImagesAreEqual(actualPixelaccessableImage, expectedPixelaccessableImage);
+                return ImagesAreEqual(actualPixelaccessableImage, expectedPixelaccessableImage, resizeOption);
             }
             finally
             {
@@ -112,26 +116,41 @@ namespace Codeuctivity.ImageSharpCompare
         /// </summary>
         /// <param name="actual"></param>
         /// <param name="expected"></param>
+        /// <param name="resizeOption"></param>
         /// <returns>True if every pixel of actual is equal to expected</returns>
-        public static bool ImagesAreEqual(Image<Rgb24> actual, Image<Rgb24> expected)
+        public static bool ImagesAreEqual(Image<Rgb24> actual, Image<Rgb24> expected, ResizeOption resizeOption = ResizeOption.DontResize)
         {
-            if (!ImagesHaveSameDimension(actual, expected))
+            if (resizeOption == ResizeOption.DontResize && !ImagesHaveSameDimension(actual, expected))
             {
                 return false;
             }
 
-            for (var x = 0; x < actual.Width; x++)
+            if (resizeOption == ResizeOption.DontResize || ImagesHaveSameDimension(actual, expected))
             {
-                for (var y = 0; y < actual.Height; y++)
+                for (var x = 0; x < actual.Width; x++)
                 {
-                    if (!actual[x, y].Equals(expected[x, y]))
+                    for (var y = 0; y < actual.Height; y++)
                     {
-                        return false;
+                        if (!actual[x, y].Equals(expected[x, y]))
+                        {
+                            return false;
+                        }
                     }
                 }
+
+                return true;
             }
 
-            return true;
+            var grown = GrowToSameDimension(actual, expected);
+            try
+            {
+                return ImagesAreEqual(grown.Item1, grown.Item2, ResizeOption.DontResize);
+            }
+            finally
+            {
+                grown.Item1?.Dispose();
+                grown.Item2?.Dispose();
+            }
         }
 
         /// <summary>
@@ -139,12 +158,13 @@ namespace Codeuctivity.ImageSharpCompare
         /// </summary>
         /// <param name="pathActualImage"></param>
         /// <param name="pathExpectedImage"></param>
+        /// <param name="resizeOption"></param>
         /// <returns>Mean and absolute pixel error</returns>
-        public static ICompareResult CalcDiff(string pathActualImage, string pathExpectedImage)
+        public static ICompareResult CalcDiff(string pathActualImage, string pathExpectedImage, ResizeOption resizeOption = ResizeOption.DontResize)
         {
             using var actual = Image.Load(pathActualImage);
             using var expected = Image.Load(pathExpectedImage);
-            return CalcDiff(actual, expected);
+            return CalcDiff(actual, expected, resizeOption);
         }
 
         /// <summary>
@@ -152,12 +172,13 @@ namespace Codeuctivity.ImageSharpCompare
         /// </summary>
         /// <param name="actualImage"></param>
         /// <param name="expectedImage"></param>
+        /// <param name="resizeOption"></param>
         /// <returns>Mean and absolute pixel error</returns>
-        public static ICompareResult CalcDiff(Stream actualImage, Stream expectedImage)
+        public static ICompareResult CalcDiff(Stream actualImage, Stream expectedImage, ResizeOption resizeOption = ResizeOption.DontResize)
         {
             using var actual = Image.Load(actualImage);
             using var expected = Image.Load(expectedImage);
-            return CalcDiff(actual, expected);
+            return CalcDiff(actual, expected, resizeOption);
         }
 
         /// <summary>
@@ -165,8 +186,9 @@ namespace Codeuctivity.ImageSharpCompare
         /// </summary>
         /// <param name="actual"></param>
         /// <param name="expected"></param>
+        /// <param name="resizeOption"></param>
         /// <returns>Mean and absolute pixel error</returns>
-        public static ICompareResult CalcDiff(Image actual, Image expected)
+        public static ICompareResult CalcDiff(Image actual, Image expected, ResizeOption resizeOption = ResizeOption.DontResize)
         {
             var ownsActual = false;
             var ownsExpected = false;
@@ -178,7 +200,7 @@ namespace Codeuctivity.ImageSharpCompare
                 actualRgb24 = ToRgb24Image(actual, out ownsActual);
                 expectedRgb24 = ToRgb24Image(expected, out ownsExpected);
 
-                return CalcDiff(actualRgb24, expectedRgb24);
+                return CalcDiff(actualRgb24, expectedRgb24, resizeOption);
             }
             finally
             {
@@ -198,10 +220,27 @@ namespace Codeuctivity.ImageSharpCompare
         /// </summary>
         /// <param name="actual"></param>
         /// <param name="expected"></param>
+        /// <param name="resizeOption"></param>
         /// <returns>Mean and absolute pixel error</returns>
-        public static ICompareResult CalcDiff(Image<Rgb24> actual, Image<Rgb24> expected)
+        public static ICompareResult CalcDiff(Image<Rgb24> actual, Image<Rgb24> expected, ResizeOption resizeOption = ResizeOption.DontResize)
         {
-            if (!ImagesHaveSameDimension(actual, expected))
+            var immagesHaveSameDimension = ImagesHaveSameDimension(actual, expected);
+
+            if (resizeOption == ResizeOption.Resize && !immagesHaveSameDimension)
+            {
+                var grown = GrowToSameDimension(actual, expected);
+                try
+                {
+                    return CalcDiff(grown.Item1, grown.Item2, ResizeOption.DontResize);
+                }
+                finally
+                {
+                    grown.Item1?.Dispose();
+                    grown.Item2?.Dispose();
+                }
+            }
+
+            if (!immagesHaveSameDimension)
             {
                 throw new ImageSharpCompareException(sizeDiffersExceptionMessage);
             }
@@ -237,13 +276,14 @@ namespace Codeuctivity.ImageSharpCompare
         /// <param name="pathActualImage"></param>
         /// <param name="pathExpectedImage"></param>
         /// <param name="pathMaskImage"></param>
+        /// <param name="resizeOption"></param>
         /// <returns>Mean and absolute pixel error</returns>
-        public static ICompareResult CalcDiff(string pathActualImage, string pathExpectedImage, string pathMaskImage)
+        public static ICompareResult CalcDiff(string pathActualImage, string pathExpectedImage, string pathMaskImage, ResizeOption resizeOption = ResizeOption.DontResize)
         {
             using var actual = Image.Load(pathActualImage);
             using var expected = Image.Load(pathExpectedImage);
             using var mask = Image.Load(pathMaskImage);
-            return CalcDiff(actual, expected, mask);
+            return CalcDiff(actual, expected, mask, resizeOption);
         }
 
         /// <summary>
@@ -252,12 +292,13 @@ namespace Codeuctivity.ImageSharpCompare
         /// <param name="actualImage"></param>
         /// <param name="expectedImage"></param>
         /// <param name="maskImage"></param>
+        /// <param name="resizeOption"></param>
         /// <returns></returns>
-        public static ICompareResult CalcDiff(Stream actualImage, Stream expectedImage, Image maskImage)
+        public static ICompareResult CalcDiff(Stream actualImage, Stream expectedImage, Image maskImage, ResizeOption resizeOption = ResizeOption.DontResize)
         {
             using var actual = Image.Load(actualImage);
             using var expected = Image.Load(expectedImage);
-            return CalcDiff(actual, expected, maskImage);
+            return CalcDiff(actual, expected, maskImage, resizeOption);
         }
 
         private static bool ImagesHaveSameDimension(Image actual, Image expected)
@@ -319,8 +360,9 @@ namespace Codeuctivity.ImageSharpCompare
         /// <param name="actual"></param>
         /// <param name="expected"></param>
         /// <param name="maskImage"></param>
+        /// <param name="resizeOption"></param>
         /// <returns>Mean and absolute pixel error</returns>
-        public static ICompareResult CalcDiff(Image actual, Image expected, Image maskImage)
+        public static ICompareResult CalcDiff(Image actual, Image expected, Image maskImage, ResizeOption resizeOption = ResizeOption.DontResize)
         {
             var ownsActual = false;
             var ownsExpected = false;
@@ -335,7 +377,7 @@ namespace Codeuctivity.ImageSharpCompare
                 expectedRgb24 = ToRgb24Image(expected, out ownsExpected);
                 maskImageRgb24 = ToRgb24Image(maskImage, out ownsMask);
 
-                return CalcDiff(actualRgb24, expectedRgb24, maskImageRgb24);
+                return CalcDiff(actualRgb24, expectedRgb24, maskImageRgb24, resizeOption);
             }
             finally
             {
@@ -360,10 +402,28 @@ namespace Codeuctivity.ImageSharpCompare
         /// <param name="actual"></param>
         /// <param name="expected"></param>
         /// <param name="maskImage"></param>
+        /// <param name="resizeOption"></param>
         /// <returns>Mean and absolute pixel error</returns>
-        public static ICompareResult CalcDiff(Image<Rgb24> actual, Image<Rgb24> expected, Image<Rgb24> maskImage)
+        public static ICompareResult CalcDiff(Image<Rgb24> actual, Image<Rgb24> expected, Image<Rgb24> maskImage, ResizeOption resizeOption = ResizeOption.DontResize)
         {
-            if (!ImagesHaveSameDimension(actual, expected))
+            var immagesHaveSameDimension = ImagesHaveSameDimension(actual, expected);
+
+            if (resizeOption == ResizeOption.Resize && !immagesHaveSameDimension)
+            {
+                var grown = GrowToSameDimension(actual, expected);
+                var grownMask = GrowToSameDimension(grown.Item1, maskImage);
+                try
+                {
+                    return CalcDiff(grown.Item1, grown.Item2, grownMask.Item2, ResizeOption.DontResize);
+                }
+                finally
+                {
+                    grown.Item1?.Dispose();
+                    grown.Item2?.Dispose();
+                }
+            }
+
+            if (!immagesHaveSameDimension)
             {
                 throw new ImageSharpCompareException(sizeDiffersExceptionMessage);
             }
@@ -420,12 +480,13 @@ namespace Codeuctivity.ImageSharpCompare
         /// </summary>
         /// <param name="pathActualImage"></param>
         /// <param name="pathExpectedImage"></param>
+        /// <param name="resizeOption"></param>
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
-        public static Image CalcDiffMaskImage(string pathActualImage, string pathExpectedImage)
+        public static Image CalcDiffMaskImage(string pathActualImage, string pathExpectedImage, ResizeOption resizeOption = ResizeOption.DontResize)
         {
             using var actual = Image.Load(pathActualImage);
             using var expected = Image.Load(pathExpectedImage);
-            return CalcDiffMaskImage(actual, expected);
+            return CalcDiffMaskImage(actual, expected, resizeOption);
         }
 
         /// <summary>
@@ -433,12 +494,13 @@ namespace Codeuctivity.ImageSharpCompare
         /// </summary>
         /// <param name="actualImage"></param>
         /// <param name="expectedImage"></param>
+        /// <param name="resizeOption"></param>
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
-        public static Image CalcDiffMaskImage(Stream actualImage, Stream expectedImage)
+        public static Image CalcDiffMaskImage(Stream actualImage, Stream expectedImage, ResizeOption resizeOption = ResizeOption.DontResize)
         {
             using var actual = Image.Load(actualImage);
             using var expected = Image.Load(expectedImage);
-            return CalcDiffMaskImage(actual, expected);
+            return CalcDiffMaskImage(actual, expected, resizeOption);
         }
 
         /// <summary>
@@ -446,8 +508,9 @@ namespace Codeuctivity.ImageSharpCompare
         /// </summary>
         /// <param name="actual"></param>
         /// <param name="expected"></param>
+        /// <param name="resizeOption"></param>
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
-        public static Image CalcDiffMaskImage(Image actual, Image expected)
+        public static Image CalcDiffMaskImage(Image actual, Image expected, ResizeOption resizeOption = ResizeOption.DontResize)
         {
             var ownsActual = false;
             var ownsExpected = false;
@@ -459,7 +522,7 @@ namespace Codeuctivity.ImageSharpCompare
                 actualRgb24 = ToRgb24Image(actual, out ownsActual);
                 expectedRgb24 = ToRgb24Image(expected, out ownsExpected);
 
-                return CalcDiffMaskImage(actualRgb24, expectedRgb24);
+                return CalcDiffMaskImage(actualRgb24, expectedRgb24, resizeOption);
             }
             finally
             {
@@ -479,10 +542,11 @@ namespace Codeuctivity.ImageSharpCompare
         /// </summary>
         /// <param name="actual"></param>
         /// <param name="expected"></param>
+        /// <param name="resizeOption"></param>
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
-        public static Image CalcDiffMaskImage(Image<Rgb24> actual, Image<Rgb24> expected)
+        public static Image CalcDiffMaskImage(Image<Rgb24> actual, Image<Rgb24> expected, ResizeOption resizeOption = ResizeOption.DontResize)
         {
-            if (!ImagesHaveSameDimension(actual, expected))
+            if (resizeOption == ResizeOption.DontResize && !ImagesHaveSameDimension(actual, expected))
             {
                 throw new ImageSharpCompareException(sizeDiffersExceptionMessage);
             }
@@ -507,6 +571,19 @@ namespace Codeuctivity.ImageSharpCompare
                 }
             }
             return maskImage;
+        }
+
+        private static (Image<Rgb24>, Image<Rgb24>) GrowToSameDimension(Image<Rgb24> actual, Image<Rgb24> expected)
+        {
+            var biggesWidh = actual.Width > expected.Width ? actual.Width : expected.Width;
+            var biggesHeight = actual.Height > expected.Height ? actual.Height : expected.Height;
+
+            var grownExpected = expected.Clone();
+            var grownActual = actual.Clone();
+            grownActual.Mutate(x => x.Resize(biggesWidh, biggesHeight));
+            grownExpected.Mutate(x => x.Resize(biggesWidh, biggesHeight));
+
+            return (grownActual, grownExpected);
         }
     }
 }
