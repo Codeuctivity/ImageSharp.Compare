@@ -2,7 +2,6 @@
     "recommendations": [
         "mhutchie.git-graph",
         "streetsidesoftware.code-spell-checker",
-        "slevesque.vscode-hexdump",
         "timonwong.shellcheck",
         "redhat.vscode-xml",
         "redhat.vscode-yaml"
