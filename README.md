@@ -10,8 +10,13 @@ ImageSharpCompare focus on os agnostic support and therefore depends on [SixLabo
 
 ## Example simple show cases
 
+### Compares each RGB value of each pixel to determine the equality
+
 ```csharp
 bool isEqual = ImageSharpCompare.ImagesAreEqual("actual.png", "expected.png");
+```
+
+### Calculates sum of diff of all pixels
 
 var calcDiff = ImageSharpCompare.CalcDiff("2x2PixelBlack.png", "2x2PixelWhite.png");
 Console.WriteLine($"PixelErrorCount: {diff.PixelErrorCount}");
@@ -57,6 +62,7 @@ var maskedDiff = ImageSharpCompare.CalcDiff(pathPic1, pathPic2, "differenceMask.
 Assert.That(maskedDiff.AbsoluteError, Is.EqualTo(0));
 ```
 
-## .net Framework specific note
+## .net Framework specific note / ImageSharp license note
 
-.net framework (an older Windows-based .NET implementation) is supported by versions 2.x.y .
+.net framework (an older Windows-based .NET implementation) is supported by versions 2.x.y, caused by the used dependency ImageSharp. ImageSharp dropped .net framework support starting with version 3.
+ImageSharp also made a license change. You may want to stick with 2.x.y if want to avoid that caused implications.
