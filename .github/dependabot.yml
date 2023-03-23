@@ -29,6 +29,7 @@ updates:
       interval: "daily"
     ignore:
       - dependency-name: "nunit"
+      - dependency-name: "coverlet.collector"
       - dependency-name: "SonarAnalyzer.CSharp"
       - dependency-name: "AngleSharp"
       - dependency-name: "Microsoft.NET.Test.Sdk"
