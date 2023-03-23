@@ -2,7 +2,7 @@
 
 Compares images
 
-[![.github/workflows/dotnet.yml](https://github.com/Codeuctivity/ImageSharp.Compare/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Codeuctivity/ImageSharp.Compare/actions/workflows/dotnet.yml) [![Nuget](https://img.shields.io/nuget/v/Codeuctivity.ImageSharpCompare.svg)](https://www.nuget.org/packages/Codeuctivity.ImageSharpCompare/) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/2fb2807a16f84021b088769e56e1515a)](https://www.codacy.com/gh/Codeuctivity/ImageSharp.Compare/dashboard?utm_source=github.com&utm_medium=referral&utm_content=Codeuctivity/ImageSharp.Compare&utm_campaign=Badge_Grade) [![Donate](https://img.shields.io/static/v1?label=Paypal&message=Donate&color=informational)](https://www.paypal.com/donate?hosted_button_id=7M7UFMMRTS7UE)
+[![.github/workflows/dotnet.yml](https://github.com/Codeuctivity/ImageSharp.Compare/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Codeuctivity/ImageSharp.Compare/actions/workflows/dotnet.yml) [![Nuget](https://img.shields.io/nuget/v/Codeuctivity.ImageSharpCompare.svg)](https://www.nuget.org/packages/Codeuctivity.ImageSharpCompare/) [![Donate](https://img.shields.io/static/v1?label=Paypal&message=Donate&color=informational)](https://www.paypal.com/donate?hosted_button_id=7M7UFMMRTS7UE)
 
 Inspired by the image compare feature "Visual verification API" of [TestApi](https://blogs.msdn.microsoft.com/ivo_manolov/2009/04/20/introduction-to-testapi-part-3-visual-verification-apis/) this code supports comparing images by using a tolerance mask image. That tolerance mask image is a valid image by itself and can be manipulated.
 
@@ -16,8 +16,9 @@ ImageSharpCompare focus on os agnostic support and therefore depends on [SixLabo
 bool isEqual = ImageSharpCompare.ImagesAreEqual("actual.png", "expected.png");
 ```
 
-### Calculates sum of diff of all pixels
+### Calculates diff
 
+```csharp
 var calcDiff = ImageSharpCompare.CalcDiff("2x2PixelBlack.png", "2x2PixelWhite.png");
 Console.WriteLine($"PixelErrorCount: {diff.PixelErrorCount}");
 Console.WriteLine($"PixelErrorPercentage: {diff.PixelErrorPercentage}");
@@ -43,7 +44,7 @@ Imagine two images you want to compare, and want to accept the found difference 
 
 ### Tolerance mask image
 
-using "compare.CalcDiff" you can calc a diff mask from actual and reference image
+Using **CalcDiffMaskImage** you can calc a diff mask from actual and reference image
 
 Example - Create difference image
 
@@ -61,8 +62,3 @@ Example - Compare two images using the created difference image. Add white pixel
 var maskedDiff = ImageSharpCompare.CalcDiff(pathPic1, pathPic2, "differenceMask.png");
 Assert.That(maskedDiff.AbsoluteError, Is.EqualTo(0));
 ```
-
-## .net Framework specific note / ImageSharp license note
-
-.net framework (an older Windows-based .NET implementation) is supported by versions 2.x.y, caused by the used dependency ImageSharp. ImageSharp dropped .net framework support starting with version 3.
-ImageSharp also made a license change. You may want to stick with 2.x.y if want to avoid that caused implications.
