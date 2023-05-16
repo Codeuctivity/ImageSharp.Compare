@@ -12,11 +12,24 @@ SkiaSharpCompare focus on os agnostic support and therefore depends on [SkiaShar
 
 ## Example simple show cases
 
-```csharp
-bool imagesAreEqual = SkiaSharpCompare.ImagesAreEqual("actual.png", "expected.png");
+### Compares each RGB value of each pixel to determine the equality
 
-// calcs MeanError, AbsoluteError, PixelErrorCount and PixelErrorPercentage
-ICompareResult calcDiff = SkiaSharpCompare.CalcDiff("actual.png", "expected.png");
+```csharp
+bool isEqual = Compare.ImagesAreEqual("actual.png", "expected.png");
+```
+
+### Calculates diff
+
+```csharp
+var calcDiff = Compare.CalcDiff("2x2PixelBlack.png", "2x2PixelWhite.png");
+Console.WriteLine($"PixelErrorCount: {diff.PixelErrorCount}");
+Console.WriteLine($"PixelErrorPercentage: {diff.PixelErrorPercentage}");
+Console.WriteLine($"AbsoluteError: {diff.AbsoluteError}");
+Console.WriteLine($"MeanError: {diff.MeanError}");
+// PixelErrorCount: 4
+// PixelErrorPercentage: 100
+// AbsoluteError: 3060
+// MeanError: 765
 ```
 
 ## Example show case allowing some tolerated diff
@@ -33,7 +46,7 @@ Imagine two images you want to compare, and want to accept the found difference 
 
 ### Tolerance mask image
 
-using "compare.CalcDiff" you can calc a diff mask from actual and reference image
+Using **CalcDiffMaskImage** you can calc a diff mask from actual and reference image
 
 Example - Create difference image
 

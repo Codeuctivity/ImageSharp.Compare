@@ -53,12 +53,13 @@ namespace Codeuctivity.SkiaSharpCompare
         /// </summary>
         /// <param name="pathImageActual"></param>
         /// <param name="pathImageExpected"></param>
+        /// <param name="resizeOption"></param>
         /// <returns>True if every pixel of actual is equal to expected</returns>
-        public static bool ImagesAreEqual(string pathImageActual, string pathImageExpected)
+        public static bool ImagesAreEqual(string pathImageActual, string pathImageExpected, ResizeOption resizeOption = ResizeOption.DontResize)
         {
             using var actualImage = SKBitmap.Decode(pathImageActual);
             using var expectedImage = SKBitmap.Decode(pathImageExpected);
-            return ImagesAreEqual(actualImage, expectedImage);
+            return ImagesAreEqual(actualImage, expectedImage, resizeOption);
         }
 
         /// <summary>
@@ -66,12 +67,13 @@ namespace Codeuctivity.SkiaSharpCompare
         /// </summary>
         /// <param name="actual"></param>
         /// <param name="expected"></param>
+        /// <param name="resizeOption"></param>
         /// <returns>True if every pixel of actual is equal to expected</returns>
-        public static bool ImagesAreEqual(Stream actual, Stream expected)
+        public static bool ImagesAreEqual(Stream actual, Stream expected, ResizeOption resizeOption = ResizeOption.DontResize)
         {
             using var actualImage = SKBitmap.Decode(actual);
             using var expectedImage = SKBitmap.Decode(expected);
-            return ImagesAreEqual(actualImage, expectedImage);
+            return ImagesAreEqual(actualImage, expectedImage, resizeOption);
         }
 
         /// <summary>
@@ -79,26 +81,42 @@ namespace Codeuctivity.SkiaSharpCompare
         /// </summary>
         /// <param name="actual"></param>
         /// <param name="expected"></param>
+        /// <param name="resizeOption"></param>
         /// <returns>True if every pixel of actual is equal to expected</returns>
-        public static bool ImagesAreEqual(SKBitmap actual, SKBitmap expected)
+        public static bool ImagesAreEqual(SKBitmap actual, SKBitmap expected, ResizeOption resizeOption = ResizeOption.DontResize)
         {
-            if (!ImagesHaveSameDimension(actual, expected))
+            if (resizeOption == ResizeOption.DontResize && !ImagesHaveSameDimension(actual, expected))
             {
                 return false;
             }
 
-            for (var x = 0; x < actual.Width; x++)
+            if (resizeOption == ResizeOption.DontResize || ImagesHaveSameDimension(actual, expected))
             {
-                for (var y = 0; y < actual.Height; y++)
+                for (var x = 0; x < actual.Width; x++)
                 {
-                    if (!actual.GetPixel(x, y).Equals(expected.GetPixel(x, y)))
+                    for (var y = 0; y < actual.Height; y++)
                     {
-                        return false;
+                        if (!actual.GetPixel(x, y).Equals(expected.GetPixel(x, y)))
+                        {
+                            return false;
+                        }
                     }
                 }
+
+                return true;
             }
 
-            return true;
+            var grown = GrowToSameDimension(actual, expected);
+            try
+            {
+                return ImagesAreEqual(grown.Item1, grown.Item2, ResizeOption.DontResize);
+            }
+            finally
+            {
+                grown.Item1?.Dispose();
+                grown.Item2?.Dispose();
+                grown.Item3?.Dispose();
+            }
         }
 
         /// <summary>
@@ -106,12 +124,13 @@ namespace Codeuctivity.SkiaSharpCompare
         /// </summary>
         /// <param name="pathActualImage"></param>
         /// <param name="pathExpectedImage"></param>
+        /// <param name="resizeOption"></param>
         /// <returns>Mean and absolute pixel error</returns>
-        public static ICompareResult CalcDiff(string pathActualImage, string pathExpectedImage)
+        public static ICompareResult CalcDiff(string pathActualImage, string pathExpectedImage, ResizeOption resizeOption = ResizeOption.DontResize)
         {
             using var actual = SKBitmap.Decode(pathActualImage);
             using var expected = SKBitmap.Decode(pathExpectedImage);
-            return CalcDiff(actual, expected);
+            return CalcDiff(actual, expected, resizeOption);
         }
 
         /// <summary>
@@ -119,12 +138,13 @@ namespace Codeuctivity.SkiaSharpCompare
         /// </summary>
         /// <param name="actualImage"></param>
         /// <param name="expectedImage"></param>
+        /// <param name="resizeOption"></param>
         /// <returns>Mean and absolute pixel error</returns>
-        public static ICompareResult CalcDiff(Stream actualImage, Stream expectedImage)
+        public static ICompareResult CalcDiff(Stream actualImage, Stream expectedImage, ResizeOption resizeOption = ResizeOption.DontResize)
         {
             using var actual = SKBitmap.Decode(actualImage);
             using var expected = SKBitmap.Decode(expectedImage);
-            return CalcDiff(actual, expected);
+            return CalcDiff(actual, expected, resizeOption);
         }
 
         /// <summary>
@@ -132,9 +152,27 @@ namespace Codeuctivity.SkiaSharpCompare
         /// </summary>
         /// <param name="actual"></param>
         /// <param name="expected"></param>
+        /// <param name="resizeOption"></param>
         /// <returns>Mean and absolute pixel error</returns>
-        public static ICompareResult CalcDiff(SKBitmap actual, SKBitmap expected)
+        public static ICompareResult CalcDiff(SKBitmap actual, SKBitmap expected, ResizeOption resizeOption = ResizeOption.DontResize)
         {
+            var immagesHaveSameDimension = ImagesHaveSameDimension(actual, expected);
+
+            if (resizeOption == ResizeOption.Resize && !immagesHaveSameDimension)
+            {
+                var grown = GrowToSameDimension(actual, expected);
+                try
+                {
+                    return CalcDiff(grown.Item1, grown.Item2, ResizeOption.DontResize);
+                }
+                finally
+                {
+                    grown.Item1?.Dispose();
+                    grown.Item2?.Dispose();
+                    grown.Item3?.Dispose();
+                }
+            }
+
             if (!ImagesHaveSameDimension(actual, expected))
             {
                 throw new SkiaSharpCompareException(sizeDiffersExceptionMessage);
@@ -171,13 +209,14 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <param name="pathActualImage"></param>
         /// <param name="pathExpectedImage"></param>
         /// <param name="pathMaskImage"></param>
+        /// <param name="resizeOption"></param>
         /// <returns>Mean and absolute pixel error</returns>
-        public static ICompareResult CalcDiff(string pathActualImage, string pathExpectedImage, string pathMaskImage)
+        public static ICompareResult CalcDiff(string pathActualImage, string pathExpectedImage, string pathMaskImage, ResizeOption resizeOption = ResizeOption.DontResize)
         {
             using var actual = SKBitmap.Decode(pathActualImage);
             using var expected = SKBitmap.Decode(pathExpectedImage);
             using var mask = SKBitmap.Decode(pathMaskImage);
-            return CalcDiff(actual, expected, mask);
+            return CalcDiff(actual, expected, mask, resizeOption);
         }
 
         /// <summary>
@@ -200,10 +239,28 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <param name="actual"></param>
         /// <param name="expected"></param>
         /// <param name="maskImage"></param>
+        /// <param name="resizeOption"></param>
         /// <returns>Mean and absolute pixel error</returns>
-        public static ICompareResult CalcDiff(SKBitmap actual, SKBitmap expected, SKBitmap maskImage)
+        public static ICompareResult CalcDiff(SKBitmap actual, SKBitmap expected, SKBitmap maskImage, ResizeOption resizeOption = ResizeOption.DontResize)
         {
-            if (!ImagesHaveSameDimension(actual, expected))
+            var immagesHaveSameDimension = ImagesHaveSameDimension(actual, expected) && ImagesHaveSameDimension(actual, maskImage);
+
+            if (resizeOption == ResizeOption.Resize && !immagesHaveSameDimension)
+            {
+                var grown = GrowToSameDimension(actual, expected, maskImage);
+                try
+                {
+                    return CalcDiff(grown.Item1, grown.Item2, grown.Item3, ResizeOption.DontResize);
+                }
+                finally
+                {
+                    grown.Item1?.Dispose();
+                    grown.Item2?.Dispose();
+                    grown.Item3?.Dispose();
+                }
+            }
+
+            if (!immagesHaveSameDimension)
             {
                 throw new SkiaSharpCompareException(sizeDiffersExceptionMessage);
             }
@@ -260,12 +317,13 @@ namespace Codeuctivity.SkiaSharpCompare
         /// </summary>
         /// <param name="pathActualImage"></param>
         /// <param name="pathExpectedImage"></param>
+        /// <param name="resizeOption"></param>
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
-        public static SKBitmap CalcDiffMaskImage(string pathActualImage, string pathExpectedImage)
+        public static SKBitmap CalcDiffMaskImage(string pathActualImage, string pathExpectedImage, ResizeOption resizeOption = ResizeOption.DontResize)
         {
             using var actual = SKBitmap.Decode(pathActualImage);
             using var expected = SKBitmap.Decode(pathExpectedImage);
-            return CalcDiffMaskImage(actual, expected);
+            return CalcDiffMaskImage(actual, expected, resizeOption);
         }
 
         /// <summary>
@@ -273,8 +331,9 @@ namespace Codeuctivity.SkiaSharpCompare
         /// </summary>
         /// <param name="actualImage"></param>
         /// <param name="expectedImage"></param>
+        /// <param name="resizeOption"></param>
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
-        public static SKBitmap CalcDiffMaskImage(Stream actualImage, Stream expectedImage)
+        public static SKBitmap CalcDiffMaskImage(Stream actualImage, Stream expectedImage, ResizeOption resizeOption = ResizeOption.DontResize)
         {
             if (actualImage == null)
             {
@@ -303,7 +362,7 @@ namespace Codeuctivity.SkiaSharpCompare
             expectedImageCopy.Position = 0;
             using var actual = SKBitmap.Decode(actualImageCopy);
             using var expected = SKBitmap.Decode(expectedImageCopy);
-            return CalcDiffMaskImage(actual, expected);
+            return CalcDiffMaskImage(actual, expected, resizeOption);
         }
 
         /// <summary>
@@ -311,10 +370,11 @@ namespace Codeuctivity.SkiaSharpCompare
         /// </summary>
         /// <param name="actual"></param>
         /// <param name="expected"></param>
+        /// <param name="resizeOption"></param>
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
-        public static SKBitmap CalcDiffMaskImage(SKBitmap actual, SKBitmap expected)
+        public static SKBitmap CalcDiffMaskImage(SKBitmap actual, SKBitmap expected, ResizeOption resizeOption = ResizeOption.DontResize)
         {
-            if (!ImagesHaveSameDimension(actual, expected))
+            if (resizeOption == ResizeOption.DontResize && !ImagesHaveSameDimension(actual, expected))
             {
                 throw new SkiaSharpCompareException(sizeDiffersExceptionMessage);
             }
@@ -352,6 +412,22 @@ namespace Codeuctivity.SkiaSharpCompare
             }
 
             return actual.Height == expected.Height && actual.Width == expected.Width;
+        }
+
+        private static (SKBitmap, SKBitmap, SKBitmap) GrowToSameDimension(SKBitmap actual, SKBitmap expected, SKBitmap? mask = null)
+        {
+            var biggesWidh = actual.Width > expected.Width ? actual.Width : expected.Width;
+            biggesWidh = biggesWidh > (mask?.Width ?? 0) ? biggesWidh : (mask?.Width ?? 0);
+            var biggesHeight = actual.Height > expected.Height ? actual.Height : expected.Height;
+            biggesHeight = biggesHeight > (mask?.Height ?? 0) ? biggesHeight : (mask?.Height ?? 0);
+
+            var skSizel = new SKSizeI(biggesWidh, biggesHeight);
+
+            var grownExpected = expected.Resize(skSizel, SKFilterQuality.None);
+            var grownActual = actual.Resize(skSizel, SKFilterQuality.None);
+            var grownMask = mask?.Resize(skSizel, SKFilterQuality.None) ?? new SKBitmap();
+
+            return (grownActual, grownExpected, grownMask);
         }
     }
 }
