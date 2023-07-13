@@ -545,46 +545,75 @@ namespace Codeuctivity.ImageSharpCompare
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
         public static Image CalcDiffMaskImage(Image<Rgb24> actual, Image<Rgb24> expected, ResizeOption resizeOption = ResizeOption.DontResize)
         {
-            if (resizeOption == ResizeOption.DontResize && !ImagesHaveSameDimension(actual, expected))
+            var imagesHAveSameDimension = ImagesHaveSameDimension(actual, expected);
+
+            if (resizeOption == ResizeOption.DontResize && !imagesHAveSameDimension)
             {
                 throw new ImageSharpCompareException(sizeDiffersExceptionMessage);
             }
 
-            var maskImage = new Image<Rgb24>(actual.Width, actual.Height);
-
-            for (var x = 0; x < actual.Width; x++)
+            if (imagesHAveSameDimension)
             {
-                for (var y = 0; y < actual.Height; y++)
+                var maskImage = new Image<Rgb24>(actual.Width, actual.Height);
+
+                for (var x = 0; x < actual.Width; x++)
                 {
-                    var actualPixel = actual[x, y];
-                    var expectedPixel = expected[x, y];
-
-                    var pixel = new Rgb24
+                    for (var y = 0; y < actual.Height; y++)
                     {
-                        R = (byte)Math.Abs(actualPixel.R - expectedPixel.R),
-                        G = (byte)Math.Abs(actualPixel.G - expectedPixel.G),
-                        B = (byte)Math.Abs(actualPixel.B - expectedPixel.B)
-                    };
+                        var actualPixel = actual[x, y];
+                        var expectedPixel = expected[x, y];
 
-                    maskImage[x, y] = pixel;
+                        var pixel = new Rgb24
+                        {
+                            R = (byte)Math.Abs(actualPixel.R - expectedPixel.R),
+                            G = (byte)Math.Abs(actualPixel.G - expectedPixel.G),
+                            B = (byte)Math.Abs(actualPixel.B - expectedPixel.B)
+                        };
+
+                        maskImage[x, y] = pixel;
+                    }
                 }
+                return maskImage;
             }
-            return maskImage;
+
+            var grown = GrowToSameDimension(actual, expected);
+            try
+            {
+                return CalcDiffMaskImage(grown.Item1, grown.Item2, ResizeOption.DontResize);
+            }
+            finally
+            {
+                grown.Item1?.Dispose();
+                grown.Item2?.Dispose();
+            }
         }
 
-        private static (Image<Rgb24>, Image<Rgb24>, Image<Rgb24>?) GrowToSameDimension(Image<Rgb24> actual, Image<Rgb24> expected, Image<Rgb24>? mask = null)
+        private static (Image<Rgb24>, Image<Rgb24>) GrowToSameDimension(Image<Rgb24> actual, Image<Rgb24> expected)
         {
             var biggesWidh = actual.Width > expected.Width ? actual.Width : expected.Width;
-            biggesWidh = biggesWidh > (mask?.Width ?? 0) ? biggesWidh : (mask?.Width ?? 0);
             var biggesHeight = actual.Height > expected.Height ? actual.Height : expected.Height;
-            biggesHeight = biggesHeight > (mask?.Height ?? 0) ? biggesHeight : (mask?.Height ?? 0);
 
             var grownExpected = expected.Clone();
             var grownActual = actual.Clone();
-            var grownMask = mask?.Clone();
             grownActual.Mutate(x => x.Resize(biggesWidh, biggesHeight));
             grownExpected.Mutate(x => x.Resize(biggesWidh, biggesHeight));
-            grownMask?.Mutate(x => x.Resize(biggesWidh, biggesHeight));
+
+            return (grownActual, grownExpected);
+        }
+
+        private static (Image<Rgb24>, Image<Rgb24>, Image<Rgb24>) GrowToSameDimension(Image<Rgb24> actual, Image<Rgb24> expected, Image<Rgb24> mask)
+        {
+            var biggesWidh = actual.Width > expected.Width ? actual.Width : expected.Width;
+            biggesWidh = biggesWidh > mask.Width ? biggesWidh : mask.Width;
+            var biggesHeight = actual.Height > expected.Height ? actual.Height : expected.Height;
+            biggesHeight = biggesHeight > mask.Height ? biggesHeight : mask.Height;
+
+            var grownExpected = expected.Clone();
+            var grownActual = actual.Clone();
+            var grownMask = mask.Clone();
+            grownActual.Mutate(x => x.Resize(biggesWidh, biggesHeight));
+            grownExpected.Mutate(x => x.Resize(biggesWidh, biggesHeight));
+            grownMask.Mutate(x => x.Resize(biggesWidh, biggesHeight));
 
             return (grownActual, grownExpected, grownMask);
         }
