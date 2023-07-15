@@ -374,17 +374,21 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
         public static SKBitmap CalcDiffMaskImage(SKBitmap actual, SKBitmap expected, ResizeOption resizeOption = ResizeOption.DontResize)
         {
-            if (resizeOption == ResizeOption.DontResize && !ImagesHaveSameDimension(actual, expected))
+            var imagesHAveSameDimension = ImagesHaveSameDimension(actual, expected);
+
+            if (resizeOption == ResizeOption.DontResize && !imagesHAveSameDimension)
             {
                 throw new SkiaSharpCompareException(sizeDiffersExceptionMessage);
             }
 
+            if (imagesHAveSameDimension)
+            {
             var maskImage = new SKBitmap(actual.Width, actual.Height);
 
-            for (var x = 0; x < actual.Width; x++)
-            {
-                for (var y = 0; y < actual.Height; y++)
+                for (var x = 0; x < actual.Width; x++)
                 {
+                    for (var y = 0; y < actual.Height; y++)
+                    {
                     var actualPixel = actual.GetPixel(x, y);
                     var expectedPixel = expected.GetPixel(x, y);
 
@@ -394,12 +398,37 @@ namespace Codeuctivity.SkiaSharpCompare
                     var pixel = new SKColor(red, green, blue);
 
                     maskImage.SetPixel(x, y, pixel);
+                    }
                 }
+                return maskImage;
             }
-            return maskImage;
+
+            var grown = GrowToSameDimension(actual, expected);
+            try
+            {
+                return CalcDiffMaskImage(grown.Item1, grown.Item2, ResizeOption.DontResize);
+            }
+            finally
+            {
+                grown.Item1?.Dispose();
+                grown.Item2?.Dispose();
+            }
         }
 
-        private static bool ImagesHaveSameDimension(SKBitmap actual, SKBitmap expected)
+        private static (Image<Rgb24>, Image<Rgb24>) GrowToSameDimension(Image<Rgb24> actual, Image<Rgb24> expected)
+        {
+            var biggesWidh = actual.Width > expected.Width ? actual.Width : expected.Width;
+            var biggesHeight = actual.Height > expected.Height ? actual.Height : expected.Height;
+
+            var grownExpected = expected.Clone();
+            var grownActual = actual.Clone();
+            grownActual.Mutate(x => x.Resize(biggesWidh, biggesHeight));
+            grownExpected.Mutate(x => x.Resize(biggesWidh, biggesHeight));
+
+            return (grownActual, grownExpected);
+        }
+
+        private static (Image<Rgb24>, Image<Rgb24>, Image<Rgb24>?) GrowToSameDimension(Image<Rgb24> actual, Image<Rgb24> expected, Image<Rgb24>? mask = null)
         {
             if (actual == null)
             {
@@ -417,15 +446,16 @@ namespace Codeuctivity.SkiaSharpCompare
         private static (SKBitmap, SKBitmap, SKBitmap) GrowToSameDimension(SKBitmap actual, SKBitmap expected, SKBitmap? mask = null)
         {
             var biggesWidh = actual.Width > expected.Width ? actual.Width : expected.Width;
-            biggesWidh = biggesWidh > (mask?.Width ?? 0) ? biggesWidh : (mask?.Width ?? 0);
+            biggesWidh = biggesWidh > mask.Width ? biggesWidh : mask.Width;
             var biggesHeight = actual.Height > expected.Height ? actual.Height : expected.Height;
-            biggesHeight = biggesHeight > (mask?.Height ?? 0) ? biggesHeight : (mask?.Height ?? 0);
+            biggesHeight = biggesHeight > mask.Height ? biggesHeight : mask.Height;
 
+            var grownMask = mask?.Clone();
             var skSizel = new SKSizeI(biggesWidh, biggesHeight);
 
             var grownExpected = expected.Resize(skSizel, SKFilterQuality.None);
             var grownActual = actual.Resize(skSizel, SKFilterQuality.None);
-            var grownMask = mask?.Resize(skSizel, SKFilterQuality.None) ?? new SKBitmap();
+            grownMask?.Mutate(x => x.Resize(biggesWidh, biggesHeight));
 
             return (grownActual, grownExpected, grownMask);
         }
