@@ -130,8 +130,8 @@ namespace SkiaSharpCompareTestNunit
         [TestCase(png0Rgba32, png1Rgba32, 203027, 1.25601321422385d, 681, 0.42129618173269651d, ResizeOption.DontResize)]
         [TestCase(pngBlack2x2px, pngBlack4x4px, 0, 0, 0, 0, ResizeOption.Resize)]
         [TestCase(pngBlack4x4px, pngWhite2x2px, 12240, 765, 16, 100.0d, ResizeOption.Resize)]
-        [TestCase(renderdForm1, renderdForm2, 50103469, 61.825603405725566d, 220164, 27.167324777887465d, ResizeOption.Resize)]
-        [TestCase(renderdForm2, renderdForm1, 50103469, 61.825603405725566d, 220164, 27.167324777887465d, ResizeOption.Resize)]
+        [TestCase(renderdForm1, renderdForm2, 49267623, 60.794204096742348d, 174178, 21.49284304047384d, ResizeOption.Resize)]
+        [TestCase(renderdForm2, renderdForm1, 49267623, 60.794204096742348d, 174178, 21.49284304047384d, ResizeOption.Resize)]
         public void ShouldVerifyThatImagesAreSemiEqual(string pathPic1, string pathPic2, int expectedAbsoluteError, double expectedMeanError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption)
         {
             var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
@@ -362,7 +362,7 @@ namespace SkiaSharpCompareTestNunit
             var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
             var absolutePathPic3 = Path.Combine(AppContext.BaseDirectory, pathPic3);
 
-            var exception = Assert.Throws<ImageSharpCompareException>(() => ImageSharpCompare.CalcDiff(absolutePathPic1, absolutePathPic2, absolutePathPic3));
+            var exception = Assert.Throws<SkiaSharpCompareException>(() => Compare.CalcDiff(absolutePathPic1, absolutePathPic2, absolutePathPic3));
 
             Assert.That(exception?.Message, Is.EqualTo("Size of images differ."));
         }

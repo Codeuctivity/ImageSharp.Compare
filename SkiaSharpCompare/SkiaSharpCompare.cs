@@ -115,7 +115,6 @@ namespace Codeuctivity.SkiaSharpCompare
             {
                 grown.Item1?.Dispose();
                 grown.Item2?.Dispose();
-                grown.Item3?.Dispose();
             }
         }
 
@@ -169,7 +168,6 @@ namespace Codeuctivity.SkiaSharpCompare
                 {
                     grown.Item1?.Dispose();
                     grown.Item2?.Dispose();
-                    grown.Item3?.Dispose();
                 }
             }
 
@@ -312,6 +310,21 @@ namespace Codeuctivity.SkiaSharpCompare
             return new CompareResult(absoluteError, meanError, pixelErrorCount, pixelErrorPercentage);
         }
 
+        private static bool ImagesHaveSameDimension(SKBitmap actual, SKBitmap expected)
+        {
+            if (actual == null)
+            {
+                throw new ArgumentNullException(nameof(actual));
+            }
+
+            if (expected == null)
+            {
+                throw new ArgumentNullException(nameof(expected));
+            }
+
+            return actual.Height == expected.Height && actual.Width == expected.Width;
+        }
+
         /// <summary>
         /// Creates a diff mask image of two images
         /// </summary>
@@ -383,21 +396,21 @@ namespace Codeuctivity.SkiaSharpCompare
 
             if (imagesHAveSameDimension)
             {
-            var maskImage = new SKBitmap(actual.Width, actual.Height);
+                var maskImage = new SKBitmap(actual.Width, actual.Height);
 
                 for (var x = 0; x < actual.Width; x++)
                 {
                     for (var y = 0; y < actual.Height; y++)
                     {
-                    var actualPixel = actual.GetPixel(x, y);
-                    var expectedPixel = expected.GetPixel(x, y);
+                        var actualPixel = actual.GetPixel(x, y);
+                        var expectedPixel = expected.GetPixel(x, y);
 
-                    var red = (byte)Math.Abs(actualPixel.Red - expectedPixel.Red);
-                    var green = (byte)Math.Abs(actualPixel.Green - expectedPixel.Green);
-                    var blue = (byte)Math.Abs(actualPixel.Blue - expectedPixel.Blue);
-                    var pixel = new SKColor(red, green, blue);
+                        var red = (byte)Math.Abs(actualPixel.Red - expectedPixel.Red);
+                        var green = (byte)Math.Abs(actualPixel.Green - expectedPixel.Green);
+                        var blue = (byte)Math.Abs(actualPixel.Blue - expectedPixel.Blue);
+                        var pixel = new SKColor(red, green, blue);
 
-                    maskImage.SetPixel(x, y, pixel);
+                        maskImage.SetPixel(x, y, pixel);
                     }
                 }
                 return maskImage;
@@ -415,47 +428,27 @@ namespace Codeuctivity.SkiaSharpCompare
             }
         }
 
-        private static (Image<Rgb24>, Image<Rgb24>) GrowToSameDimension(Image<Rgb24> actual, Image<Rgb24> expected)
+        private static (SKBitmap, SKBitmap) GrowToSameDimension(SKBitmap actual, SKBitmap expected)
         {
             var biggesWidh = actual.Width > expected.Width ? actual.Width : expected.Width;
             var biggesHeight = actual.Height > expected.Height ? actual.Height : expected.Height;
-
-            var grownExpected = expected.Clone();
-            var grownActual = actual.Clone();
-            grownActual.Mutate(x => x.Resize(biggesWidh, biggesHeight));
-            grownExpected.Mutate(x => x.Resize(biggesWidh, biggesHeight));
+            var skSizel = new SKSizeI(biggesWidh, biggesHeight);
+            var grownExpected = expected.Resize(skSizel, SKFilterQuality.None);
+            var grownActual = actual.Resize(skSizel, SKFilterQuality.None);
 
             return (grownActual, grownExpected);
         }
 
-        private static (Image<Rgb24>, Image<Rgb24>, Image<Rgb24>?) GrowToSameDimension(Image<Rgb24> actual, Image<Rgb24> expected, Image<Rgb24>? mask = null)
-        {
-            if (actual == null)
-            {
-                throw new ArgumentNullException(nameof(actual));
-            }
-
-            if (expected == null)
-            {
-                throw new ArgumentNullException(nameof(expected));
-            }
-
-            return actual.Height == expected.Height && actual.Width == expected.Width;
-        }
-
-        private static (SKBitmap, SKBitmap, SKBitmap) GrowToSameDimension(SKBitmap actual, SKBitmap expected, SKBitmap? mask = null)
+        private static (SKBitmap, SKBitmap, SKBitmap) GrowToSameDimension(SKBitmap actual, SKBitmap expected, SKBitmap mask)
         {
             var biggesWidh = actual.Width > expected.Width ? actual.Width : expected.Width;
             biggesWidh = biggesWidh > mask.Width ? biggesWidh : mask.Width;
             var biggesHeight = actual.Height > expected.Height ? actual.Height : expected.Height;
             biggesHeight = biggesHeight > mask.Height ? biggesHeight : mask.Height;
-
-            var grownMask = mask?.Clone();
             var skSizel = new SKSizeI(biggesWidh, biggesHeight);
-
             var grownExpected = expected.Resize(skSizel, SKFilterQuality.None);
             var grownActual = actual.Resize(skSizel, SKFilterQuality.None);
-            grownMask?.Mutate(x => x.Resize(biggesWidh, biggesHeight));
+            var grownMask = mask.Resize(skSizel, SKFilterQuality.None);
 
             return (grownActual, grownExpected, grownMask);
         }
