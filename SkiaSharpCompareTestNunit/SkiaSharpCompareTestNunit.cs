@@ -16,6 +16,8 @@ namespace SkiaSharpCompareTestNunit
         private const string pngBlack4x4px = "../../../TestData/BlackDoubleSize.png";
         private const string pngWhite2x2px = "../../../TestData/White.png";
         private const string pngTransparent2x2px = "../../../TestData/pngTransparent2x2px.png";
+        private const string renderdForm1 = "../../../TestData/HC007-Test-02-3-OxPt.html1.png";
+        private const string renderdForm2 = "../../../TestData/HC007-Test-02-3-OxPt.html2.png";
 
         [Test]
         [TestCase(jpg0Rgb24, jpg0Rgb24, true)]
@@ -128,6 +130,8 @@ namespace SkiaSharpCompareTestNunit
         [TestCase(png0Rgba32, png1Rgba32, 203027, 1.25601321422385d, 681, 0.42129618173269651d, ResizeOption.DontResize)]
         [TestCase(pngBlack2x2px, pngBlack4x4px, 0, 0, 0, 0, ResizeOption.Resize)]
         [TestCase(pngBlack4x4px, pngWhite2x2px, 12240, 765, 16, 100.0d, ResizeOption.Resize)]
+        [TestCase(renderdForm1, renderdForm2, 49267623, 60.794204096742348d, 174178, 21.49284304047384d, ResizeOption.Resize)]
+        [TestCase(renderdForm2, renderdForm1, 49267623, 60.794204096742348d, 174178, 21.49284304047384d, ResizeOption.Resize)]
         public void ShouldVerifyThatImagesAreSemiEqual(string pathPic1, string pathPic2, int expectedAbsoluteError, double expectedMeanError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption)
         {
             var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
@@ -188,7 +192,10 @@ namespace SkiaSharpCompareTestNunit
         [TestCase(png0Rgba32, png1Rgba32, 0, 0, 0, 0, ResizeOption.DontResize)]
         [TestCase(png0Rgba32, png1Rgba32, 0, 0, 0, 0, ResizeOption.Resize)]
         [TestCase(pngWhite2x2px, pngBlack4x4px, 0, 0, 0, 0, ResizeOption.Resize)]
-        public void DiffMask(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption)
+        [TestCase(pngBlack4x4px, pngWhite2x2px, 0, 0, 0, 0, ResizeOption.Resize)]
+        [TestCase(renderdForm1, renderdForm2, 0, 0, 0, 0, ResizeOption.Resize)]
+        [TestCase(renderdForm2, renderdForm1, 0, 0, 0, 0, ResizeOption.Resize)]
+        public void Diffmask(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption)
         {
             var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
             var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
@@ -342,6 +349,20 @@ namespace SkiaSharpCompareTestNunit
             var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
 
             var exception = Assert.Throws<SkiaSharpCompareException>(() => Compare.CalcDiff(absolutePathPic1, absolutePathPic2));
+
+            Assert.That(exception?.Message, Is.EqualTo("Size of images differ."));
+        }
+
+        [TestCase(png0Rgba32, png0Rgba32, pngBlack2x2px)]
+        [TestCase(png0Rgba32, pngBlack2x2px, png0Rgba32)]
+        [TestCase(pngBlack2x2px, png0Rgba32, png0Rgba32)]
+        public void ShouldVerifyThatImageWithDifferentSizeThrows(string pathPic1, string pathPic2, string pathPic3)
+        {
+            var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
+            var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
+            var absolutePathPic3 = Path.Combine(AppContext.BaseDirectory, pathPic3);
+
+            var exception = Assert.Throws<SkiaSharpCompareException>(() => Compare.CalcDiff(absolutePathPic1, absolutePathPic2, absolutePathPic3));
 
             Assert.That(exception?.Message, Is.EqualTo("Size of images differ."));
         }

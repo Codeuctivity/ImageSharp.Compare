@@ -11,7 +11,7 @@
 		<Version Condition="'$(CURRENT_VERSION)' == ''">0.0.1</Version>
 		<AssemblyVersion>$(Version)</AssemblyVersion>
 		<FileVersion>$(Version)</FileVersion>
-		<PackageVersion>$(Version)-prerelease</PackageVersion>
+		<PackageVersion>$(Version)</PackageVersion>
 		<PackageReleaseNotes>$(LAST_COMMIT_MESSAGE)</PackageReleaseNotes>
 		<PackageIcon>NugetIcon.png</PackageIcon>
 		<PackageProjectUrl>https://github.com/Codeuctivity/SkiaSharp.Compare</PackageProjectUrl>
