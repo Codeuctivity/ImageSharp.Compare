@@ -85,6 +85,15 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <returns>True if every pixel of actual is equal to expected</returns>
         public static bool ImagesAreEqual(SKBitmap actual, SKBitmap expected, ResizeOption resizeOption = ResizeOption.DontResize)
         {
+            if (actual == null)
+            {
+                throw new ArgumentNullException(nameof(actual));
+            }
+            if (expected == null)
+            {
+                throw new ArgumentNullException(nameof(expected));
+            }
+
             if (resizeOption == ResizeOption.DontResize && !ImagesHaveSameDimension(actual, expected))
             {
                 return false;
@@ -155,9 +164,9 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <returns>Mean and absolute pixel error</returns>
         public static ICompareResult CalcDiff(SKBitmap actual, SKBitmap expected, ResizeOption resizeOption = ResizeOption.DontResize)
         {
-            var immagesHaveSameDimension = ImagesHaveSameDimension(actual, expected);
+            var imagesHaveSameDimension = ImagesHaveSameDimension(actual, expected);
 
-            if (resizeOption == ResizeOption.Resize && !immagesHaveSameDimension)
+            if (resizeOption == ResizeOption.Resize && !imagesHaveSameDimension)
             {
                 var grown = GrowToSameDimension(actual, expected);
                 try
@@ -241,9 +250,14 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <returns>Mean and absolute pixel error</returns>
         public static ICompareResult CalcDiff(SKBitmap actual, SKBitmap expected, SKBitmap maskImage, ResizeOption resizeOption = ResizeOption.DontResize)
         {
-            var immagesHaveSameDimension = ImagesHaveSameDimension(actual, expected) && ImagesHaveSameDimension(actual, maskImage);
+            if (maskImage == null)
+            {
+                throw new ArgumentNullException(nameof(resizeOption));
+            }
 
-            if (resizeOption == ResizeOption.Resize && !immagesHaveSameDimension)
+            var imagesHaveSameDimension = ImagesHaveSameDimension(actual, expected) && ImagesHaveSameDimension(actual, maskImage);
+
+            if (resizeOption == ResizeOption.Resize && !imagesHaveSameDimension)
             {
                 var grown = GrowToSameDimension(actual, expected, maskImage);
                 try
@@ -258,14 +272,9 @@ namespace Codeuctivity.SkiaSharpCompare
                 }
             }
 
-            if (!immagesHaveSameDimension)
+            if (!imagesHaveSameDimension)
             {
                 throw new SkiaSharpCompareException(sizeDiffersExceptionMessage);
-            }
-
-            if (maskImage == null)
-            {
-                throw new ArgumentNullException(nameof(maskImage));
             }
 
             var quantity = actual.Width * actual.Height;
@@ -430,25 +439,25 @@ namespace Codeuctivity.SkiaSharpCompare
 
         private static (SKBitmap, SKBitmap) GrowToSameDimension(SKBitmap actual, SKBitmap expected)
         {
-            var biggesWidh = actual.Width > expected.Width ? actual.Width : expected.Width;
-            var biggesHeight = actual.Height > expected.Height ? actual.Height : expected.Height;
-            var skSizel = new SKSizeI(biggesWidh, biggesHeight);
-            var grownExpected = expected.Resize(skSizel, SKFilterQuality.None);
-            var grownActual = actual.Resize(skSizel, SKFilterQuality.None);
+            var biggestWidth = actual.Width > expected.Width ? actual.Width : expected.Width;
+            var biggestHeight = actual.Height > expected.Height ? actual.Height : expected.Height;
+            var skSize = new SKSizeI(biggestWidth, biggestHeight);
+            var grownExpected = expected.Resize(skSize, SKFilterQuality.None);
+            var grownActual = actual.Resize(skSize, SKFilterQuality.None);
 
             return (grownActual, grownExpected);
         }
 
         private static (SKBitmap, SKBitmap, SKBitmap) GrowToSameDimension(SKBitmap actual, SKBitmap expected, SKBitmap mask)
         {
-            var biggesWidh = actual.Width > expected.Width ? actual.Width : expected.Width;
-            biggesWidh = biggesWidh > mask.Width ? biggesWidh : mask.Width;
-            var biggesHeight = actual.Height > expected.Height ? actual.Height : expected.Height;
-            biggesHeight = biggesHeight > mask.Height ? biggesHeight : mask.Height;
-            var skSizel = new SKSizeI(biggesWidh, biggesHeight);
-            var grownExpected = expected.Resize(skSizel, SKFilterQuality.None);
-            var grownActual = actual.Resize(skSizel, SKFilterQuality.None);
-            var grownMask = mask.Resize(skSizel, SKFilterQuality.None);
+            var biggestWidth = actual.Width > expected.Width ? actual.Width : expected.Width;
+            biggestWidth = biggestWidth > mask.Width ? biggestWidth : mask.Width;
+            var biggestHeight = actual.Height > expected.Height ? actual.Height : expected.Height;
+            biggestHeight = biggestHeight > mask.Height ? biggestHeight : mask.Height;
+            var skSize = new SKSizeI(biggestWidth, biggestHeight);
+            var grownExpected = expected.Resize(skSize, SKFilterQuality.None);
+            var grownActual = actual.Resize(skSize, SKFilterQuality.None);
+            var grownMask = mask.Resize(skSize, SKFilterQuality.None);
 
             return (grownActual, grownExpected, grownMask);
         }

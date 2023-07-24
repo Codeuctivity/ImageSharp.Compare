@@ -27,6 +27,8 @@
 		<Nullable>enable</Nullable>
 		<LangVersion>8.0</LangVersion>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<AnalysisMode>AllEnabledByDefault</AnalysisMode>
+		<AnalysisLevel>latest</AnalysisLevel>
 		<PackageId>Codeuctivity.SkiaSharpCompare</PackageId>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<Product>Codeuctivity.SkiaSharpCompare</Product>

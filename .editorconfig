@@ -1,4 +1,7 @@
-﻿[*.cs]
+﻿[*]
+spelling_exclusion_path = .\exclusion.dic
+
+[*.cs]
 
 # CA1303: Do not pass literals as localized parameters
 dotnet_diagnostic.CA1303.severity = none
