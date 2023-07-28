@@ -419,6 +419,7 @@ namespace Codeuctivity.ImageSharpCompare
                 {
                     grown.Item1?.Dispose();
                     grown.Item2?.Dispose();
+                    grown.Item3?.Dispose();
                 }
             }
 
