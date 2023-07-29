@@ -17,8 +17,8 @@ namespace ImageSharpCompareTestNunit
         private const string pngBlack4x4px = "../../../TestData/BlackDoubleSize.png";
         private const string pngWhite2x2px = "../../../TestData/White.png";
         private const string pngTransparent2x2px = "../../../TestData/pngTransparent2x2px.png";
-        private const string renderdForm1 = "../../../TestData/HC007-Test-02-3-OxPt.html1.png";
-        private const string renderdForm2 = "../../../TestData/HC007-Test-02-3-OxPt.html2.png";
+        private const string renderedForm1 = "../../../TestData/HC007-Test-02-3-OxPt.html1.png";
+        private const string renderedForm2 = "../../../TestData/HC007-Test-02-3-OxPt.html2.png";
 
         [Test]
         [TestCase(jpg0Rgb24, jpg0Rgb24, true)]
@@ -26,7 +26,7 @@ namespace ImageSharpCompareTestNunit
         [TestCase(png0Rgba32, jpg0Rgb24, true)]
         [TestCase(png0Rgba32, jpg1Rgb24, true)]
         [TestCase(png0Rgba32, pngBlack2x2px, false)]
-        public void ShouldVerifyThatImagesFromFilepathSizeAreEqual(string pathActual, string pathExpected, bool expectedOutcome)
+        public void ShouldVerifyThatImagesFromFilePathSizeAreEqual(string pathActual, string pathExpected, bool expectedOutcome)
         {
             var absolutePathActual = Path.Combine(AppContext.BaseDirectory, pathActual);
             var absolutePathExpected = Path.Combine(AppContext.BaseDirectory, pathExpected);
@@ -133,8 +133,8 @@ namespace ImageSharpCompareTestNunit
         [TestCase(pngBlack2x2px, pngWhite2x2px, 3060, 765, 4, 100.0d, ResizeOption.DontResize)]
         [TestCase(pngBlack2x2px, pngBlack4x4px, 0, 0, 0, 0, ResizeOption.Resize)]
         [TestCase(pngBlack4x4px, pngWhite2x2px, 12240, 765, 16, 100.0d, ResizeOption.Resize)]
-        [TestCase(renderdForm1, renderdForm2, 50103469, 61.825603405725566d, 220164, 27.167324777887465d, ResizeOption.Resize)]
-        [TestCase(renderdForm2, renderdForm1, 50103469, 61.825603405725566d, 220164, 27.167324777887465d, ResizeOption.Resize)]
+        [TestCase(renderedForm1, renderedForm2, 50103469, 61.825603405725566d, 220164, 27.167324777887465d, ResizeOption.Resize)]
+        [TestCase(renderedForm2, renderedForm1, 50103469, 61.825603405725566d, 220164, 27.167324777887465d, ResizeOption.Resize)]
         public void ShouldVerifyThatImagesAreSemiEqual(string pathPic1, string pathPic2, int expectedAbsoluteError, double expectedMeanError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption)
         {
             var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
@@ -198,8 +198,8 @@ namespace ImageSharpCompareTestNunit
         [TestCase(png0Rgba32, png1Rgba32, 0, 0, 0, 0, ResizeOption.Resize)]
         [TestCase(pngWhite2x2px, pngBlack4x4px, 0, 0, 0, 0, ResizeOption.Resize)]
         [TestCase(pngBlack4x4px, pngWhite2x2px, 0, 0, 0, 0, ResizeOption.Resize)]
-        [TestCase(renderdForm1, renderdForm2, 0, 0, 0, 0, ResizeOption.Resize)]
-        [TestCase(renderdForm2, renderdForm1, 0, 0, 0, 0, ResizeOption.Resize)]
+        [TestCase(renderedForm1, renderedForm2, 0, 0, 0, 0, ResizeOption.Resize)]
+        [TestCase(renderedForm2, renderedForm1, 0, 0, 0, 0, ResizeOption.Resize)]
         public void CalcDiffMaskImage(string pathPic1, string pathPic2, double expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption)
         {
             var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
@@ -225,7 +225,7 @@ namespace ImageSharpCompareTestNunit
         [TestCase(jpg0Rgb24, jpg1Rgb24, 0, 0, 0, 0, ResizeOption.DontResize)]
         [TestCase(jpg0Rgb24, jpg1Rgb24, 0, 0, 0, 0, ResizeOption.Resize)]
         [TestCase(pngBlack2x2px, pngBlack4x4px, 0, 0, 0, 0, ResizeOption.Resize)]
-        public void ShoulCalcDiffmaskImageSharpAndUseOutcome(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption)
+        public void ShoulCalcDiffMaskImageSharpAndUseOutcome(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption)
         {
             var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
             var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
@@ -259,7 +259,7 @@ namespace ImageSharpCompareTestNunit
         [TestCase(pngBlack2x2px, pngBlack2x2px, pngBlack4x4px, 0, 0, 0, 0, ResizeOption.Resize)]
         [TestCase(pngBlack2x2px, pngBlack4x4px, pngBlack2x2px, 0, 0, 0, 0, ResizeOption.Resize)]
         [TestCase(pngBlack4x4px, pngBlack2x2px, pngBlack2x2px, 0, 0, 0, 0, ResizeOption.Resize)]
-        public void ShoulUseDiffMask(string pathPic1, string pathPic2, string pathPic3, double expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption)
+        public void ShouldUseDiffMask(string pathPic1, string pathPic2, string pathPic3, double expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption)
         {
             var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
             var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
@@ -283,7 +283,7 @@ namespace ImageSharpCompareTestNunit
         [TestCase(pngBlack2x2px, pngBlack2x2px, pngBlack4x4px)]
         [TestCase(pngBlack2x2px, pngBlack4x4px, pngBlack2x2px)]
         [TestCase(pngBlack4x4px, pngBlack2x2px, pngBlack2x2px)]
-        public void ShoulThrowUsingInvalidImageDimenstionsDiffMask(string pathPic1, string pathPic2, string pathPic3)
+        public void ShouldThrowUsingInvalidImageDimensionsDiffMask(string pathPic1, string pathPic2, string pathPic3)
         {
             var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
             var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
@@ -301,7 +301,7 @@ namespace ImageSharpCompareTestNunit
             AssertDisposeBehavior(maskPic);
         }
 
-        private void AssertDisposeBehavior(Image image)
+        private static void AssertDisposeBehavior(Image image)
         {
             const string imageSharpPrivateFieldNameIsDisposed = "isDisposed";
             var isDisposed = (bool?)GetInstanceField(image, imageSharpPrivateFieldNameIsDisposed);
@@ -315,16 +315,11 @@ namespace ImageSharpCompareTestNunit
         {
             var bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
             var field = typeof(T).GetField(fieldName, bindFlags);
-            if (field == null)
-            {
-                throw new ArgumentNullException(fieldName);
-            }
-
-            return field.GetValue(instance);
+            return field == null ? throw new ArgumentNullException(fieldName) : field.GetValue(instance);
         }
 
         [TestCase(png0Rgba32, png1Rgba32, 0, 0, 0, 0)]
-        public void DiffmaskSteams(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage)
+        public void DiffMaskSteams(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage)
         {
             var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
             var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
