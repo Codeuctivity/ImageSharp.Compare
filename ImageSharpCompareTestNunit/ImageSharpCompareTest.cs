@@ -350,23 +350,23 @@ namespace ImageSharpCompareTestNunit
             using var image1Stream = new FileStream(image1Path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             using var image2Stream = new FileStream(image2Path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
-            using (var fileStreamDiffMask1 = File.Create(diffMask1Path))
-            using (var diffMask1Image = ImageSharpCompare.CalcDiffMaskImage(image1Stream, image2Stream))
+            using (var diffMask1Stream = File.Create(diffMask1Path))
             {
-                ImageExtensions.SaveAsPng(diffMask1Image, fileStreamDiffMask1);
+                using var diffMask1Image = ImageSharpCompare.CalcDiffMaskImage(image1Stream, image2Stream);
+                ImageExtensions.SaveAsPng(diffMask1Image, diffMask1Stream);
             }
-
-            using var diffMask1Stream = new FileStream(diffMask1Path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
             image1Stream.Position = 0;
             image2Stream.Position = 0;
-            diffMask1Stream.Position = 0;
 
-            var diffMask2Image = ImageSharpCompare.CalcDiffMaskImage(image1Stream, image2Stream, diffMask1Stream);
+            using (var diffMask1Stream = new FileStream(diffMask1Path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                diffMask1Stream.Position = 0;
+                var diffMask2Image = ImageSharpCompare.CalcDiffMaskImage(image1Stream, image2Stream, diffMask1Stream);
+                Assert.That(IsImageEntirelyBlack(diffMask2Image), Is.True);
+            }
 
             File.Delete(diffMask1Path);
-
-            Assert.That(IsImageEntirelyBlack(diffMask2Image), Is.True);
         }
 
         [Test]
