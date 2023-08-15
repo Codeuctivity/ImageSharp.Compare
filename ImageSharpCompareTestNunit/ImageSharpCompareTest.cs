@@ -341,7 +341,26 @@ namespace ImageSharpCompareTestNunit
         }
 
         [TestCase(png0Rgba32, png1Rgba32)]
-        public void CalcDiffMaskImage_WhenSupplyingDiffMaskOfTwoImages_NoDifferences(string image1RelativePath, string image2RelativePath)
+        public void CalcDiffMaskImage_WhenSupplyingDiffMaskOfTwoImagesByFilePath_NoDifferences(string image1RelativePath, string image2RelativePath)
+        {
+            var image1Path = Path.Combine(AppContext.BaseDirectory, image1RelativePath);
+            var image2Path = Path.Combine(AppContext.BaseDirectory, image2RelativePath);
+            var diffMask1Path = Path.GetTempFileName() + "differenceMask.png";
+
+            using (var diffMask1Stream = File.Create(diffMask1Path))
+            {
+                using var diffMask1Image = ImageSharpCompare.CalcDiffMaskImage(image1Path, image2Path);
+                ImageExtensions.SaveAsPng(diffMask1Image, diffMask1Stream);
+            }
+
+            using var diffMask2Image = ImageSharpCompare.CalcDiffMaskImage(image1Path, image2Path, diffMask1Path);
+            Assert.That(IsImageEntirelyBlack(diffMask2Image), Is.True);
+
+            File.Delete(diffMask1Path);
+        }
+
+        [TestCase(png0Rgba32, png1Rgba32)]
+        public void CalcDiffMaskImage_WhenSupplyingDiffMaskOfTwoImagesByStream_NoDifferences(string image1RelativePath, string image2RelativePath)
         {
             var image1Path = Path.Combine(AppContext.BaseDirectory, image1RelativePath);
             var image2Path = Path.Combine(AppContext.BaseDirectory, image2RelativePath);
@@ -362,11 +381,27 @@ namespace ImageSharpCompareTestNunit
             using (var diffMask1Stream = new FileStream(diffMask1Path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 diffMask1Stream.Position = 0;
-                var diffMask2Image = ImageSharpCompare.CalcDiffMaskImage(image1Stream, image2Stream, diffMask1Stream);
+                using var diffMask2Image = ImageSharpCompare.CalcDiffMaskImage(image1Stream, image2Stream, diffMask1Stream);
                 Assert.That(IsImageEntirelyBlack(diffMask2Image), Is.True);
             }
 
             File.Delete(diffMask1Path);
+        }
+
+        [TestCase(png0Rgba32, png1Rgba32)]
+        public void CalcDiffMaskImage_WhenSupplyingDiffMaskOfTwoImagesByImage_NoDifferences(string image1RelativePath, string image2RelativePath)
+        {
+            var image1Path = Path.Combine(AppContext.BaseDirectory, image1RelativePath);
+            var image2Path = Path.Combine(AppContext.BaseDirectory, image2RelativePath);
+
+            using var image1 = Image.Load(image1Path);
+            using var image2 = Image.Load(image2Path);
+
+            using var diffMask1Image = ImageSharpCompare.CalcDiffMaskImage(image1, image2);
+
+            using var diffMask2Image = ImageSharpCompare.CalcDiffMaskImage(image1, image2, diffMask1Image);
+
+            Assert.That(IsImageEntirelyBlack(diffMask2Image), Is.True);
         }
 
         [Test]
