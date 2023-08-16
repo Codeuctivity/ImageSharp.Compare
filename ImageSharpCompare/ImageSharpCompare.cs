@@ -7,7 +7,9 @@ using System.IO;
 namespace Codeuctivity.ImageSharpCompare
 {
     /// <summary>
-    /// ImageSharpCompare, compares images. Use this class to compare images using a third image as mask of regions where your two compared images may differ. An alpha channel is ignored.
+    /// ImageSharpCompare, compares images.
+    /// Use this class to compare images using a third image as mask of regions where your two compared images may differ.
+    /// An alpha channel is ignored.
     /// </summary>
 #pragma warning disable CA1724 // Type names should not match namespaces - this is accepted for now to prevent a breaking change
 
@@ -532,6 +534,22 @@ namespace Codeuctivity.ImageSharpCompare
         /// <summary>
         /// Creates a diff mask image of two images
         /// </summary>
+        /// <param name="pathActualImage"></param>
+        /// <param name="pathExpectedImage"></param>
+        /// <param name="pathMaskImage"></param>
+        /// <param name="resizeOption"></param>
+        /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
+        public static Image CalcDiffMaskImage(string pathActualImage, string pathExpectedImage, string pathMaskImage, ResizeOption resizeOption = ResizeOption.DontResize)
+        {
+            using var actual = Image.Load(pathActualImage);
+            using var expected = Image.Load(pathExpectedImage);
+            using var mask = Image.Load(pathMaskImage);
+            return CalcDiffMaskImage(actual, expected, mask, resizeOption);
+        }
+
+        /// <summary>
+        /// Creates a diff mask image of two images
+        /// </summary>
         /// <param name="actualImage"></param>
         /// <param name="expectedImage"></param>
         /// <param name="resizeOption"></param>
@@ -541,6 +559,22 @@ namespace Codeuctivity.ImageSharpCompare
             using var actual = Image.Load(actualImage);
             using var expected = Image.Load(expectedImage);
             return CalcDiffMaskImage(actual, expected, resizeOption);
+        }
+
+        /// <summary>
+        /// Creates a diff mask image of two images
+        /// </summary>
+        /// <param name="actualImage"></param>
+        /// <param name="expectedImage"></param>
+        /// <param name="maskImage"></param>
+        /// <param name="resizeOption"></param>
+        /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
+        public static Image CalcDiffMaskImage(Stream actualImage, Stream expectedImage, Stream maskImage, ResizeOption resizeOption = ResizeOption.DontResize)
+        {
+            using var actual = Image.Load(actualImage);
+            using var expected = Image.Load(expectedImage);
+            using var mask = Image.Load(maskImage);
+            return CalcDiffMaskImage(actual, expected, mask, resizeOption);
         }
 
         /// <summary>
@@ -583,6 +617,48 @@ namespace Codeuctivity.ImageSharpCompare
                 if (ownsExpected)
                 {
                     expectedRgb24?.Dispose();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Creates a diff mask image of two images
+        /// </summary>
+        /// <param name="actual"></param>
+        /// <param name="expected"></param>
+        /// <param name="mask"></param>
+        /// <param name="resizeOption"></param>
+        /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
+        public static Image CalcDiffMaskImage(Image actual, Image expected, Image mask, ResizeOption resizeOption = ResizeOption.DontResize)
+        {
+            var ownsActual = false;
+            var ownsExpected = false;
+            var ownsMask = false;
+            Image<Rgb24>? actualRgb24 = null;
+            Image<Rgb24>? expectedRgb24 = null;
+            Image<Rgb24>? maskRgb24 = null;
+
+            try
+            {
+                actualRgb24 = ToRgb24Image(actual, out ownsActual);
+                expectedRgb24 = ToRgb24Image(expected, out ownsExpected);
+                maskRgb24 = ToRgb24Image(mask, out ownsMask);
+
+                return CalcDiffMaskImage(actualRgb24, expectedRgb24, maskRgb24, resizeOption);
+            }
+            finally
+            {
+                if (ownsActual)
+                {
+                    actualRgb24?.Dispose();
+                }
+                if (ownsExpected)
+                {
+                    expectedRgb24?.Dispose();
+                }
+                if (ownsMask)
+                {
+                    maskRgb24?.Dispose();
                 }
             }
         }
@@ -636,6 +712,60 @@ namespace Codeuctivity.ImageSharpCompare
             {
                 grown.Item1?.Dispose();
                 grown.Item2?.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Creates a diff mask image of two images using a image mask for tolerated difference between the two images.
+        /// </summary>
+        /// <param name="actual"></param>
+        /// <param name="expected"></param>
+        /// <param name="mask"></param>
+        /// <param name="resizeOption"></param>
+        /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
+        public static Image CalcDiffMaskImage(Image<Rgb24> actual, Image<Rgb24> expected, Image<Rgb24> mask, ResizeOption resizeOption = ResizeOption.DontResize)
+        {
+            var imagesHaveSameDimensions = ImagesHaveSameDimension(actual, expected) && ImagesHaveSameDimension(actual, mask);
+
+            if (!imagesHaveSameDimensions && resizeOption == ResizeOption.DontResize)
+            {
+                throw new ImageSharpCompareException(sizeDiffersExceptionMessage);
+            }
+
+            if (imagesHaveSameDimensions)
+            {
+                var maskImageResult = new Image<Rgb24>(actual.Width, actual.Height);
+
+                for (var x = 0; x < actual.Width; x++)
+                {
+                    for (var y = 0; y < actual.Height; y++)
+                    {
+                        var maskPixel = mask[x, y];
+                        var actualPixel = actual[x, y];
+                        var expectedPixel = expected[x, y];
+
+                        maskImageResult[x, y] = new Rgb24
+                        {
+                            R = (byte)Math.Max(byte.MinValue, Math.Abs(expectedPixel.R - actualPixel.R) - maskPixel.R),
+                            G = (byte)Math.Max(byte.MinValue, Math.Abs(expectedPixel.G - actualPixel.G) - maskPixel.G),
+                            B = (byte)Math.Max(byte.MinValue, Math.Abs(expectedPixel.B - actualPixel.B) - maskPixel.B)
+                        };
+                    }
+                }
+
+                return maskImageResult;
+            }
+
+            var grown = GrowToSameDimension(actual, expected, mask);
+            try
+            {
+                return CalcDiffMaskImage(grown.Item1, grown.Item2, grown.Item3, ResizeOption.DontResize);
+            }
+            finally
+            {
+                grown.Item1?.Dispose();
+                grown.Item2?.Dispose();
+                grown.Item3?.Dispose();
             }
         }
 

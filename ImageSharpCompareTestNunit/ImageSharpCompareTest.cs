@@ -1,6 +1,7 @@
 using Codeuctivity.ImageSharpCompare;
 using NUnit.Framework;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.IO;
 using System.Reflection;
@@ -339,6 +340,70 @@ namespace ImageSharpCompareTestNunit
             Assert.That(maskedDiff.PixelErrorPercentage, Is.EqualTo(expectedPixelErrorPercentage), "PixelErrorPercentage");
         }
 
+        [TestCase(png0Rgba32, png1Rgba32)]
+        public void CalcDiffMaskImage_WhenSupplyingDiffMaskOfTwoImagesByFilePath_NoDifferences(string image1RelativePath, string image2RelativePath)
+        {
+            var image1Path = Path.Combine(AppContext.BaseDirectory, image1RelativePath);
+            var image2Path = Path.Combine(AppContext.BaseDirectory, image2RelativePath);
+            var diffMask1Path = Path.GetTempFileName() + "differenceMask.png";
+
+            using (var diffMask1Stream = File.Create(diffMask1Path))
+            {
+                using var diffMask1Image = ImageSharpCompare.CalcDiffMaskImage(image1Path, image2Path);
+                ImageExtensions.SaveAsPng(diffMask1Image, diffMask1Stream);
+            }
+
+            using var diffMask2Image = ImageSharpCompare.CalcDiffMaskImage(image1Path, image2Path, diffMask1Path);
+            Assert.That(IsImageEntirelyBlack(diffMask2Image), Is.True);
+
+            File.Delete(diffMask1Path);
+        }
+
+        [TestCase(png0Rgba32, png1Rgba32)]
+        public void CalcDiffMaskImage_WhenSupplyingDiffMaskOfTwoImagesByStream_NoDifferences(string image1RelativePath, string image2RelativePath)
+        {
+            var image1Path = Path.Combine(AppContext.BaseDirectory, image1RelativePath);
+            var image2Path = Path.Combine(AppContext.BaseDirectory, image2RelativePath);
+            var diffMask1Path = Path.GetTempFileName() + "differenceMask.png";
+
+            using var image1Stream = new FileStream(image1Path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            using var image2Stream = new FileStream(image2Path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+
+            using (var diffMask1Stream = File.Create(diffMask1Path))
+            {
+                using var diffMask1Image = ImageSharpCompare.CalcDiffMaskImage(image1Stream, image2Stream);
+                ImageExtensions.SaveAsPng(diffMask1Image, diffMask1Stream);
+            }
+
+            image1Stream.Position = 0;
+            image2Stream.Position = 0;
+
+            using (var diffMask1Stream = new FileStream(diffMask1Path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                diffMask1Stream.Position = 0;
+                using var diffMask2Image = ImageSharpCompare.CalcDiffMaskImage(image1Stream, image2Stream, diffMask1Stream);
+                Assert.That(IsImageEntirelyBlack(diffMask2Image), Is.True);
+            }
+
+            File.Delete(diffMask1Path);
+        }
+
+        [TestCase(png0Rgba32, png1Rgba32)]
+        public void CalcDiffMaskImage_WhenSupplyingDiffMaskOfTwoImagesByImage_NoDifferences(string image1RelativePath, string image2RelativePath)
+        {
+            var image1Path = Path.Combine(AppContext.BaseDirectory, image1RelativePath);
+            var image2Path = Path.Combine(AppContext.BaseDirectory, image2RelativePath);
+
+            using var image1 = Image.Load(image1Path);
+            using var image2 = Image.Load(image2Path);
+
+            using var diffMask1Image = ImageSharpCompare.CalcDiffMaskImage(image1, image2);
+
+            using var diffMask2Image = ImageSharpCompare.CalcDiffMaskImage(image1, image2, diffMask1Image);
+
+            Assert.That(IsImageEntirelyBlack(diffMask2Image), Is.True);
+        }
+
         [Test]
         [TestCase(jpg0Rgb24, jpg1Rgb24)]
         [TestCase(png0Rgba32, png1Rgba32)]
@@ -393,6 +458,27 @@ namespace ImageSharpCompareTestNunit
             var exception = Assert.Throws<ImageSharpCompareException>(() => ImageSharpCompare.CalcDiff(absolutePathPic1, absolutePathPic2, absolutePathPic3));
 
             Assert.That(exception?.Message, Is.EqualTo("Size of images differ."));
+        }
+
+        private static bool IsImageEntirelyBlack(Image image)
+        {
+            if (!(image is Image<Rgb24> imageRgb24))
+            {
+                throw new ArgumentException("Image must be an RGB 24 one", nameof(image));
+            }
+
+            for (var x = 0; x < imageRgb24.Width; x++)
+            {
+                for (var y = 0; y < imageRgb24.Height; y++)
+                {
+                    if (imageRgb24[x, y] != new Rgb24(byte.MinValue, byte.MinValue, byte.MinValue))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
     }
 }
