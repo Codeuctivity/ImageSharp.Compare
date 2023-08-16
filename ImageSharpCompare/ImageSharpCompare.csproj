@@ -27,6 +27,9 @@
 		<Nullable>enable</Nullable>
 		<LangVersion>8.0</LangVersion>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<AnalysisMode>AllEnabledByDefault</AnalysisMode>
+		<AnalysisLevel>latest</AnalysisLevel>
+		<CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
 		<PackageId>Codeuctivity.ImageSharpCompare</PackageId>
 		<PackageReadmeFile>nugetReadme.md</PackageReadmeFile>
     <Product>Codeuctivity.ImageSharpCompare</Product>
