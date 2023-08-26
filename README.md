@@ -8,7 +8,7 @@ Inspired by the image compare feature "Visual verification API" of [TestApi](htt
 
 SkiaSharpCompare focus on os agnostic support and therefore depends on [SkiaSharp](https://github.com/mono/SkiaSharp).
 
-**NOTE**: The Alpha-channel is ignored.
+NOTE: The Alpha-channel is ignored.
 
 ## Example simple show cases
 
