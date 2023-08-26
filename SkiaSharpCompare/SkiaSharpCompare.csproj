@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-	    <TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<RepositoryUrl>https://github.com/Codeuctivity/SkiaSharp.Compare</RepositoryUrl>
@@ -15,7 +15,9 @@
 		<PackageReleaseNotes>$(LAST_COMMIT_MESSAGE)</PackageReleaseNotes>
 		<PackageIcon>NugetIcon.png</PackageIcon>
 		<PackageProjectUrl>https://github.com/Codeuctivity/SkiaSharp.Compare</PackageProjectUrl>
-		<Description>Compares Images and calculates mean error, absolute error and diff image. Supports optional tolerance mask/images to ignore areas of an image. Use this for automated visual comparing in your unit tests.</Description>
+		<Description>Compares Images and calculates mean error, absolute error and diff image.
+			Supports optional tolerance mask/images to ignore areas of an image. Use this for
+			automated visual comparing in your unit tests.</Description>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<AssemblyOriginatorKeyFile>SkiaSharpCompare.snk</AssemblyOriginatorKeyFile>
@@ -41,7 +43,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
 		<PackageReference Include="SkiaSharp" Version="2.88.3" />
 		<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.3" />
 		<PackageReference Include="SonarAnalyzer.CSharp" Version="9.0.0.68202">

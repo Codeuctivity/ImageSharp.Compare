@@ -351,6 +351,22 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <summary>
         /// Creates a diff mask image of two images
         /// </summary>
+        /// <param name="pathActualImage"></param>
+        /// <param name="pathExpectedImage"></param>
+        /// <param name="pathMaskImage"></param>
+        /// <param name="resizeOption"></param>
+        /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
+        public static SKBitmap CalcDiffMaskImage(string pathActualImage, string pathExpectedImage, string pathMaskImage, ResizeOption resizeOption = ResizeOption.DontResize)
+        {
+            using var actual = SKBitmap.Decode(pathActualImage);
+            using var expected = SKBitmap.Decode(pathExpectedImage);
+            using var mask = SKBitmap.Decode(pathMaskImage);
+            return CalcDiffMaskImage(actual, expected, mask, resizeOption);
+        }
+
+        /// <summary>
+        /// Creates a diff mask image of two images
+        /// </summary>
         /// <param name="actualImage"></param>
         /// <param name="expectedImage"></param>
         /// <param name="resizeOption"></param>
@@ -385,6 +401,60 @@ namespace Codeuctivity.SkiaSharpCompare
             using var actual = SKBitmap.Decode(actualImageCopy);
             using var expected = SKBitmap.Decode(expectedImageCopy);
             return CalcDiffMaskImage(actual, expected, resizeOption);
+        }
+
+        /// <summary>
+        /// Creates a diff mask image of two images
+        /// </summary>
+        /// <param name="actualImage"></param>
+        /// <param name="expectedImage"></param>
+        /// <param name="maskImage"></param>
+        /// <param name="resizeOption"></param>
+        /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
+        public static SKBitmap CalcDiffMaskImage(Stream actualImage, Stream expectedImage, Stream maskImage, ResizeOption resizeOption = ResizeOption.DontResize)
+        {
+            if (actualImage == null)
+            {
+                throw new ArgumentNullException(nameof(actualImage));
+            }
+
+            if (expectedImage == null)
+            {
+                throw new ArgumentNullException(nameof(expectedImage));
+            }
+
+            if (maskImage == null)
+            {
+                throw new ArgumentNullException(nameof(maskImage));
+            }
+
+            if (actualImage.CanSeek)
+            {
+                actualImage.Position = 0;
+            }
+            if (expectedImage.CanSeek)
+            {
+                expectedImage.Position = 0;
+            }
+
+            if (maskImage.CanSeek)
+            {
+                maskImage.Position = 0;
+            }
+
+            using var actualImageCopy = new MemoryStream();
+            using var expectedImageCopy = new MemoryStream();
+            using var maskCopy = new MemoryStream();
+            actualImage.CopyTo(actualImageCopy);
+            expectedImage.CopyTo(expectedImageCopy);
+            maskImage.CopyTo(maskCopy);
+            actualImageCopy.Position = 0;
+            expectedImageCopy.Position = 0;
+            maskCopy.Position = 0;
+            using var actual = SKBitmap.Decode(actualImageCopy);
+            using var expected = SKBitmap.Decode(expectedImageCopy);
+            using var mask = SKBitmap.Decode(maskCopy);
+            return CalcDiffMaskImage(actual, expected, mask, resizeOption);
         }
 
         /// <summary>
@@ -434,6 +504,64 @@ namespace Codeuctivity.SkiaSharpCompare
             {
                 grown.Item1?.Dispose();
                 grown.Item2?.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Creates a diff mask image of two images
+        /// </summary>
+        /// <param name="actual"></param>
+        /// <param name="expected"></param>
+        /// <param name="mask"></param>
+        /// <param name="resizeOption"></param>
+        /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
+        public static SKBitmap CalcDiffMaskImage(SKBitmap actual, SKBitmap expected, SKBitmap mask, ResizeOption resizeOption = ResizeOption.DontResize)
+        {
+            if (mask == null)
+            {
+                throw new ArgumentNullException(nameof(mask));
+            }
+
+            var imagesHaveSameDimension = ImagesHaveSameDimension(actual, expected) && ImagesHaveSameDimension(actual, mask);
+
+            if (resizeOption == ResizeOption.DontResize && !imagesHaveSameDimension)
+            {
+                throw new SkiaSharpCompareException(sizeDiffersExceptionMessage);
+            }
+
+            if (imagesHaveSameDimension)
+            {
+                var maskImage = new SKBitmap(actual.Width, actual.Height);
+
+                for (var x = 0; x < actual.Width; x++)
+                {
+                    for (var y = 0; y < actual.Height; y++)
+                    {
+                        var actualPixel = actual.GetPixel(x, y);
+                        var expectedPixel = expected.GetPixel(x, y);
+                        var maskPixel = mask.GetPixel(x, y);
+
+                        var red = (byte)(Math.Abs(actualPixel.Red - expectedPixel.Red) - maskPixel.Red);
+                        var green = (byte)(Math.Abs(actualPixel.Green - expectedPixel.Green) - maskPixel.Green);
+                        var blue = (byte)(Math.Abs(actualPixel.Blue - expectedPixel.Blue) - maskPixel.Blue);
+                        var pixel = new SKColor(red, green, blue);
+
+                        maskImage.SetPixel(x, y, pixel);
+                    }
+                }
+                return maskImage;
+            }
+
+            var grown = GrowToSameDimension(actual, expected, mask);
+            try
+            {
+                return CalcDiffMaskImage(grown.Item1, grown.Item2, grown.Item3, ResizeOption.DontResize);
+            }
+            finally
+            {
+                grown.Item1?.Dispose();
+                grown.Item2?.Dispose();
+                grown.Item3?.Dispose();
             }
         }
 
