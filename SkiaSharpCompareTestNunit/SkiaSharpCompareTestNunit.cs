@@ -325,6 +325,9 @@ namespace SkiaSharpCompareTestNunit
             }
 
             using var diffMask2Image = Compare.CalcDiffMaskImage(image1Path, image2Path, diffMask1Path);
+
+            using (var diffMask2Stream = File.Create(diffMask1Path))
+                ImageExtensions.SaveAsPng(diffMask2Image, diffMask2Stream);
             Assert.That(IsImageEntirelyBlack(diffMask2Image), Is.True);
 
             File.Delete(diffMask1Path);
@@ -437,7 +440,8 @@ namespace SkiaSharpCompareTestNunit
             {
                 for (var y = 0; y < image.Height; y++)
                 {
-                    if (image.GetPixel(x, y) != new SKColor(0, 0, 0))
+                    var sKColor = image.GetPixel(x, y);
+                    if (sKColor.Red != 0 || sKColor.Green != 0 || sKColor.Blue != 0)
                     {
                         return false;
                     }
