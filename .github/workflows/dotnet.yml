@@ -48,7 +48,7 @@ jobs:
       if:  env.NUGET_TOKEN_EXISTS != ''
       run: |
           dotnet nuget push ./SkiaSharpCompare/bin/Release/*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_TOKEN}} --source https://api.nuget.org/v3/index.json
-    - uses: "marvinpinto/action-automatic-releases@latest"
+    - uses: marvinpinto/action-automatic-releases@v1.2.1
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: ${{ env.CURRENT_VERSION }}
@@ -80,7 +80,7 @@ jobs:
       run: |
           ls ./SkiaSharpCompare/bin/Release
           dotnet nuget push ./SkiaSharpCompare/bin/Release/*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_TEST_TOKEN}} --source https://apiint.nugettest.org/v3/index.json
-    - uses: "marvinpinto/action-automatic-releases@latest"
+    - uses: marvinpinto/action-automatic-releases@v1.2.1
       if: github.ref == 'refs/heads/main'
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
