@@ -4,8 +4,9 @@
         "Codeuctivity",
         "Nuget",
         "Nunit",
-        "Rgba",
         "nupkg",
+        "Rgba",
+        "Skia",
         "snupkg"
     ]
 }
