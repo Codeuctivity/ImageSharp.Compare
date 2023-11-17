@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+		<TargetFrameworks>net8.0</TargetFrameworks>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<RepositoryUrl>https://github.com/Codeuctivity/ImageSharp.Compare</RepositoryUrl>
@@ -17,7 +17,6 @@
 		<PackageProjectUrl>https://github.com/Codeuctivity/ImageSharp.Compare</PackageProjectUrl>
 		<Description>Compares Images and calculates mean error, absolute error and diff image. Supports optional tolerance mask/images to ignore areas of an image. Use this for automated visual comparing in your unit tests.</Description>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<AssemblyOriginatorKeyFile>ImageSharpCompare.snk</AssemblyOriginatorKeyFile>
 		<SignAssembly>true</SignAssembly>
 		<IncludeSymbols>true</IncludeSymbols>
@@ -25,7 +24,6 @@
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<Nullable>enable</Nullable>
-		<LangVersion>8.0</LangVersion>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<AnalysisMode>AllEnabledByDefault</AnalysisMode>
 		<AnalysisLevel>latest</AnalysisLevel>
@@ -47,7 +45,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="SixLabors.ImageSharp" Version="3.0.2" />
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="all" />
 		<PackageReference Include="SonarAnalyzer.CSharp" Version="9.12.0.78982">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
