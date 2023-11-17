@@ -20,16 +20,8 @@ namespace Codeuctivity.ImageSharpCompare
 
         private static bool ImagesHaveSameDimension(Image actual, Image expected)
         {
-            if (actual == null)
-            {
-                throw new ArgumentNullException(nameof(actual));
-            }
-
-            if (expected == null)
-            {
-                throw new ArgumentNullException(nameof(expected));
-            }
-
+            ArgumentNullException.ThrowIfNull(actual);
+            ArgumentNullException.ThrowIfNull(expected);
             return actual.Height == expected.Height && actual.Width == expected.Width;
         }
 
@@ -137,15 +129,9 @@ namespace Codeuctivity.ImageSharpCompare
         /// <returns>True if every pixel of actual is equal to expected</returns>
         public static bool ImagesAreEqual(Image actual, Image expected, ResizeOption resizeOption = ResizeOption.DontResize)
         {
-            if (actual == null)
-            {
-                throw new ArgumentNullException(nameof(actual));
-            }
+            ArgumentNullException.ThrowIfNull(actual);
 
-            if (expected == null)
-            {
-                throw new ArgumentNullException(nameof(expected));
-            }
+            ArgumentNullException.ThrowIfNull(expected);
 
             var ownsActual = false;
             var ownsExpected = false;
@@ -180,15 +166,9 @@ namespace Codeuctivity.ImageSharpCompare
         /// <returns>True if every pixel of actual is equal to expected</returns>
         public static bool ImagesAreEqual(Image<Rgb24> actual, Image<Rgb24> expected, ResizeOption resizeOption = ResizeOption.DontResize)
         {
-            if (actual == null)
-            {
-                throw new ArgumentNullException(nameof(actual));
-            }
+            ArgumentNullException.ThrowIfNull(actual);
 
-            if (expected == null)
-            {
-                throw new ArgumentNullException(nameof(expected));
-            }
+            ArgumentNullException.ThrowIfNull(expected);
 
             if (resizeOption == ResizeOption.DontResize && !ImagesHaveSameDimension(actual, expected))
             {
@@ -291,15 +271,9 @@ namespace Codeuctivity.ImageSharpCompare
         /// <returns>Mean and absolute pixel error</returns>
         public static ICompareResult CalcDiff(Image actual, Image expected, ResizeOption resizeOption = ResizeOption.DontResize)
         {
-            if (actual == null)
-            {
-                throw new ArgumentNullException(nameof(actual));
-            }
+            ArgumentNullException.ThrowIfNull(actual);
 
-            if (expected == null)
-            {
-                throw new ArgumentNullException(nameof(expected));
-            }
+            ArgumentNullException.ThrowIfNull(expected);
 
             var ownsActual = false;
             var ownsExpected = false;
@@ -391,20 +365,11 @@ namespace Codeuctivity.ImageSharpCompare
         /// <returns>Mean and absolute pixel error</returns>
         public static ICompareResult CalcDiff(Image actual, Image expected, Image maskImage, ResizeOption resizeOption = ResizeOption.DontResize)
         {
-            if (actual == null)
-            {
-                throw new ArgumentNullException(nameof(actual));
-            }
+            ArgumentNullException.ThrowIfNull(actual);
 
-            if (expected == null)
-            {
-                throw new ArgumentNullException(nameof(expected));
-            }
+            ArgumentNullException.ThrowIfNull(expected);
 
-            if (maskImage == null)
-            {
-                throw new ArgumentNullException(nameof(maskImage));
-            }
+            ArgumentNullException.ThrowIfNull(maskImage);
 
             var ownsActual = false;
             var ownsExpected = false;
@@ -448,10 +413,7 @@ namespace Codeuctivity.ImageSharpCompare
         /// <returns>Mean and absolute pixel error</returns>
         public static ICompareResult CalcDiff(Image<Rgb24> actual, Image<Rgb24> expected, Image<Rgb24> maskImage, ResizeOption resizeOption = ResizeOption.DontResize)
         {
-            if (maskImage == null)
-            {
-                throw new ArgumentNullException(nameof(maskImage));
-            }
+            ArgumentNullException.ThrowIfNull(maskImage);
 
             var imagesHaveSameDimension = ImagesHaveSameDimension(actual, expected) && ImagesHaveSameDimension(actual, maskImage);
 
@@ -586,15 +548,9 @@ namespace Codeuctivity.ImageSharpCompare
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
         public static Image CalcDiffMaskImage(Image actual, Image expected, ResizeOption resizeOption = ResizeOption.DontResize)
         {
-            if (actual == null)
-            {
-                throw new ArgumentNullException(nameof(actual));
-            }
+            ArgumentNullException.ThrowIfNull(actual);
 
-            if (expected == null)
-            {
-                throw new ArgumentNullException(nameof(expected));
-            }
+            ArgumentNullException.ThrowIfNull(expected);
 
             var ownsActual = false;
             var ownsExpected = false;
@@ -631,6 +587,9 @@ namespace Codeuctivity.ImageSharpCompare
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
         public static Image CalcDiffMaskImage(Image actual, Image expected, Image mask, ResizeOption resizeOption = ResizeOption.DontResize)
         {
+            ArgumentNullException.ThrowIfNull(actual);
+            ArgumentNullException.ThrowIfNull(expected);
+            ArgumentNullException.ThrowIfNull(mask);
             var ownsActual = false;
             var ownsExpected = false;
             var ownsMask = false;
@@ -725,6 +684,7 @@ namespace Codeuctivity.ImageSharpCompare
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
         public static Image CalcDiffMaskImage(Image<Rgb24> actual, Image<Rgb24> expected, Image<Rgb24> mask, ResizeOption resizeOption = ResizeOption.DontResize)
         {
+            ArgumentNullException.ThrowIfNull(mask);
             var imagesHaveSameDimensions = ImagesHaveSameDimension(actual, expected) && ImagesHaveSameDimension(actual, mask);
 
             if (!imagesHaveSameDimensions && resizeOption == ResizeOption.DontResize)
@@ -792,10 +752,7 @@ namespace Codeuctivity.ImageSharpCompare
         /// <param name="imageRgba32"></param>
         public static Image<Rgb24> ConvertRgba32ToRgb24(Image<Rgba32> imageRgba32)
         {
-            if (imageRgba32 == null)
-            {
-                throw new ArgumentNullException(nameof(imageRgba32));
-            }
+            ArgumentNullException.ThrowIfNull(imageRgba32);
 
             var maskRgb24 = new Image<Rgb24>(imageRgba32.Width, imageRgba32.Height);
 
