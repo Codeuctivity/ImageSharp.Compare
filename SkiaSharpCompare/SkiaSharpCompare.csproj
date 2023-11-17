@@ -1,59 +1,61 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;net6.0</TargetFrameworks>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<RepositoryUrl>https://github.com/Codeuctivity/SkiaSharp.Compare</RepositoryUrl>
-		<PackageTags>Compare Image JPG PNG BMP Linux Windows MacOs</PackageTags>
-		<Authors>Stefan Seeland</Authors>
-		<Company>Codeuctivity</Company>
-		<Version Condition="'$(CURRENT_VERSION)' != ''">$(CURRENT_VERSION)</Version>
-		<Version Condition="'$(CURRENT_VERSION)' == ''">0.0.1</Version>
-		<AssemblyVersion>$(Version)</AssemblyVersion>
-		<FileVersion>$(Version)</FileVersion>
-		<PackageVersion>$(Version)</PackageVersion>
-		<PackageReleaseNotes>$(LAST_COMMIT_MESSAGE)</PackageReleaseNotes>
-		<PackageIcon>NugetIcon.png</PackageIcon>
-		<PackageProjectUrl>https://github.com/Codeuctivity/SkiaSharp.Compare</PackageProjectUrl>
-		<Description>Compares Images and calculates mean error, absolute error and diff image.
-			Supports optional tolerance mask/images to ignore areas of an image. Use this for
-			automated visual comparing in your unit tests.</Description>
-		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-		<AssemblyOriginatorKeyFile>SkiaSharpCompare.snk</AssemblyOriginatorKeyFile>
-		<SignAssembly>True</SignAssembly>
-		<IncludeSymbols>true</IncludeSymbols>
-		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-		<PublishRepositoryUrl>true</PublishRepositoryUrl>
-		<EmbedUntrackedSources>true</EmbedUntrackedSources>
-		<Nullable>enable</Nullable>
-		<LangVersion>8.0</LangVersion>
-		<EnableNETAnalyzers>true</EnableNETAnalyzers>
-		<AnalysisMode>AllEnabledByDefault</AnalysisMode>
-		<AnalysisLevel>latest</AnalysisLevel>
-		<PackageId>Codeuctivity.SkiaSharpCompare</PackageId>
-		<PackageReadmeFile>nugetReadme.md</PackageReadmeFile>
-		<Product>Codeuctivity.SkiaSharpCompare</Product>
-		<AssemblyName>Codeuctivity.SkiaSharpCompare</AssemblyName>
-		<RootNamespace>Codeuctivity.SkiaSharpCompare</RootNamespace>
-		<ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
-	</PropertyGroup>
-	<ItemGroup>
-		<None Include="docs\nugetReadme.md" Pack="true" PackagePath="\" />
-	</ItemGroup>
+  <PropertyGroup>
+	<TargetFrameworks>net8.0</TargetFrameworks>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	<RepositoryUrl>https://github.com/Codeuctivity/SkiaSharp.Compare</RepositoryUrl>
+	<PackageTags>Compare Image JPG PNG BMP Linux Windows MacOs</PackageTags>
+	<Authors>Stefan Seeland</Authors>
+	<Company>Codeuctivity</Company>
+	<Version Condition="'$(CURRENT_VERSION)' != ''">$(CURRENT_VERSION)</Version>
+	<Version Condition="'$(CURRENT_VERSION)' == ''">0.0.1</Version>
+	<AssemblyVersion>$(Version)</AssemblyVersion>
+	<FileVersion>$(Version)</FileVersion>
+	<PackageVersion>$(Version)</PackageVersion>
+	<PackageReleaseNotes>$(LAST_COMMIT_MESSAGE)</PackageReleaseNotes>
+	<PackageIcon>NugetIcon.png</PackageIcon>
+	<PackageProjectUrl>https://github.com/Codeuctivity/SkiaSharp.Compare</PackageProjectUrl>
+	<Description>
+	  Compares Images and calculates mean error, absolute error and diff image.
+	  Supports optional tolerance mask/images to ignore areas of an image. Use this for
+	  automated visual comparing in your unit tests.
+	</Description>
+	<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+	<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+	<AssemblyOriginatorKeyFile>SkiaSharpCompare.snk</AssemblyOriginatorKeyFile>
+	<SignAssembly>True</SignAssembly>
+	<IncludeSymbols>true</IncludeSymbols>
+	<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	<PublishRepositoryUrl>true</PublishRepositoryUrl>
+	<EmbedUntrackedSources>true</EmbedUntrackedSources>
+	<Nullable>enable</Nullable>
+	<EnableNETAnalyzers>true</EnableNETAnalyzers>
+	<AnalysisMode>AllEnabledByDefault</AnalysisMode>
+	<AnalysisLevel>latest</AnalysisLevel>
+	<PackageId>Codeuctivity.SkiaSharpCompare</PackageId>
+	<PackageReadmeFile>nugetReadme.md</PackageReadmeFile>
+	<Product>Codeuctivity.SkiaSharpCompare</Product>
+	<AssemblyName>Codeuctivity.SkiaSharpCompare</AssemblyName>
+	<RootNamespace>Codeuctivity.SkiaSharpCompare</RootNamespace>
+	<ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
-		<PackageReference Include="SkiaSharp" Version="2.88.6" />
-		<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.6" />
-		<PackageReference Include="SonarAnalyzer.CSharp" Version="9.12.0.78982">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-	</ItemGroup>
+  </PropertyGroup>
+  <ItemGroup>
+	<None Include="docs\nugetReadme.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<None Include="NugetIcon.png" Pack="true" PackagePath="\" />
-	</ItemGroup>
+  <ItemGroup>
+	<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="all" />
+	<PackageReference Include="SkiaSharp" Version="2.88.6" />
+	<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.6" />
+	<PackageReference Include="SonarAnalyzer.CSharp" Version="9.12.0.78982">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+	<None Include="NugetIcon.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
 </Project>

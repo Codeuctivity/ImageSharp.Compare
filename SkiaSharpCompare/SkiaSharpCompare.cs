@@ -85,14 +85,8 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <returns>True if every pixel of actual is equal to expected</returns>
         public static bool ImagesAreEqual(SKBitmap actual, SKBitmap expected, ResizeOption resizeOption = ResizeOption.DontResize)
         {
-            if (actual == null)
-            {
-                throw new ArgumentNullException(nameof(actual));
-            }
-            if (expected == null)
-            {
-                throw new ArgumentNullException(nameof(expected));
-            }
+            ArgumentNullException.ThrowIfNull(actual);
+            ArgumentNullException.ThrowIfNull(expected);
 
             if (resizeOption == ResizeOption.DontResize && !ImagesHaveSameDimension(actual, expected))
             {
@@ -250,10 +244,7 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <returns>Mean and absolute pixel error</returns>
         public static ICompareResult CalcDiff(SKBitmap actual, SKBitmap expected, SKBitmap maskImage, ResizeOption resizeOption = ResizeOption.DontResize)
         {
-            if (maskImage == null)
-            {
-                throw new ArgumentNullException(nameof(resizeOption));
-            }
+            ArgumentNullException.ThrowIfNull(maskImage);
 
             var imagesHaveSameDimension = ImagesHaveSameDimension(actual, expected) && ImagesHaveSameDimension(actual, maskImage);
 
@@ -321,15 +312,9 @@ namespace Codeuctivity.SkiaSharpCompare
 
         private static bool ImagesHaveSameDimension(SKBitmap actual, SKBitmap expected)
         {
-            if (actual == null)
-            {
-                throw new ArgumentNullException(nameof(actual));
-            }
+            ArgumentNullException.ThrowIfNull(actual);
 
-            if (expected == null)
-            {
-                throw new ArgumentNullException(nameof(expected));
-            }
+            ArgumentNullException.ThrowIfNull(expected);
 
             return actual.Height == expected.Height && actual.Width == expected.Width;
         }
@@ -373,15 +358,9 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
         public static SKBitmap CalcDiffMaskImage(Stream actualImage, Stream expectedImage, ResizeOption resizeOption = ResizeOption.DontResize)
         {
-            if (actualImage == null)
-            {
-                throw new ArgumentNullException(nameof(actualImage));
-            }
+            ArgumentNullException.ThrowIfNull(actualImage);
 
-            if (expectedImage == null)
-            {
-                throw new ArgumentNullException(nameof(expectedImage));
-            }
+            ArgumentNullException.ThrowIfNull(expectedImage);
 
             if (actualImage.CanSeek)
             {
@@ -413,20 +392,11 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
         public static SKBitmap CalcDiffMaskImage(Stream actualImage, Stream expectedImage, Stream maskImage, ResizeOption resizeOption = ResizeOption.DontResize)
         {
-            if (actualImage == null)
-            {
-                throw new ArgumentNullException(nameof(actualImage));
-            }
+            ArgumentNullException.ThrowIfNull(actualImage);
 
-            if (expectedImage == null)
-            {
-                throw new ArgumentNullException(nameof(expectedImage));
-            }
+            ArgumentNullException.ThrowIfNull(expectedImage);
 
-            if (maskImage == null)
-            {
-                throw new ArgumentNullException(nameof(maskImage));
-            }
+            ArgumentNullException.ThrowIfNull(maskImage);
 
             if (actualImage.CanSeek)
             {
@@ -517,10 +487,7 @@ namespace Codeuctivity.SkiaSharpCompare
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
         public static SKBitmap CalcDiffMaskImage(SKBitmap actual, SKBitmap expected, SKBitmap mask, ResizeOption resizeOption = ResizeOption.DontResize)
         {
-            if (mask == null)
-            {
-                throw new ArgumentNullException(nameof(mask));
-            }
+            ArgumentNullException.ThrowIfNull(mask);
 
             var imagesHaveSameDimension = ImagesHaveSameDimension(actual, expected) && ImagesHaveSameDimension(actual, mask);
 
