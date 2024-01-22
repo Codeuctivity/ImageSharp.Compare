@@ -209,12 +209,13 @@ namespace Codeuctivity.ImageSharpCompare
         /// <param name="pathActualImage"></param>
         /// <param name="pathExpectedImage"></param>
         /// <param name="resizeOption"></param>
+        /// <param name="pixelColorShiftTolerance"></param>
         /// <returns>Mean and absolute pixel error</returns>
-        public static ICompareResult CalcDiff(string pathActualImage, string pathExpectedImage, ResizeOption resizeOption = ResizeOption.DontResize)
+        public static ICompareResult CalcDiff(string pathActualImage, string pathExpectedImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance=0)
         {
             using var actual = Image.Load(pathActualImage);
             using var expected = Image.Load(pathExpectedImage);
-            return CalcDiff(actual, expected, resizeOption);
+            return CalcDiff(actual, expected, resizeOption, pixelColorShiftTolerance);
         }
 
         /// <summary>
@@ -224,13 +225,14 @@ namespace Codeuctivity.ImageSharpCompare
         /// <param name="pathExpectedImage"></param>
         /// <param name="pathMaskImage"></param>
         /// <param name="resizeOption"></param>
+        /// <param name="pixelColorShiftTolerance"></param>
         /// <returns>Mean and absolute pixel error</returns>
-        public static ICompareResult CalcDiff(string pathActualImage, string pathExpectedImage, string pathMaskImage, ResizeOption resizeOption = ResizeOption.DontResize)
+        public static ICompareResult CalcDiff(string pathActualImage, string pathExpectedImage, string pathMaskImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0)
         {
             using var actual = Image.Load(pathActualImage);
             using var expected = Image.Load(pathExpectedImage);
             using var mask = Image.Load(pathMaskImage);
-            return CalcDiff(actual, expected, mask, resizeOption);
+            return CalcDiff(actual, expected, mask, resizeOption, pixelColorShiftTolerance);
         }
 
         /// <summary>
@@ -239,12 +241,13 @@ namespace Codeuctivity.ImageSharpCompare
         /// <param name="actualImage"></param>
         /// <param name="expectedImage"></param>
         /// <param name="resizeOption"></param>
+        /// <param name="pixelColorShiftTolerance"></param>
         /// <returns>Mean and absolute pixel error</returns>
-        public static ICompareResult CalcDiff(Stream actualImage, Stream expectedImage, ResizeOption resizeOption = ResizeOption.DontResize)
+        public static ICompareResult CalcDiff(Stream actualImage, Stream expectedImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0)
         {
             using var actual = Image.Load(actualImage);
             using var expected = Image.Load(expectedImage);
-            return CalcDiff(actual, expected, resizeOption);
+            return CalcDiff(actual, expected, resizeOption, pixelColorShiftTolerance);
         }
 
         /// <summary>
@@ -254,12 +257,13 @@ namespace Codeuctivity.ImageSharpCompare
         /// <param name="expectedImage"></param>
         /// <param name="maskImage"></param>
         /// <param name="resizeOption"></param>
+        /// <param name="pixelColorShiftTolerance"></param>
         /// <returns></returns>
-        public static ICompareResult CalcDiff(Stream actualImage, Stream expectedImage, Image maskImage, ResizeOption resizeOption = ResizeOption.DontResize)
+        public static ICompareResult CalcDiff(Stream actualImage, Stream expectedImage, Image maskImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0)
         {
             using var actual = Image.Load(actualImage);
             using var expected = Image.Load(expectedImage);
-            return CalcDiff(actual, expected, maskImage, resizeOption);
+            return CalcDiff(actual, expected, maskImage, resizeOption, pixelColorShiftTolerance);
         }
 
         /// <summary>
@@ -268,11 +272,11 @@ namespace Codeuctivity.ImageSharpCompare
         /// <param name="actual"></param>
         /// <param name="expected"></param>
         /// <param name="resizeOption"></param>
+        /// <param name="pixelColorShiftTolerance"></param>
         /// <returns>Mean and absolute pixel error</returns>
-        public static ICompareResult CalcDiff(Image actual, Image expected, ResizeOption resizeOption = ResizeOption.DontResize)
+        public static ICompareResult CalcDiff(Image actual, Image expected, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0)
         {
             ArgumentNullException.ThrowIfNull(actual);
-
             ArgumentNullException.ThrowIfNull(expected);
 
             var ownsActual = false;
@@ -285,7 +289,7 @@ namespace Codeuctivity.ImageSharpCompare
                 actualRgb24 = ToRgb24Image(actual, out ownsActual);
                 expectedRgb24 = ToRgb24Image(expected, out ownsExpected);
 
-                return CalcDiff(actualRgb24, expectedRgb24, resizeOption);
+                return CalcDiff(actualRgb24, expectedRgb24, resizeOption, pixelColorShiftTolerance);
             }
             finally
             {
@@ -306,8 +310,9 @@ namespace Codeuctivity.ImageSharpCompare
         /// <param name="actual"></param>
         /// <param name="expected"></param>
         /// <param name="resizeOption"></param>
+        /// <param name="pixelColorShiftTolerance"></param>
         /// <returns>Mean and absolute pixel error</returns>
-        public static ICompareResult CalcDiff(Image<Rgb24> actual, Image<Rgb24> expected, ResizeOption resizeOption = ResizeOption.DontResize)
+        public static ICompareResult CalcDiff(Image<Rgb24> actual, Image<Rgb24> expected, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0)
         {
             var imagesHaveSameDimension = ImagesHaveSameDimension(actual, expected);
 
@@ -316,7 +321,7 @@ namespace Codeuctivity.ImageSharpCompare
                 var grown = GrowToSameDimension(actual, expected);
                 try
                 {
-                    return CalcDiff(grown.Item1, grown.Item2, ResizeOption.DontResize);
+                    return CalcDiff(grown.Item1, grown.Item2, ResizeOption.DontResize, pixelColorShiftTolerance);
                 }
                 finally
                 {
@@ -344,9 +349,9 @@ namespace Codeuctivity.ImageSharpCompare
                     var r = Math.Abs(expectedPixel.R - actualPixel.R);
                     var g = Math.Abs(expectedPixel.G - actualPixel.G);
                     var b = Math.Abs(expectedPixel.B - actualPixel.B);
-                    absoluteError = absoluteError + r + g + b;
-
-                    pixelErrorCount += r + g + b > 0 ? 1 : 0;
+                    var sum = r + g + b;
+                    absoluteError = absoluteError + (sum > pixelColorShiftTolerance ? sum :0) ;
+                    pixelErrorCount +=( sum > pixelColorShiftTolerance )? 1 : 0;
                 }
             }
 
@@ -355,6 +360,8 @@ namespace Codeuctivity.ImageSharpCompare
             return new CompareResult(absoluteError, meanError, pixelErrorCount, pixelErrorPercentage);
         }
 
+   
+
         /// <summary>
         /// Calculates ICompareResult expressing the amount of difference of both images using a image mask for tolerated difference between the two images
         /// </summary>
@@ -362,8 +369,9 @@ namespace Codeuctivity.ImageSharpCompare
         /// <param name="expected"></param>
         /// <param name="maskImage"></param>
         /// <param name="resizeOption"></param>
+        /// <param name="pixelColorShiftTolerance"></param>
         /// <returns>Mean and absolute pixel error</returns>
-        public static ICompareResult CalcDiff(Image actual, Image expected, Image maskImage, ResizeOption resizeOption = ResizeOption.DontResize)
+        public static ICompareResult CalcDiff(Image actual, Image expected, Image maskImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0)
         {
             ArgumentNullException.ThrowIfNull(actual);
 
@@ -410,8 +418,9 @@ namespace Codeuctivity.ImageSharpCompare
         /// <param name="expected"></param>
         /// <param name="maskImage"></param>
         /// <param name="resizeOption"></param>
+        /// <param name="pixelColorShiftTolerance"></param>
         /// <returns>Mean and absolute pixel error</returns>
-        public static ICompareResult CalcDiff(Image<Rgb24> actual, Image<Rgb24> expected, Image<Rgb24> maskImage, ResizeOption resizeOption = ResizeOption.DontResize)
+        public static ICompareResult CalcDiff(Image<Rgb24> actual, Image<Rgb24> expected, Image<Rgb24> maskImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0)
         {
             ArgumentNullException.ThrowIfNull(maskImage);
 
@@ -485,12 +494,13 @@ namespace Codeuctivity.ImageSharpCompare
         /// <param name="pathActualImage"></param>
         /// <param name="pathExpectedImage"></param>
         /// <param name="resizeOption"></param>
+        /// <param name="pixelColorShiftTolerance"></param>
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
-        public static Image CalcDiffMaskImage(string pathActualImage, string pathExpectedImage, ResizeOption resizeOption = ResizeOption.DontResize)
+        public static Image CalcDiffMaskImage(string pathActualImage, string pathExpectedImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0)
         {
             using var actual = Image.Load(pathActualImage);
             using var expected = Image.Load(pathExpectedImage);
-            return CalcDiffMaskImage(actual, expected, resizeOption);
+            return CalcDiffMaskImage(actual, expected, resizeOption, pixelColorShiftTolerance);
         }
 
         /// <summary>
@@ -500,13 +510,14 @@ namespace Codeuctivity.ImageSharpCompare
         /// <param name="pathExpectedImage"></param>
         /// <param name="pathMaskImage"></param>
         /// <param name="resizeOption"></param>
+        /// <param name="pixelColorShiftTolerance"></param>
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
-        public static Image CalcDiffMaskImage(string pathActualImage, string pathExpectedImage, string pathMaskImage, ResizeOption resizeOption = ResizeOption.DontResize)
+        public static Image CalcDiffMaskImage(string pathActualImage, string pathExpectedImage, string pathMaskImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0)
         {
             using var actual = Image.Load(pathActualImage);
             using var expected = Image.Load(pathExpectedImage);
             using var mask = Image.Load(pathMaskImage);
-            return CalcDiffMaskImage(actual, expected, mask, resizeOption);
+            return CalcDiffMaskImage(actual, expected, mask, resizeOption, pixelColorShiftTolerance);
         }
 
         /// <summary>
@@ -515,12 +526,13 @@ namespace Codeuctivity.ImageSharpCompare
         /// <param name="actualImage"></param>
         /// <param name="expectedImage"></param>
         /// <param name="resizeOption"></param>
+        /// <param name="pixelColorShiftTolerance"></param>
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
-        public static Image CalcDiffMaskImage(Stream actualImage, Stream expectedImage, ResizeOption resizeOption = ResizeOption.DontResize)
+        public static Image CalcDiffMaskImage(Stream actualImage, Stream expectedImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0)
         {
             using var actual = Image.Load(actualImage);
             using var expected = Image.Load(expectedImage);
-            return CalcDiffMaskImage(actual, expected, resizeOption);
+            return CalcDiffMaskImage(actual, expected, resizeOption, pixelColorShiftTolerance);
         }
 
         /// <summary>
@@ -530,13 +542,14 @@ namespace Codeuctivity.ImageSharpCompare
         /// <param name="expectedImage"></param>
         /// <param name="maskImage"></param>
         /// <param name="resizeOption"></param>
+        /// <param name="pixelColorShiftTolerance"></param>
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
-        public static Image CalcDiffMaskImage(Stream actualImage, Stream expectedImage, Stream maskImage, ResizeOption resizeOption = ResizeOption.DontResize)
+        public static Image CalcDiffMaskImage(Stream actualImage, Stream expectedImage, Stream maskImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0)
         {
             using var actual = Image.Load(actualImage);
             using var expected = Image.Load(expectedImage);
             using var mask = Image.Load(maskImage);
-            return CalcDiffMaskImage(actual, expected, mask, resizeOption);
+            return CalcDiffMaskImage(actual, expected, mask, resizeOption, pixelColorShiftTolerance);
         }
 
         /// <summary>
@@ -545,8 +558,9 @@ namespace Codeuctivity.ImageSharpCompare
         /// <param name="actual"></param>
         /// <param name="expected"></param>
         /// <param name="resizeOption"></param>
+        /// <param name="pixelColorShiftTolerance"></param>
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
-        public static Image CalcDiffMaskImage(Image actual, Image expected, ResizeOption resizeOption = ResizeOption.DontResize)
+        public static Image CalcDiffMaskImage(Image actual, Image expected, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0)
         {
             ArgumentNullException.ThrowIfNull(actual);
 
@@ -562,7 +576,7 @@ namespace Codeuctivity.ImageSharpCompare
                 actualRgb24 = ToRgb24Image(actual, out ownsActual);
                 expectedRgb24 = ToRgb24Image(expected, out ownsExpected);
 
-                return CalcDiffMaskImage(actualRgb24, expectedRgb24, resizeOption);
+                return CalcDiffMaskImage(actualRgb24, expectedRgb24, resizeOption, pixelColorShiftTolerance);
             }
             finally
             {
@@ -584,8 +598,9 @@ namespace Codeuctivity.ImageSharpCompare
         /// <param name="expected"></param>
         /// <param name="mask"></param>
         /// <param name="resizeOption"></param>
+        /// <param name="pixelColorShiftTolerance"></param>
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
-        public static Image CalcDiffMaskImage(Image actual, Image expected, Image mask, ResizeOption resizeOption = ResizeOption.DontResize)
+        public static Image CalcDiffMaskImage(Image actual, Image expected, Image mask, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0)
         {
             ArgumentNullException.ThrowIfNull(actual);
             ArgumentNullException.ThrowIfNull(expected);
@@ -603,7 +618,7 @@ namespace Codeuctivity.ImageSharpCompare
                 expectedRgb24 = ToRgb24Image(expected, out ownsExpected);
                 maskRgb24 = ToRgb24Image(mask, out ownsMask);
 
-                return CalcDiffMaskImage(actualRgb24, expectedRgb24, maskRgb24, resizeOption);
+                return CalcDiffMaskImage(actualRgb24, expectedRgb24, maskRgb24, resizeOption, pixelColorShiftTolerance);
             }
             finally
             {
@@ -628,8 +643,9 @@ namespace Codeuctivity.ImageSharpCompare
         /// <param name="actual"></param>
         /// <param name="expected"></param>
         /// <param name="resizeOption"></param>
+        /// <param name="pixelColorShiftTolerance"></param>
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
-        public static Image CalcDiffMaskImage(Image<Rgb24> actual, Image<Rgb24> expected, ResizeOption resizeOption = ResizeOption.DontResize)
+        public static Image CalcDiffMaskImage(Image<Rgb24> actual, Image<Rgb24> expected, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0)
         {
             var imagesHAveSameDimension = ImagesHaveSameDimension(actual, expected);
 
@@ -665,7 +681,7 @@ namespace Codeuctivity.ImageSharpCompare
             var grown = GrowToSameDimension(actual, expected);
             try
             {
-                return CalcDiffMaskImage(grown.Item1, grown.Item2, ResizeOption.DontResize);
+                return CalcDiffMaskImage(grown.Item1, grown.Item2, ResizeOption.DontResize, pixelColorShiftTolerance);
             }
             finally
             {
@@ -681,8 +697,9 @@ namespace Codeuctivity.ImageSharpCompare
         /// <param name="expected"></param>
         /// <param name="mask"></param>
         /// <param name="resizeOption"></param>
+        /// <param name="pixelColorShiftTolerance"></param>
         /// <returns>Image representing diff, black means no diff between actual image and expected image, white means max diff</returns>
-        public static Image CalcDiffMaskImage(Image<Rgb24> actual, Image<Rgb24> expected, Image<Rgb24> mask, ResizeOption resizeOption = ResizeOption.DontResize)
+        public static Image CalcDiffMaskImage(Image<Rgb24> actual, Image<Rgb24> expected, Image<Rgb24> mask, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0)
         {
             ArgumentNullException.ThrowIfNull(mask);
             var imagesHaveSameDimensions = ImagesHaveSameDimension(actual, expected) && ImagesHaveSameDimension(actual, mask);
@@ -719,7 +736,7 @@ namespace Codeuctivity.ImageSharpCompare
             var grown = GrowToSameDimension(actual, expected, mask);
             try
             {
-                return CalcDiffMaskImage(grown.Item1, grown.Item2, grown.Item3, ResizeOption.DontResize);
+                return CalcDiffMaskImage(grown.Item1, grown.Item2, grown.Item3, ResizeOption.DontResize,  pixelColorShiftTolerance );
             }
             finally
             {
