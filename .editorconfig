@@ -20,3 +20,4 @@ csharp_prefer_braces = true:warning
 
 # IDE0011: Add braces - reflecting codacy defaults
 dotnet_diagnostic.IDE0011.severity = warning
+dotnet_diagnostic.IDE0060.severity = error

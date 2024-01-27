@@ -22,7 +22,7 @@ namespace ImageSharpCompareTestNunit
         private const string renderedForm2 = "../../../TestData/HC007-Test-02-3-OxPt.html2.png";
         private const string colorShift1 = "../../../TestData/ColorShift1.png";
         private const string colorShift2 = "../../../TestData/ColorShift2.png";
-        
+
         [Test]
         [TestCase(jpg0Rgb24, jpg0Rgb24, true)]
         [TestCase(png0Rgba32, png0Rgba32, true)]
@@ -139,8 +139,8 @@ namespace ImageSharpCompareTestNunit
         [TestCase(pngBlack4x4px, pngWhite2x2px, 12240, 765, 16, 100.0d, ResizeOption.Resize, 0)]
         [TestCase(renderedForm1, renderedForm2, 50103469, 61.825603405725566d, 220164, 27.167324777887465d, ResizeOption.Resize, 0)]
         [TestCase(renderedForm2, renderedForm1, 50103469, 61.825603405725566d, 220164, 27.167324777887465d, ResizeOption.Resize, 0)]
-        [TestCase(colorShift1, colorShift2, 117896, 3.437201166180758d, 30398, 88.623906705539355d, ResizeOption.DontResize,0)]
-        [TestCase(colorShift1, colorShift2, 0, 0, 0, 0, ResizeOption.DontResize,15)]
+        [TestCase(colorShift1, colorShift2, 117896, 3.437201166180758d, 30398, 88.623906705539355d, ResizeOption.DontResize, 0)]
+        [TestCase(colorShift1, colorShift2, 0, 0, 0, 0, ResizeOption.DontResize, 15)]
         public void ShouldVerifyThatImagesAreSemiEqual(string pathPic1, string pathPic2, int expectedAbsoluteError, double expectedMeanError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption, int pixelColorShiftTolerance)
         {
             var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
@@ -231,7 +231,7 @@ namespace ImageSharpCompareTestNunit
         [TestCase(jpg0Rgb24, jpg1Rgb24, 0, 0, 0, 0, ResizeOption.DontResize)]
         [TestCase(jpg0Rgb24, jpg1Rgb24, 0, 0, 0, 0, ResizeOption.Resize)]
         [TestCase(pngBlack2x2px, pngBlack4x4px, 0, 0, 0, 0, ResizeOption.Resize)]
-        public void ShoulCalcDiffMaskImageSharpAndUseOutcome(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption)
+        public void ShouldCalcDiffMaskImageSharpAndUseOutcome(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption)
         {
             var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
             var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
@@ -260,12 +260,13 @@ namespace ImageSharpCompareTestNunit
             AssertDisposeBehavior(differenceMaskPic);
         }
 
-        [TestCase(pngWhite2x2px, pngBlack2x2px, pngTransparent2x2px, 765, 12240, 16, 100d, ResizeOption.Resize)]
-        [TestCase(pngWhite2x2px, pngBlack2x2px, pngBlack4x4px, 765, 12240, 16, 100d, ResizeOption.Resize)]
-        [TestCase(pngBlack2x2px, pngBlack2x2px, pngBlack4x4px, 0, 0, 0, 0, ResizeOption.Resize)]
-        [TestCase(pngBlack2x2px, pngBlack4x4px, pngBlack2x2px, 0, 0, 0, 0, ResizeOption.Resize)]
-        [TestCase(pngBlack4x4px, pngBlack2x2px, pngBlack2x2px, 0, 0, 0, 0, ResizeOption.Resize)]
-        public void ShouldUseDiffMask(string pathPic1, string pathPic2, string pathPic3, double expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption)
+        [TestCase(pngWhite2x2px, pngBlack2x2px, pngTransparent2x2px, 765, 12240, 16, 100d, ResizeOption.Resize, 0)]
+        [TestCase(pngWhite2x2px, pngBlack2x2px, pngBlack4x4px, 765, 12240, 16, 100d, ResizeOption.Resize, 0)]
+        [TestCase(pngBlack2x2px, pngBlack2x2px, pngBlack4x4px, 0, 0, 0, 0, ResizeOption.Resize, 0)]
+        [TestCase(pngBlack2x2px, pngBlack4x4px, pngBlack2x2px, 0, 0, 0, 0, ResizeOption.Resize, 0)]
+        [TestCase(pngBlack4x4px, pngBlack2x2px, pngBlack2x2px, 0, 0, 0, 0, ResizeOption.Resize, 0)]
+        [TestCase(colorShift1, colorShift2, pngBlack2x2px, 0, 0, 0, 0, ResizeOption.Resize, 15)]
+        public void ShouldUseDiffMask(string pathPic1, string pathPic2, string pathPic3, double expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption, int pixelColorShiftTolerance)
         {
             var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
             var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
@@ -274,7 +275,7 @@ namespace ImageSharpCompareTestNunit
             using var pic2 = Image.Load(absolutePathPic2);
             using var maskPic = Image.Load(differenceMaskPic);
 
-            var maskedDiff = ImageSharpCompare.CalcDiff(pic1, pic2, maskPic, resizeOption);
+            var maskedDiff = ImageSharpCompare.CalcDiff(pic1, pic2, maskPic, resizeOption, pixelColorShiftTolerance);
 
             Assert.That(maskedDiff.MeanError, Is.EqualTo(expectedMeanError), "MeanError");
             Assert.That(maskedDiff.AbsoluteError, Is.EqualTo(expectedAbsoluteError), "AbsoluteError");
