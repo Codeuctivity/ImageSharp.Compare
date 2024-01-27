@@ -211,7 +211,7 @@ namespace Codeuctivity.ImageSharpCompare
         /// <param name="resizeOption"></param>
         /// <param name="pixelColorShiftTolerance"></param>
         /// <returns>Mean and absolute pixel error</returns>
-        public static ICompareResult CalcDiff(string pathActualImage, string pathExpectedImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance=0)
+        public static ICompareResult CalcDiff(string pathActualImage, string pathExpectedImage, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0)
         {
             using var actual = Image.Load(pathActualImage);
             using var expected = Image.Load(pathExpectedImage);
@@ -350,8 +350,8 @@ namespace Codeuctivity.ImageSharpCompare
                     var g = Math.Abs(expectedPixel.G - actualPixel.G);
                     var b = Math.Abs(expectedPixel.B - actualPixel.B);
                     var sum = r + g + b;
-                    absoluteError = absoluteError + (sum > pixelColorShiftTolerance ? sum :0) ;
-                    pixelErrorCount +=( sum > pixelColorShiftTolerance )? 1 : 0;
+                    absoluteError = absoluteError + (sum > pixelColorShiftTolerance ? sum : 0);
+                    pixelErrorCount += (sum > pixelColorShiftTolerance) ? 1 : 0;
                 }
             }
 
@@ -359,8 +359,6 @@ namespace Codeuctivity.ImageSharpCompare
             var pixelErrorPercentage = (double)pixelErrorCount / quantity * 100;
             return new CompareResult(absoluteError, meanError, pixelErrorCount, pixelErrorPercentage);
         }
-
-   
 
         /// <summary>
         /// Calculates ICompareResult expressing the amount of difference of both images using a image mask for tolerated difference between the two images
@@ -392,7 +390,7 @@ namespace Codeuctivity.ImageSharpCompare
                 expectedRgb24 = ToRgb24Image(expected, out ownsExpected);
                 maskImageRgb24 = ToRgb24Image(maskImage, out ownsMask);
 
-                return CalcDiff(actualRgb24, expectedRgb24, maskImageRgb24, resizeOption);
+                return CalcDiff(actualRgb24, expectedRgb24, maskImageRgb24, resizeOption, pixelColorShiftTolerance);
             }
             finally
             {
@@ -431,7 +429,7 @@ namespace Codeuctivity.ImageSharpCompare
                 var grown = GrowToSameDimension(actual, expected, maskImage);
                 try
                 {
-                    return CalcDiff(grown.Item1, grown.Item2, grown.Item3, ResizeOption.DontResize);
+                    return CalcDiff(grown.Item1, grown.Item2, grown.Item3, ResizeOption.DontResize, pixelColorShiftTolerance);
                 }
                 finally
                 {
@@ -479,8 +477,8 @@ namespace Codeuctivity.ImageSharpCompare
                         error += b;
                     }
 
-                    absoluteError += error;
-                    pixelErrorCount += error > 0 ? 1 : 0;
+                    absoluteError = absoluteError + (error > pixelColorShiftTolerance ? error : 0);
+                    pixelErrorCount += error > pixelColorShiftTolerance ? 1 : 0;
                 }
             }
             var meanError = (double)absoluteError / quantity;
@@ -736,7 +734,7 @@ namespace Codeuctivity.ImageSharpCompare
             var grown = GrowToSameDimension(actual, expected, mask);
             try
             {
-                return CalcDiffMaskImage(grown.Item1, grown.Item2, grown.Item3, ResizeOption.DontResize,  pixelColorShiftTolerance );
+                return CalcDiffMaskImage(grown.Item1, grown.Item2, grown.Item3, ResizeOption.DontResize, pixelColorShiftTolerance);
             }
             finally
             {
