@@ -4,7 +4,6 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.IO;
-using System.Reflection;
 
 namespace ImageSharpCompareTestNunit
 {
@@ -121,8 +120,40 @@ namespace ImageSharpCompareTestNunit
             using var expected = Image.Load(absolutePathExpected);
 
             Assert.That(ImageSharpCompare.ImagesAreEqual(actual, expected), Is.True);
-            AssertDisposeBehavior(actual);
-            AssertDisposeBehavior(expected);
+            AssertDisposeBehavior.AssertThatImageIsDisposed(actual);
+            AssertDisposeBehavior.AssertThatImageIsDisposed(expected);
+        }
+
+        [Test]
+        [TestCase(jpg0Rgb24, jpg0Rgb24)]
+        [TestCase(png0Rgba32, png0Rgba32)]
+        public void ShouldVerifyThatImageSharpImagesAreEqualBrga(string pathActual, string pathExpected)
+        {
+            var absolutePathActual = Path.Combine(AppContext.BaseDirectory, pathActual);
+            var absolutePathExpected = Path.Combine(AppContext.BaseDirectory, pathExpected);
+
+            using var actual = Image.Load(absolutePathActual);
+            using var expected = Image.Load<Bgra32>(absolutePathExpected);
+
+            Assert.That(ImageSharpCompare.ImagesAreEqual(actual, expected), Is.True);
+            AssertDisposeBehavior.AssertThatImageIsDisposed(actual);
+            AssertDisposeBehavior.AssertThatImageIsDisposed(expected);
+        }
+
+        [Test]
+        [TestCase(jpg0Rgb24, jpg0Rgb24)]
+        [TestCase(png0Rgba32, png0Rgba32)]
+        public void ShouldVerifyThatImageSharpImagesAreEqualBgra5551(string pathActual, string pathExpected)
+        {
+            var absolutePathActual = Path.Combine(AppContext.BaseDirectory, pathActual);
+            var absolutePathExpected = Path.Combine(AppContext.BaseDirectory, pathExpected);
+
+            using var actual = Image.Load<Bgra5551>(absolutePathActual);
+            using var expected = Image.Load<Bgra5551>(absolutePathExpected);
+
+            Assert.That(ImageSharpCompare.ImagesAreEqual(actual, expected), Is.True);
+            AssertDisposeBehavior.AssertThatImageIsDisposed(actual);
+            AssertDisposeBehavior.AssertThatImageIsDisposed(expected);
         }
 
         [Test]
@@ -254,10 +285,43 @@ namespace ImageSharpCompareTestNunit
             Assert.That(maskedDiff.MeanError, Is.EqualTo(expectedMeanError), "MeanError");
             Assert.That(maskedDiff.PixelErrorCount, Is.EqualTo(expectedPixelErrorCount), "PixelErrorCount");
             Assert.That(maskedDiff.PixelErrorPercentage, Is.EqualTo(expectedPixelErrorPercentage), "PixelErrorPercentage");
+            AssertDisposeBehavior.
+                        AssertThatImageIsDisposed(absolutePic1);
+            AssertDisposeBehavior.AssertThatImageIsDisposed(absolutePic2);
+            AssertDisposeBehavior.AssertThatImageIsDisposed(differenceMaskPic);
+        }
 
-            AssertDisposeBehavior(absolutePic1);
-            AssertDisposeBehavior(absolutePic2);
-            AssertDisposeBehavior(differenceMaskPic);
+        [TestCase(png0Rgba32, png1Rgba32, 0, 0, 0, 0, ResizeOption.DontResize)]
+        [TestCase(jpg0Rgb24, jpg1Rgb24, 0, 0, 0, 0, ResizeOption.DontResize)]
+        [TestCase(jpg0Rgb24, jpg1Rgb24, 0, 0, 0, 0, ResizeOption.Resize)]
+        [TestCase(pngBlack2x2px, pngBlack4x4px, 0, 0, 0, 0, ResizeOption.Resize)]
+        public void ShouldCalcDiffMaskImageHalfSingleHalfVector2AndUseOutcome(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption)
+        {
+            var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
+            var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
+            var differenceMaskPicPath = Path.GetTempFileName() + "differenceMask.png";
+
+            using var absolutePic1 = Image.Load<HalfVector2>(absolutePathPic1);
+            using var absolutePic2 = Image.Load(absolutePathPic2);
+
+            using (var fileStreamDifferenceMask = File.Create(differenceMaskPicPath))
+            using (var maskImage = ImageSharpCompare.CalcDiffMaskImage(absolutePic1, absolutePic2, resizeOption))
+            {
+                ImageExtensions.SaveAsPng(maskImage, fileStreamDifferenceMask);
+            }
+
+            using var differenceMaskPic = Image.Load(differenceMaskPicPath);
+            var maskedDiff = ImageSharpCompare.CalcDiff(absolutePic1, absolutePic2, differenceMaskPic, resizeOption);
+            File.Delete(differenceMaskPicPath);
+
+            Assert.That(maskedDiff.AbsoluteError, Is.EqualTo(expectedAbsoluteError), "AbsoluteError");
+            Assert.That(maskedDiff.MeanError, Is.EqualTo(expectedMeanError), "MeanError");
+            Assert.That(maskedDiff.PixelErrorCount, Is.EqualTo(expectedPixelErrorCount), "PixelErrorCount");
+            Assert.That(maskedDiff.PixelErrorPercentage, Is.EqualTo(expectedPixelErrorPercentage), "PixelErrorPercentage");
+            AssertDisposeBehavior.
+                        AssertThatImageIsDisposed(absolutePic1);
+            AssertDisposeBehavior.AssertThatImageIsDisposed(absolutePic2);
+            AssertDisposeBehavior.AssertThatImageIsDisposed(differenceMaskPic);
         }
 
         [TestCase(pngWhite2x2px, pngBlack2x2px, pngTransparent2x2px, 765, 12240, 16, 100d, ResizeOption.Resize, 0)]
@@ -281,10 +345,10 @@ namespace ImageSharpCompareTestNunit
             Assert.That(maskedDiff.AbsoluteError, Is.EqualTo(expectedAbsoluteError), "AbsoluteError");
             Assert.That(maskedDiff.PixelErrorCount, Is.EqualTo(expectedPixelErrorCount), "PixelErrorCount");
             Assert.That(maskedDiff.PixelErrorPercentage, Is.EqualTo(expectedPixelErrorPercentage), "PixelErrorPercentage");
-
-            AssertDisposeBehavior(pic1);
-            AssertDisposeBehavior(pic2);
-            AssertDisposeBehavior(maskPic);
+            AssertDisposeBehavior.
+                        AssertThatImageIsDisposed(pic1);
+            AssertDisposeBehavior.AssertThatImageIsDisposed(pic2);
+            AssertDisposeBehavior.AssertThatImageIsDisposed(maskPic);
         }
 
         [TestCase(pngBlack2x2px, pngBlack2x2px, pngBlack4x4px)]
@@ -302,28 +366,13 @@ namespace ImageSharpCompareTestNunit
             var exception = Assert.Throws<ImageSharpCompareException>(() => ImageSharpCompare.CalcDiff(pic1, pic2, maskPic, ResizeOption.DontResize));
 
             Assert.That(exception?.Message, Is.EqualTo("Size of images differ."));
-
-            AssertDisposeBehavior(pic1);
-            AssertDisposeBehavior(pic2);
-            AssertDisposeBehavior(maskPic);
+            AssertDisposeBehavior.
+                        AssertThatImageIsDisposed(pic1);
+            AssertDisposeBehavior.AssertThatImageIsDisposed(pic2);
+            AssertDisposeBehavior.AssertThatImageIsDisposed(maskPic);
         }
 
-        private static void AssertDisposeBehavior(Image image)
-        {
-            const string imageSharpPrivateFieldNameIsDisposed = "isDisposed";
-            var isDisposed = (bool?)GetInstanceField(image, imageSharpPrivateFieldNameIsDisposed);
-            Assert.That(isDisposed, Is.False);
-            image.Dispose();
-            isDisposed = (bool?)GetInstanceField(image, imageSharpPrivateFieldNameIsDisposed);
-            Assert.That(isDisposed, Is.True);
-        }
 
-        private static object? GetInstanceField<T>(T instance, string fieldName)
-        {
-            var bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
-            var field = typeof(T).GetField(fieldName, bindFlags);
-            return field == null ? throw new ArgumentNullException(fieldName) : field.GetValue(instance);
-        }
 
         [TestCase(png0Rgba32, png1Rgba32, 0, 0, 0, 0)]
         public void DiffMaskSteams(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage)
