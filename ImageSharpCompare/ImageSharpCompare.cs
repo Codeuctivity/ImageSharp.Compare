@@ -350,7 +350,7 @@ namespace Codeuctivity.ImageSharpCompare
                     var g = Math.Abs(expectedPixel.G - actualPixel.G);
                     var b = Math.Abs(expectedPixel.B - actualPixel.B);
                     var sum = r + g + b;
-                    absoluteError = absoluteError + (sum > pixelColorShiftTolerance ? sum : 0);
+                    absoluteError += (sum > pixelColorShiftTolerance ? sum : 0);
                     pixelErrorCount += (sum > pixelColorShiftTolerance) ? 1 : 0;
                 }
             }
@@ -477,7 +477,7 @@ namespace Codeuctivity.ImageSharpCompare
                         error += b;
                     }
 
-                    absoluteError = absoluteError + (error > pixelColorShiftTolerance ? error : 0);
+                    absoluteError += (error > pixelColorShiftTolerance ? error : 0);
                     pixelErrorCount += error > pixelColorShiftTolerance ? 1 : 0;
                 }
             }
@@ -752,19 +752,17 @@ namespace Codeuctivity.ImageSharpCompare
                 return actualPixelAccessibleImage;
             }
 
-            if (actual is Image<Rgba32> imageRgba32)
-            {
-                ownsImage = true;
-                return ConvertRgba32ToRgb24(imageRgba32);
-            }
-
-            throw new NotImplementedException($"Pixel type {actual.PixelType} is not supported to be compared.");
+            ownsImage = true;
+            return actual.CloneAs<Rgb24>();
         }
 
         /// <summary>
         /// Converts a Rgba32 Image to Rgb24 one
         /// </summary>
         /// <param name="imageRgba32"></param>
+#pragma warning disable S1133 // Give the consumer of the public method some time to migrate
+        [Obsolete("use 'imageRgba32..CloneAs<Rgb24>()' instead")]
+#pragma warning restore S1133 
         public static Image<Rgb24> ConvertRgba32ToRgb24(Image<Rgba32> imageRgba32)
         {
             ArgumentNullException.ThrowIfNull(imageRgba32);

@@ -126,6 +126,38 @@ namespace ImageSharpCompareTestNunit
         }
 
         [Test]
+        [TestCase(jpg0Rgb24, jpg0Rgb24)]
+        [TestCase(png0Rgba32, png0Rgba32)]
+        public void ShouldVerifyThatImageSharpImagesAreEqualBrga(string pathActual, string pathExpected)
+        {
+            var absolutePathActual = Path.Combine(AppContext.BaseDirectory, pathActual);
+            var absolutePathExpected = Path.Combine(AppContext.BaseDirectory, pathExpected);
+
+            using var actual = Image.Load(absolutePathActual);
+            using var expected = Image.Load<Bgra32>(absolutePathExpected);
+
+            Assert.That(ImageSharpCompare.ImagesAreEqual(actual, expected), Is.True);
+            AssertDisposeBehavior(actual);
+            AssertDisposeBehavior(expected);
+        }
+
+        [Test]
+        [TestCase(jpg0Rgb24, jpg0Rgb24)]
+        [TestCase(png0Rgba32, png0Rgba32)]
+        public void ShouldVerifyThatImageSharpImagesAreEqualBgra5551(string pathActual, string pathExpected)
+        {
+            var absolutePathActual = Path.Combine(AppContext.BaseDirectory, pathActual);
+            var absolutePathExpected = Path.Combine(AppContext.BaseDirectory, pathExpected);
+
+            using var actual = Image.Load<Bgra5551>(absolutePathActual);
+            using var expected = Image.Load<Bgra5551>(absolutePathExpected);
+
+            Assert.That(ImageSharpCompare.ImagesAreEqual(actual, expected), Is.True);
+            AssertDisposeBehavior(actual);
+            AssertDisposeBehavior(expected);
+        }
+
+        [Test]
         [TestCase(jpg0Rgb24, png0Rgba32, 384538, 2.3789191061839596d, 140855, 87.139021553537404d, null, 0)]
         [TestCase(jpg0Rgb24, png0Rgba32, 384538, 2.3789191061839596d, 140855, 87.139021553537404d, ResizeOption.DontResize, 0)]
         [TestCase(jpg0Rgb24, png0Rgba32, 384538, 2.3789191061839596d, 140855, 87.139021553537404d, ResizeOption.Resize, 0)]
@@ -232,6 +264,39 @@ namespace ImageSharpCompareTestNunit
         [TestCase(jpg0Rgb24, jpg1Rgb24, 0, 0, 0, 0, ResizeOption.Resize)]
         [TestCase(pngBlack2x2px, pngBlack4x4px, 0, 0, 0, 0, ResizeOption.Resize)]
         public void ShouldCalcDiffMaskImageSharpAndUseOutcome(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption)
+        {
+            var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
+            var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
+            var differenceMaskPicPath = Path.GetTempFileName() + "differenceMask.png";
+
+            using var absolutePic1 = Image.Load(absolutePathPic1);
+            using var absolutePic2 = Image.Load(absolutePathPic2);
+
+            using (var fileStreamDifferenceMask = File.Create(differenceMaskPicPath))
+            using (var maskImage = ImageSharpCompare.CalcDiffMaskImage(absolutePic1, absolutePic2, resizeOption))
+            {
+                ImageExtensions.SaveAsPng(maskImage, fileStreamDifferenceMask);
+            }
+
+            using var differenceMaskPic = Image.Load(differenceMaskPicPath);
+            var maskedDiff = ImageSharpCompare.CalcDiff(absolutePic1, absolutePic2, differenceMaskPic, resizeOption);
+            File.Delete(differenceMaskPicPath);
+
+            Assert.That(maskedDiff.AbsoluteError, Is.EqualTo(expectedAbsoluteError), "AbsoluteError");
+            Assert.That(maskedDiff.MeanError, Is.EqualTo(expectedMeanError), "MeanError");
+            Assert.That(maskedDiff.PixelErrorCount, Is.EqualTo(expectedPixelErrorCount), "PixelErrorCount");
+            Assert.That(maskedDiff.PixelErrorPercentage, Is.EqualTo(expectedPixelErrorPercentage), "PixelErrorPercentage");
+
+            AssertDisposeBehavior(absolutePic1);
+            AssertDisposeBehavior(absolutePic2);
+            AssertDisposeBehavior(differenceMaskPic);
+        }
+
+        [TestCase(png0Rgba32, png1Rgba32, 0, 0, 0, 0, ResizeOption.DontResize)]
+        [TestCase(jpg0Rgb24, jpg1Rgb24, 0, 0, 0, 0, ResizeOption.DontResize)]
+        [TestCase(jpg0Rgb24, jpg1Rgb24, 0, 0, 0, 0, ResizeOption.Resize)]
+        [TestCase(pngBlack2x2px, pngBlack4x4px, 0, 0, 0, 0, ResizeOption.Resize)]
+        public void ShouldCalcDiffMaskImageHalfSingleSharpAndUseOutcome(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption)
         {
             var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
             var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
