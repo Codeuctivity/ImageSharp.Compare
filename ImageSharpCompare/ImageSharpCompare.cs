@@ -139,8 +139,8 @@ namespace Codeuctivity.ImageSharpCompare
             Image<Rgb24>? expectedPixelAccusableImage = null;
             try
             {
-                actualPixelAccessibleImage = ToRgb24Image(actual, out ownsActual);
-                expectedPixelAccusableImage = ToRgb24Image(expected, out ownsExpected);
+                actualPixelAccessibleImage = ImageSharpPixelTypeConverter.ToRgb24Image(actual, out ownsActual);
+                expectedPixelAccusableImage = ImageSharpPixelTypeConverter.ToRgb24Image(expected, out ownsExpected);
 
                 return ImagesAreEqual(actualPixelAccessibleImage, expectedPixelAccusableImage, resizeOption);
             }
@@ -286,8 +286,8 @@ namespace Codeuctivity.ImageSharpCompare
 
             try
             {
-                actualRgb24 = ToRgb24Image(actual, out ownsActual);
-                expectedRgb24 = ToRgb24Image(expected, out ownsExpected);
+                actualRgb24 = ImageSharpPixelTypeConverter.ToRgb24Image(actual, out ownsActual);
+                expectedRgb24 = ImageSharpPixelTypeConverter.ToRgb24Image(expected, out ownsExpected);
 
                 return CalcDiff(actualRgb24, expectedRgb24, resizeOption, pixelColorShiftTolerance);
             }
@@ -386,9 +386,9 @@ namespace Codeuctivity.ImageSharpCompare
 
             try
             {
-                actualRgb24 = ToRgb24Image(actual, out ownsActual);
-                expectedRgb24 = ToRgb24Image(expected, out ownsExpected);
-                maskImageRgb24 = ToRgb24Image(maskImage, out ownsMask);
+                actualRgb24 = ImageSharpPixelTypeConverter.ToRgb24Image(actual, out ownsActual);
+                expectedRgb24 = ImageSharpPixelTypeConverter.ToRgb24Image(expected, out ownsExpected);
+                maskImageRgb24 = ImageSharpPixelTypeConverter.ToRgb24Image(maskImage, out ownsMask);
 
                 return CalcDiff(actualRgb24, expectedRgb24, maskImageRgb24, resizeOption, pixelColorShiftTolerance);
             }
@@ -571,8 +571,8 @@ namespace Codeuctivity.ImageSharpCompare
 
             try
             {
-                actualRgb24 = ToRgb24Image(actual, out ownsActual);
-                expectedRgb24 = ToRgb24Image(expected, out ownsExpected);
+                actualRgb24 = ImageSharpPixelTypeConverter.ToRgb24Image(actual, out ownsActual);
+                expectedRgb24 = ImageSharpPixelTypeConverter.ToRgb24Image(expected, out ownsExpected);
 
                 return CalcDiffMaskImage(actualRgb24, expectedRgb24, resizeOption, pixelColorShiftTolerance);
             }
@@ -612,9 +612,9 @@ namespace Codeuctivity.ImageSharpCompare
 
             try
             {
-                actualRgb24 = ToRgb24Image(actual, out ownsActual);
-                expectedRgb24 = ToRgb24Image(expected, out ownsExpected);
-                maskRgb24 = ToRgb24Image(mask, out ownsMask);
+                actualRgb24 = ImageSharpPixelTypeConverter.ToRgb24Image(actual, out ownsActual);
+                expectedRgb24 = ImageSharpPixelTypeConverter.ToRgb24Image(expected, out ownsExpected);
+                maskRgb24 = ImageSharpPixelTypeConverter.ToRgb24Image(mask, out ownsMask);
 
                 return CalcDiffMaskImage(actualRgb24, expectedRgb24, maskRgb24, resizeOption, pixelColorShiftTolerance);
             }
@@ -742,18 +742,6 @@ namespace Codeuctivity.ImageSharpCompare
                 grown.Item2?.Dispose();
                 grown.Item3?.Dispose();
             }
-        }
-
-        private static Image<Rgb24> ToRgb24Image(Image actual, out bool ownsImage)
-        {
-            if (actual is Image<Rgb24> actualPixelAccessibleImage)
-            {
-                ownsImage = false;
-                return actualPixelAccessibleImage;
-            }
-
-            ownsImage = true;
-            return actual.CloneAs<Rgb24>();
         }
 
         /// <summary>
