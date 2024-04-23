@@ -296,13 +296,13 @@ namespace ImageSharpCompareTestNunit
         [TestCase(jpg0Rgb24, jpg1Rgb24, 0, 0, 0, 0, ResizeOption.DontResize)]
         [TestCase(jpg0Rgb24, jpg1Rgb24, 0, 0, 0, 0, ResizeOption.Resize)]
         [TestCase(pngBlack2x2px, pngBlack4x4px, 0, 0, 0, 0, ResizeOption.Resize)]
-        public void ShouldCalcDiffMaskImageHalfSingleSharpAndUseOutcome(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption)
+        public void ShouldCalcDiffMaskImageHalfSingleHalfVector2AndUseOutcome(string pathPic1, string pathPic2, int expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption)
         {
             var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
             var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
             var differenceMaskPicPath = Path.GetTempFileName() + "differenceMask.png";
 
-            using var absolutePic1 = Image.Load(absolutePathPic1);
+            using var absolutePic1 = Image.Load<HalfVector2>(absolutePathPic1);
             using var absolutePic2 = Image.Load(absolutePathPic2);
 
             using (var fileStreamDifferenceMask = File.Create(differenceMaskPicPath))
