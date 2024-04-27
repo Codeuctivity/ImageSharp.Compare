@@ -5,7 +5,11 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Codeuctivity.ImageSharpCompare;
+
+#pragma warning disable CA1724 // Type names should not match namespaces - this is accepted for now to prevent a breaking change
+
 public static partial class ImageSharpCompare
+#pragma warning restore CA1724 // Type names should not match namespaces - this is accepted for now to prevent a breaking change
 {
     /// <summary>
     /// Creates a diff mask image of two images

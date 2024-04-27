@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SixLabors.ImageSharp.PixelFormats;
 
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Codeuctivity.ImageSharpCompare;
+
+#pragma warning disable CA1724 // Type names should not match namespaces - this is accepted for now to prevent a breaking change
+
 public static partial class ImageSharpCompare
+#pragma warning restore CA1724 // Type names should not match namespaces - this is accepted for now to prevent a breaking change
 {
     /// <summary>
     /// Creates an image with a diff mask based on another one
