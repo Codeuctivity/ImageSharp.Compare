@@ -93,6 +93,18 @@ namespace ImageSharpCompareTestNunit
 
             Assert.That(ImageSharpCompare.ImagesAreEqual(absolutePathActual, absolutePathExpected, resizeOption), Is.EqualTo(expectedResult));
         }
+        [Test]
+        [TestCase(colorShift1, colorShift2, ResizeOption.DontResize, 0, false)]
+        [TestCase(colorShift1, colorShift2, ResizeOption.Resize, 0, false)]
+        [TestCase(colorShift1, colorShift2, ResizeOption.DontResize, 15, true)]
+        [TestCase(colorShift1, colorShift2, ResizeOption.Resize, 15, true)]
+        public void ShouldVerifyThatImagesWithColorShift(string pathActual, string pathExpected, ResizeOption resizeOption, int expectedColorShift, bool expectedResult)
+        {
+            var absolutePathActual = Path.Combine(AppContext.BaseDirectory, pathActual);
+            var absolutePathExpected = Path.Combine(AppContext.BaseDirectory, pathExpected);
+
+            Assert.That(ImageSharpCompare.ImagesAreEqual(absolutePathActual, absolutePathExpected, resizeOption, expectedColorShift), Is.EqualTo(expectedResult));
+        }
 
         [Test]
         [TestCase(jpg0Rgb24, jpg0Rgb24)]
@@ -157,7 +169,6 @@ namespace ImageSharpCompareTestNunit
         }
 
         [Test]
-        [TestCase(jpg0Rgb24, png0Rgba32, 384538, 2.3789191061839596d, 140855, 87.139021553537404d, null, 0)]
         [TestCase(jpg0Rgb24, png0Rgba32, 384538, 2.3789191061839596d, 140855, 87.139021553537404d, ResizeOption.DontResize, 0)]
         [TestCase(jpg0Rgb24, png0Rgba32, 384538, 2.3789191061839596d, 140855, 87.139021553537404d, ResizeOption.Resize, 0)]
         [TestCase(jpg1Rgb24, png1Rgba32, 382669, 2.3673566603152607d, 140893, 87.162530004206772d, ResizeOption.DontResize, 0)]
@@ -204,7 +215,6 @@ namespace ImageSharpCompareTestNunit
         }
 
         [Test]
-        [TestCase(jpg0Rgb24, png0Rgba32, 384538, 2.3789191061839596d, 140855, 87.139021553537404d, null)]
         [TestCase(jpg0Rgb24, png0Rgba32, 384538, 2.3789191061839596d, 140855, 87.139021553537404d, ResizeOption.DontResize)]
         [TestCase(jpg0Rgb24, png0Rgba32, 384538, 2.3789191061839596d, 140855, 87.139021553537404d, ResizeOption.Resize)]
         [TestCase(jpg1Rgb24, png1Rgba32, 382669, 2.3673566603152607d, 140893, 87.162530004206772d, ResizeOption.DontResize)]

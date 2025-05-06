@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net8.0</TargetFrameworks>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<RepositoryUrl>https://github.com/Codeuctivity/ImageSharp.Compare</RepositoryUrl>
@@ -45,7 +45,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="SixLabors.ImageSharp" Version="3.1.8" />
-		<PackageReference Include="SonarAnalyzer.CSharp" Version="9.32.0.97167">
+		<PackageReference Include="SonarAnalyzer.CSharp" Version="10.9.0.115408">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
