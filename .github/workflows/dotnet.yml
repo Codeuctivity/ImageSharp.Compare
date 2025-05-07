@@ -1,6 +1,6 @@
 name: .NET build and test
 env:
-  CURRENT_VERSION: 4.0.${{ github.run_number }}
+  CURRENT_VERSION: 4.1.${{ github.run_number }}
   LAST_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
 
 on:
@@ -20,6 +20,7 @@ jobs:
       with:
         dotnet-version: | 
           8.0.x
+          9.0.x
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
@@ -38,6 +39,7 @@ jobs:
       with:
         dotnet-version: | 
           8.0.x
+          9.0.x
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
@@ -67,6 +69,7 @@ jobs:
       with:
         dotnet-version: | 
           8.0.x
+          9.0.x
     - name: Check formatting
       run: dotnet format --verify-no-changes
     - name: Restore dependencies

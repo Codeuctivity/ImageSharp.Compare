@@ -98,12 +98,13 @@ namespace Codeuctivity.ImageSharpCompare
         /// <param name="pathImageActual"></param>
         /// <param name="pathImageExpected"></param>
         /// <param name="resizeOption"></param>
+        /// <param name="pixelColorShiftTolerance"></param>
         /// <returns>True if every pixel of actual is equal to expected</returns>
-        public static bool ImagesAreEqual(string pathImageActual, string pathImageExpected, ResizeOption resizeOption = ResizeOption.DontResize)
+        public static bool ImagesAreEqual(string pathImageActual, string pathImageExpected, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0)
         {
             using var actualImage = Image.Load(pathImageActual);
             using var expectedImage = Image.Load(pathImageExpected);
-            return ImagesAreEqual(actualImage, expectedImage, resizeOption);
+            return ImagesAreEqual(actualImage, expectedImage, resizeOption, pixelColorShiftTolerance);
         }
 
         /// <summary>
@@ -126,8 +127,9 @@ namespace Codeuctivity.ImageSharpCompare
         /// <param name="actual"></param>
         /// <param name="expected"></param>
         /// <param name="resizeOption"></param>
+        /// <param name="pixelColorShiftTolerance"></param>
         /// <returns>True if every pixel of actual is equal to expected</returns>
-        public static bool ImagesAreEqual(Image actual, Image expected, ResizeOption resizeOption = ResizeOption.DontResize)
+        public static bool ImagesAreEqual(Image actual, Image expected, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0)
         {
             ArgumentNullException.ThrowIfNull(actual);
 
@@ -142,7 +144,7 @@ namespace Codeuctivity.ImageSharpCompare
                 actualPixelAccessibleImage = ImageSharpPixelTypeConverter.ToRgb24Image(actual, out ownsActual);
                 expectedPixelAccusableImage = ImageSharpPixelTypeConverter.ToRgb24Image(expected, out ownsExpected);
 
-                return ImagesAreEqual(actualPixelAccessibleImage, expectedPixelAccusableImage, resizeOption);
+                return ImagesAreEqual(actualPixelAccessibleImage, expectedPixelAccusableImage, resizeOption, pixelColorShiftTolerance);
             }
             finally
             {
@@ -163,8 +165,9 @@ namespace Codeuctivity.ImageSharpCompare
         /// <param name="actual"></param>
         /// <param name="expected"></param>
         /// <param name="resizeOption"></param>
+        /// <param name="pixelColorShiftTolerance"></param>
         /// <returns>True if every pixel of actual is equal to expected</returns>
-        public static bool ImagesAreEqual(Image<Rgb24> actual, Image<Rgb24> expected, ResizeOption resizeOption = ResizeOption.DontResize)
+        public static bool ImagesAreEqual(Image<Rgb24> actual, Image<Rgb24> expected, ResizeOption resizeOption = ResizeOption.DontResize, int pixelColorShiftTolerance = 0)
         {
             ArgumentNullException.ThrowIfNull(actual);
 
@@ -181,9 +184,20 @@ namespace Codeuctivity.ImageSharpCompare
                 {
                     for (var y = 0; y < actual.Height; y++)
                     {
-                        if (!actual[x, y].Equals(expected[x, y]))
+                        if (pixelColorShiftTolerance == 0 && !actual[x, y].Equals(expected[x, y]))
                         {
                             return false;
+                        }
+                        else if (pixelColorShiftTolerance > 0)
+                        {
+                            var actualPixel = actual[x, y];
+                            var expectedPixel = expected[x, y];
+                            if (Math.Abs(actualPixel.R - expectedPixel.R) > pixelColorShiftTolerance ||
+                                Math.Abs(actualPixel.G - expectedPixel.G) > pixelColorShiftTolerance ||
+                                Math.Abs(actualPixel.B - expectedPixel.B) > pixelColorShiftTolerance)
+                            {
+                                return false;
+                            }
                         }
                     }
                 }
@@ -194,7 +208,7 @@ namespace Codeuctivity.ImageSharpCompare
             var grown = GrowToSameDimension(actual, expected);
             try
             {
-                return ImagesAreEqual(grown.Item1, grown.Item2, ResizeOption.DontResize);
+                return ImagesAreEqual(grown.Item1, grown.Item2, ResizeOption.DontResize, pixelColorShiftTolerance);
             }
             finally
             {
@@ -350,7 +364,7 @@ namespace Codeuctivity.ImageSharpCompare
                     var g = Math.Abs(expectedPixel.G - actualPixel.G);
                     var b = Math.Abs(expectedPixel.B - actualPixel.B);
                     var sum = r + g + b;
-                    absoluteError += (sum > pixelColorShiftTolerance ? sum : 0);
+                    absoluteError += sum > pixelColorShiftTolerance ? sum : 0;
                     pixelErrorCount += (sum > pixelColorShiftTolerance) ? 1 : 0;
                 }
             }
@@ -477,7 +491,7 @@ namespace Codeuctivity.ImageSharpCompare
                         error += b;
                     }
 
-                    absoluteError += (error > pixelColorShiftTolerance ? error : 0);
+                    absoluteError += error > pixelColorShiftTolerance ? error : 0;
                     pixelErrorCount += error > pixelColorShiftTolerance ? 1 : 0;
                 }
             }
@@ -663,14 +677,40 @@ namespace Codeuctivity.ImageSharpCompare
                         var actualPixel = actual[x, y];
                         var expectedPixel = expected[x, y];
 
-                        var pixel = new Rgb24
+                        if (pixelColorShiftTolerance == 0)
                         {
-                            R = (byte)Math.Abs(actualPixel.R - expectedPixel.R),
-                            G = (byte)Math.Abs(actualPixel.G - expectedPixel.G),
-                            B = (byte)Math.Abs(actualPixel.B - expectedPixel.B)
-                        };
+                            var pixel = new Rgb24
+                            {
+                                R = (byte)Math.Abs(actualPixel.R - expectedPixel.R),
+                                G = (byte)Math.Abs(actualPixel.G - expectedPixel.G),
+                                B = (byte)Math.Abs(actualPixel.B - expectedPixel.B)
+                            };
 
-                        maskImage[x, y] = pixel;
+                            maskImage[x, y] = pixel;
+                        }
+                        else
+                        {
+                            var r = Math.Abs(actualPixel.R - expectedPixel.R);
+                            var g = Math.Abs(actualPixel.G - expectedPixel.G);
+                            var b = Math.Abs(actualPixel.B - expectedPixel.B);
+
+                            var error = r + g + b;
+                            if (error <= pixelColorShiftTolerance)
+                            {
+                                r = 0;
+                                g = 0;
+                                b = 0;
+                            }
+
+                            var pixel = new Rgb24
+                            {
+                                R = (byte)r,
+                                G = (byte)g,
+                                B = (byte)b
+                            };
+
+                            maskImage[x, y] = pixel;
+                        }
                     }
                 }
                 return maskImage;
