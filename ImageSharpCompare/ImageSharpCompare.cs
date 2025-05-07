@@ -701,8 +701,6 @@ namespace Codeuctivity.ImageSharpCompare
                                 g = 0;
                                 b = 0;
                             }
-                            else
-                            { }
 
                             var pixel = new Rgb24
                             {
