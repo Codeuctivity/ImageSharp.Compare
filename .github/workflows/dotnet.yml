@@ -20,6 +20,7 @@ jobs:
       with:
         dotnet-version: | 
           8.0.x
+          9.0.x
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
@@ -38,6 +39,7 @@ jobs:
       with:
         dotnet-version: | 
           8.0.x
+          9.0.x
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
@@ -67,6 +69,7 @@ jobs:
       with:
         dotnet-version: | 
           8.0.x
+          9.0.x
     - name: Check formatting
       run: dotnet format --verify-no-changes
     - name: Restore dependencies
