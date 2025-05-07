@@ -678,15 +678,15 @@ namespace Codeuctivity.ImageSharpCompare
                         var expectedPixel = expected[x, y];
 
                         if (pixelColorShiftTolerance == 0)
-                        { 
-                            var pixel = new Rgb24
                         {
-                            R = (byte)Math.Abs(actualPixel.R - expectedPixel.R),
-                            G = (byte)Math.Abs(actualPixel.G - expectedPixel.G),
-                            B = (byte)Math.Abs(actualPixel.B - expectedPixel.B)
-                        };
+                            var pixel = new Rgb24
+                            {
+                                R = (byte)Math.Abs(actualPixel.R - expectedPixel.R),
+                                G = (byte)Math.Abs(actualPixel.G - expectedPixel.G),
+                                B = (byte)Math.Abs(actualPixel.B - expectedPixel.B)
+                            };
 
-                        maskImage[x, y] = pixel;
+                            maskImage[x, y] = pixel;
                         }
                         else
                         {
@@ -704,12 +704,12 @@ namespace Codeuctivity.ImageSharpCompare
                             else
                             { }
 
-                                var pixel = new Rgb24
-                                {
-                                    R = (byte)r,
-                                    G = (byte)g,
-                                    B = (byte)b
-                                };
+                            var pixel = new Rgb24
+                            {
+                                R = (byte)r,
+                                G = (byte)g,
+                                B = (byte)b
+                            };
 
                             maskImage[x, y] = pixel;
                         }
