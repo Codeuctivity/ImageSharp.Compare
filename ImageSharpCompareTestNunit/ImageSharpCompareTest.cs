@@ -240,26 +240,32 @@ namespace ImageSharpCompareTestNunit
             Assert.That(diff.PixelErrorPercentage, Is.EqualTo(expectedPixelErrorPercentage), "PixelErrorPercentage");
         }
 
-        [TestCase(png0Rgba32, png1Rgba32, 0, 0, 0, 0, null)]
-        [TestCase(png0Rgba32, png1Rgba32, 0, 0, 0, 0, ResizeOption.DontResize)]
-        [TestCase(png0Rgba32, png1Rgba32, 0, 0, 0, 0, ResizeOption.Resize)]
-        [TestCase(pngWhite2x2px, pngBlack4x4px, 0, 0, 0, 0, ResizeOption.Resize)]
-        [TestCase(pngBlack4x4px, pngWhite2x2px, 0, 0, 0, 0, ResizeOption.Resize)]
-        [TestCase(renderedForm1, renderedForm2, 0, 0, 0, 0, ResizeOption.Resize)]
-        [TestCase(renderedForm2, renderedForm1, 0, 0, 0, 0, ResizeOption.Resize)]
-        public void CalcDiffMaskImage(string pathPic1, string pathPic2, double expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption)
+        [TestCase(png0Rgba32, png1Rgba32, 0, 0, 0, 0, ResizeOption.DontResize, 0, false)]
+        [TestCase(png0Rgba32, png1Rgba32, 0, 0, 0, 0, ResizeOption.Resize, 0, false)]
+        [TestCase(pngWhite2x2px, pngBlack4x4px, 0, 0, 0, 0, ResizeOption.Resize, 0, false)]
+        [TestCase(pngBlack4x4px, pngWhite2x2px, 0, 0, 0, 0, ResizeOption.Resize, 0, false)]
+        [TestCase(renderedForm1, renderedForm2, 0, 0, 0, 0, ResizeOption.Resize, 0, false)]
+        [TestCase(renderedForm2, renderedForm1, 0, 0, 0, 0, ResizeOption.Resize, 0, false)]
+        [TestCase(colorShift1, colorShift1, 0, 0, 0, 0, ResizeOption.DontResize, 15, true)]
+        [TestCase(colorShift1, colorShift1, 0, 0, 0, 0, ResizeOption.Resize, 15, true)]
+        [TestCase(colorShift1, colorShift2, 0, 0, 0, 0, ResizeOption.Resize, 15, true)]
+        [TestCase(colorShift1, colorShift2, 0, 0, 0, 0, ResizeOption.DontResize, 15, true)]
+        [TestCase(colorShift1, colorShift2, 0, 0, 0, 0, ResizeOption.Resize, 14, false)]
+        [TestCase(colorShift1, colorShift2, 0, 0, 0, 0, ResizeOption.DontResize, 14, false)]
+        public void CalcDiffMaskImage(string pathPic1, string pathPic2, double expectedMeanError, int expectedAbsoluteError, int expectedPixelErrorCount, double expectedPixelErrorPercentage, ResizeOption resizeOption, int expectedColorShift, bool expectMaskToBeBlack)
         {
             var absolutePathPic1 = Path.Combine(AppContext.BaseDirectory, pathPic1);
             var absolutePathPic2 = Path.Combine(AppContext.BaseDirectory, pathPic2);
             var differenceMask = Path.GetTempFileName() + "differenceMask.png";
 
             using (var fileStreamDifferenceMask = File.Create(differenceMask))
-            using (var maskImage = ImageSharpCompare.CalcDiffMaskImage(absolutePathPic1, absolutePathPic2, resizeOption))
+            using (var maskImage = ImageSharpCompare.CalcDiffMaskImage(absolutePathPic1, absolutePathPic2, resizeOption, expectedColorShift))
             {
                 ImageExtensions.SaveAsPng(maskImage, fileStreamDifferenceMask);
+                Assert.That(IsImageEntirelyBlack(maskImage), Is.EqualTo(expectMaskToBeBlack));
             }
 
-            var maskedDiff = ImageSharpCompare.CalcDiff(absolutePathPic1, absolutePathPic2, differenceMask, resizeOption);
+            var maskedDiff = ImageSharpCompare.CalcDiff(absolutePathPic1, absolutePathPic2, differenceMask, resizeOption, expectedColorShift);
             File.Delete(differenceMask);
 
             Assert.That(maskedDiff.AbsoluteError, Is.EqualTo(expectedAbsoluteError), "AbsoluteError");

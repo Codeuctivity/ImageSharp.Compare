@@ -491,7 +491,7 @@ namespace Codeuctivity.ImageSharpCompare
                         error += b;
                     }
 
-                    absoluteError += (error > pixelColorShiftTolerance ? error : 0);
+                    absoluteError += error > pixelColorShiftTolerance ? error : 0;
                     pixelErrorCount += error > pixelColorShiftTolerance ? 1 : 0;
                 }
             }
@@ -677,7 +677,9 @@ namespace Codeuctivity.ImageSharpCompare
                         var actualPixel = actual[x, y];
                         var expectedPixel = expected[x, y];
 
-                        var pixel = new Rgb24
+                        if (pixelColorShiftTolerance == 0)
+                        { 
+                            var pixel = new Rgb24
                         {
                             R = (byte)Math.Abs(actualPixel.R - expectedPixel.R),
                             G = (byte)Math.Abs(actualPixel.G - expectedPixel.G),
@@ -685,6 +687,32 @@ namespace Codeuctivity.ImageSharpCompare
                         };
 
                         maskImage[x, y] = pixel;
+                        }
+                        else
+                        {
+                            var r = Math.Abs(actualPixel.R - expectedPixel.R);
+                            var g = Math.Abs(actualPixel.G - expectedPixel.G);
+                            var b = Math.Abs(actualPixel.B - expectedPixel.B);
+
+                            var error = r + g + b;
+                            if (error <= pixelColorShiftTolerance)
+                            {
+                                r = 0;
+                                g = 0;
+                                b = 0;
+                            }
+                            else
+                            { }
+
+                                var pixel = new Rgb24
+                                {
+                                    R = (byte)r,
+                                    G = (byte)g,
+                                    B = (byte)b
+                                };
+
+                            maskImage[x, y] = pixel;
+                        }
                     }
                 }
                 return maskImage;
