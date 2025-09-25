@@ -16,7 +16,7 @@ Get-ChildItem -Path . -Recurse -Include "*.csproj", "*.fsproj" | ForEach-Object 
             # Only update stable versions (not prerelease versions containing -)
             if ($version -notmatch '-') {
                 Write-Host "Updating package: $packageName"
-                & "C:\Program Files\dotnet\dotnet.exe" add "$projFile" package "$packageName"
+                dotnet add "$projFile" package "$packageName"
             }
         }
     }
