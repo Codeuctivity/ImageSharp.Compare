@@ -43,6 +43,18 @@
             "type": "shell",
             "command": "'./.vscode/updateNuget.sh'",
             "problemMatcher": []
+        },
+        {
+            "label": "update nuget packages (windows)",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "./.vscode/updateNuget.ps1"
+            ],
+            "problemMatcher": []
         }
     ]
 }

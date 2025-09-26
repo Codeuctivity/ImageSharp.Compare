@@ -12,20 +12,20 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="nunit" Version="4.3.2" />
+		<PackageReference Include="nunit" Version="4.4.0" />
 		<PackageReference Include="NUnit.Analyzers" Version="4.10.0">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="SonarAnalyzer.CSharp" Version="10.9.0.115408">
+		<PackageReference Include="SonarAnalyzer.CSharp" Version="10.15.0.120848">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
-		<PackageReference Include="NUnit3TestAdapter" Version="5.0.0">
+		<PackageReference Include="NUnit3TestAdapter" Version="5.1.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
 	</ItemGroup>
 
 	<ItemGroup>
