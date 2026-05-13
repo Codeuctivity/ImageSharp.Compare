@@ -8,6 +8,10 @@ Inspired by the image compare feature "Visual verification API" of [TestApi](htt
 
 ImageSharpCompare focus on os agnostic support and therefore depends on [SixLabors.ImageSharp](https://github.com/SixLabors/ImageSharp).
 
+## ImageSharp License Note
+
+If you run into the licensing hassle around the ImageSharp dependency, consider [Codeuctivity/SkiaSharp.Compare](https://github.com/Codeuctivity/SkiaSharp.Compare) as an alternative. It is semi API compatible, and if that project already satisfies my personal needs, it may aslo be the better fit for you. For further details, see [Licence Enforcement Changes](https://sixlabors.com/posts/licence-enforcement-changes/). The respect here is directed toward the ImageSharp dependency and the work behind it. Keeping this project compliant with license changes takes ongoing effort, and [funding](https://github.com/sponsors/Codeuctivity) would help make it easier to upgrade to the latest ImageSharp versions and keep pace with their technical changes responsibly.
+
 NOTE: The Alpha-channel is ignored.
 
 ## Example simple show cases
